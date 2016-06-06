@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="PlanBar">
+        <attr name="leftPositionX" format="dimension"></attr>
+        <attr name="leftPositionY" format="dimension"></attr>
+        <attr name="strochWidth" format="dimension"></attr>
+    </declare-styleable>
+</resources>
