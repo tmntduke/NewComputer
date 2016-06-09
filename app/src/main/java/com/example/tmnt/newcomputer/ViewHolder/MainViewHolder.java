@@ -30,15 +30,15 @@ public class MainViewHolder implements Holder<Integer> {
     @Override
     public void UpdateUI(Context context, int position, Integer data) {
         mImageView.setImageResource(data);
-//        p = position;
-//        if (mOnClickImageListener != null) {
-//            mImageView.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    mOnClickImageListener.itemClick(v, p);
-//                }
-//            });
-//        }
+        p = position;
+        if (mOnClickImageListener != null) {
+            mImageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mOnClickImageListener.itemClick(v, p);
+                }
+            });
+        }
     }
 
     public static void setOnClickImageListener(OnClickImageListener onClickImageListener) {

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/home_Item"
+    android:layout_width="match_parent"
+    android:layout_height="65dp"
+    android:layout_margin="16dp"
+    android:background="#969696"
+    android:padding="15dp"
+    app:cardCornerRadius="10dp"
+    app:cardElevation="5dp"
+>
+
+    <LinearLayout android:layout_width="match_parent"
+                  android:layout_height="match_parent"
+
+                  android:orientation="horizontal"
+    >
+
+        <com.example.tmnt.newcomputer.DView.CircleImageView
+            android:id="@+id/question_sort_icon"
+            android:layout_width="52dp"
+            android:layout_height="52dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="10dp"
+            tools:src="@drawable/a1_2"
+
+        />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="15dp"
+            android:gravity="center_vertical"
+            android:orientation="vertical"
+        >
+
+            <TextView
+                android:id="@+id/question_sort_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#000000"
+                android:textSize="25sp"
+                tools:text="ffffff"
+            />
+
+            <TextView
+                android:id="@+id/question_sort_subtitle"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:textColor="#000000"
+                android:textSize="16sp"
+                tools:text="ffffff"
+            />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</android.support.v7.widget.CardView>

@@ -7,4 +7,7 @@
     <color name="colorRegister">#009dff</color>
     <color name="test">#94f5e5</color>
     <color name="answer">#8ae7e1</color>
+    <color name="android">#2ec72b</color>
+    <color name="java">#f47717</color>
+    <color name="python">#005897</color>
 </resources>

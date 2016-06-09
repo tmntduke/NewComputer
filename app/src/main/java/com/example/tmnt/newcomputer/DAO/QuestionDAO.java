@@ -188,6 +188,21 @@ public class QuestionDAO {
     }
 
     /**
+     * 查询所有错误问题的题目
+     *
+     * @return
+     */
+    public ArrayList<String> queryWrongQuestion() {
+        ArrayList<String> list = new ArrayList<>();
+        db = mDBHelper.getReadableDatabase();
+        Cursor cursor = db.query("T_Wrong", new String[]{"question"}, null, null, null, null, null);
+        while (cursor.moveToNext()) {
+            list.add(cursor.getString(0));
+        }
+        return list;
+    }
+
+    /**
      * 查询登陆用户名
      *
      * @return
@@ -270,12 +285,14 @@ public class QuestionDAO {
 
     /**
      * 更新用户头像路径
-      * @param username
+     *
+     * @param username
      * @param path
      */
-    public void updateUserIcon(String username,String path){
+    public void updateUserIcon(String username, String path) {
         db = mDBHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
+
         values.put("iconPath", path);
         db.update("T_UserIcon", values, "username=?", new String[]{username});
     }
@@ -316,11 +333,12 @@ public class QuestionDAO {
 
     /**
      * 查询用户头像路径
+     *
      * @param name
      * @return
      */
     public String queryUserIconPath(String name) {
-        String path=null;
+        String path = null;
         db = mDBHelper.getReadableDatabase();
         Cursor cursor = db.query("T_UserIcon", new String[]{"iconPath"}, "username=?", new String[]{name}, null, null, null);
         if (cursor.moveToNext()) {
