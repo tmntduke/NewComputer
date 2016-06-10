@@ -5,8 +5,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/home_Item"
     android:layout_width="match_parent"
-    android:layout_height="65dp"
-    android:layout_margin="16dp"
+    android:layout_height="67dp"
+    android:layout_margin="14dp"
     android:background="#969696"
     android:padding="15dp"
     app:cardCornerRadius="10dp"
@@ -15,7 +15,6 @@
 
     <LinearLayout android:layout_width="match_parent"
                   android:layout_height="match_parent"
-
                   android:orientation="horizontal"
     >
 
@@ -42,7 +41,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="#000000"
-                android:textSize="25sp"
+                android:textSize="22sp"
                 tools:text="ffffff"
             />
 
@@ -51,7 +50,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:textColor="#000000"
-                android:textSize="16sp"
+                android:textSize="14sp"
                 tools:text="ffffff"
             />
         </LinearLayout>

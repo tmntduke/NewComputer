@@ -1,11 +1,14 @@
 package com.example.tmnt.newcomputer.Activity;
 
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.transition.Explode;
+import android.transition.Fade;
 import android.view.Window;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -15,6 +18,7 @@ import android.widget.LinearLayout;
 import com.dd.processbutton.iml.ActionProcessButton;
 import com.example.tmnt.newcomputer.Adapter.LoginAutoCompleteAdapter;
 import com.example.tmnt.newcomputer.DAO.QuestionDAO;
+import com.example.tmnt.newcomputer.Fragment.UserMessageFragment;
 import com.example.tmnt.newcomputer.MainActivity;
 import com.example.tmnt.newcomputer.R;
 import com.example.tmnt.newcomputer.Utils.ProgressGenerator;
@@ -45,6 +49,9 @@ public class LoginActivity extends AppCompatActivity implements ProgressGenerato
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        getWindow().requestFeature(
+                Window.FEATURE_CONTENT_TRANSITIONS);
+
         super.onCreate(savedInstanceState);
         if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) {
             Utils.setTranslucentStatus(LoginActivity.this, true);
@@ -57,13 +64,15 @@ public class LoginActivity extends AppCompatActivity implements ProgressGenerato
         tintManager.setStatusBarTintEnabled(true);
         tintManager.setStatusBarTintResource(android.R.color.transparent);
         setContentView(R.layout.login_layout);
+        setEnterAnmition();
+        showExit();
         ButterKnife.bind(this);
 
 
         mDAO = new QuestionDAO(getApplicationContext());
         mLogin.setMode(ActionProcessButton.Mode.PROGRESS);
 
-        LoginAutoCompleteAdapter adapter=new LoginAutoCompleteAdapter(LoginActivity.this,R.layout.activity_autocomplete_item,mDAO.queryAlluser());
+        LoginAutoCompleteAdapter adapter = new LoginAutoCompleteAdapter(LoginActivity.this, R.layout.activity_autocomplete_item, mDAO.queryAlluser());
         mEditUsername.setAdapter(adapter);
 
         if (!mDAO.isLogin()) {
@@ -109,7 +118,38 @@ public class LoginActivity extends AppCompatActivity implements ProgressGenerato
         mDAO.updateLogin(true);
         mDAO.updateUserLogin(mEditUsername.getText().toString(), true);
         turnMain.putExtra("user", mEditUsername.getText().toString());
-        startActivity(turnMain);
-        finish();
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(LoginActivity.this);
+            startActivity(turnMain, options.toBundle());
+            finish();
+        } else {
+            startActivity(turnMain);
+            finish();
+        }
+    }
+
+    public void showExit() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            Explode explode = new Explode();
+            explode.setDuration(2000);
+            getWindow().setExitTransition(explode);
+
+            Fade fade = new Fade();
+            fade.setDuration(2000);
+            getWindow().setReturnTransition(fade);
+        }
+    }
+
+    public void setEnterAnmition() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            //Fade fade = new Fade();
+            Explode explode = new Explode();
+            explode.setDuration(2000);
+            getWindow().setEnterTransition(explode);
+
+            Fade fade = new Fade();
+            fade.setDuration(2000);
+            getWindow().setReturnTransition(fade);
+        }
     }
 }

@@ -81,7 +81,7 @@ public class FirstUseActivity extends AppCompatActivity {
                     Intent turnLogin = new Intent(FirstUseActivity.this, LoginActivity.class);
                     mDAO.updateFirst(true);
                     startActivity(turnLogin);
-
+                    finish();
                 });
 
                 mFirstRegister.setOnClickListener((v) -> {
@@ -89,6 +89,7 @@ public class FirstUseActivity extends AppCompatActivity {
                     mDAO.updateFirst(true);
                     startActivity(intent);
                     finish();
+
                 });
 
             } else {

@@ -7,9 +7,12 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.transition.Explode;
+import android.transition.Fade;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Toast;
 
 import com.example.tmnt.newcomputer.Activity.TitleSlideActivity;
@@ -36,6 +39,7 @@ public class HomeFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setEnterAnmition();
     }
 
     @Nullable
@@ -83,7 +87,6 @@ public class HomeFragment extends Fragment {
                 } else {
                     startActivity(intent);
                 }
-
             }
 
         });
@@ -114,4 +117,19 @@ public class HomeFragment extends Fragment {
         mList.add(R.drawable.python);
         return mList;
     }
+
+    public void setEnterAnmition() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            //Fade fade = new Fade();
+            Explode explode = new Explode();
+            explode.setDuration(2000);
+            getActivity().getWindow().setEnterTransition(explode);
+
+            Fade fade = new Fade();
+            fade.setDuration(2000);
+            getActivity().getWindow().setReturnTransition(fade);
+        }
+
+    }
+
 }

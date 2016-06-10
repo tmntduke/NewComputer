@@ -4,9 +4,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import com.example.tmnt.newcomputer.Activity.ShowUIconActivity;
 import com.example.tmnt.newcomputer.DView.CircleImageView;
@@ -28,10 +30,12 @@ public class UserMsgItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     private String name;
     private String sub;
 
-    private CardView cardView;
+    private LinearLayout cardView;
     private CircleImageView iCircleImageView;
 
     public OnclickUserMsgListener mOnclickUserMsgListener;
+
+    private static final String TAG = "UserMsgItemAdapter";
 
     public UserMsgItemAdapter(List<Integer> icons, List<String> title, Context cotext, String path, String name, String sub) {
         this.icons = icons;
@@ -50,7 +54,7 @@ public class UserMsgItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             return UserMsgViewHolder.getInstance(view, viewType);
         } else {
             View view = LayoutInflater.from(cotext).inflate(R.layout.user_msg_list_item, parent, false);
-            cardView = (CardView) view.findViewById(R.id.wrong_list_id);
+            cardView = (LinearLayout) view.findViewById(R.id.wrong_list_id);
             return UserMsgViewHolder.getInstance(view, viewType);
         }
 
@@ -67,6 +71,7 @@ public class UserMsgItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 @Override
                 public void onClick(View v) {
                     if (mOnclickUserMsgListener != null) {
+                        Log.i(TAG, "onClick: start");
                         mOnclickUserMsgListener.onClickMsgItem(v, position);
                     }
                 }

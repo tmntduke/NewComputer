@@ -17,7 +17,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.tmnt.newcomputer.Activity.ShowUIconActivity;
-import com.example.tmnt.newcomputer.Adapter.UserMsgAdapter;
+import com.example.tmnt.newcomputer.Activity.WrongListActivity;
 import com.example.tmnt.newcomputer.Adapter.UserMsgItemAdapter;
 import com.example.tmnt.newcomputer.DAO.QuestionDAO;
 import com.example.tmnt.newcomputer.DView.CircleImageView;
@@ -98,9 +98,13 @@ public class UserMessageFragment extends Fragment {
             @Override
             public void onClickMsgItem(View v, int position) {
                 switch (position) {
-                    case 0:
-                        break;
                     case 1:
+                        Log.i(TAG, "onClickMsgItem: start");
+                        Intent intent = new Intent(getActivity(), WrongListActivity.class);
+                        startActivity(intent);
+                        break;
+                    case 2:
+
                         break;
 
                 }
@@ -109,7 +113,7 @@ public class UserMessageFragment extends Fragment {
             @Override
             public void turnToShow(View v) {
                 Intent intent = new Intent(getActivity(), ShowUIconActivity.class);
-                intent.putExtra(PATH,path);
+                intent.putExtra(PATH, path);
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
                     ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(getActivity(), v, getString(R.string.share));
                     startActivity(intent, options.toBundle());

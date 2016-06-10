@@ -26,13 +26,14 @@ public class UserMsgAdapter extends BaseAdapter {
         mList = list;
     }
 
+    public void deleteData(int position) {
+        mList.remove(position);
+    }
+
     @Override
     public int getCount() {
-        if (mList.size() != 0) {
-            return mList.size();
-        } else {
-            return 1;
-        }
+        return mList.size();
+
 
     }
 
@@ -57,7 +58,7 @@ public class UserMsgAdapter extends BaseAdapter {
         ViewHolder viewHolder;
         if (mList.size() != 0) {
             if (convertView == null) {
-                view = LayoutInflater.from(mContext).inflate(R.layout.user_msg_list_item, parent, false);
+                view = LayoutInflater.from(mContext).inflate(R.layout.wrong_list_lay, parent, false);
                 viewHolder = new ViewHolder();
                 viewHolder.mTextView = (TextView) view.findViewById(R.id.text);
                 viewHolder.delete = (ImageView) view.findViewById(R.id.delete);

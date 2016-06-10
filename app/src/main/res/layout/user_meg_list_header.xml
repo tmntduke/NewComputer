@@ -4,9 +4,9 @@
               android:layout_width="match_parent"
               android:layout_height="180dp"
               android:background="@drawable/user_shoe"
+              android:elevation="1dp"
               android:gravity="center"
               android:orientation="vertical"
-              android:elevation="5dp"
               android:paddingTop="5dp"
 >
 
@@ -15,8 +15,9 @@
         android:layout_width="75dp"
         android:layout_height="75dp"
         android:scaleType="centerCrop"
+        android:src="@drawable/image"
         android:transitionName="@string/share"
-        tools:src="@drawable/a1_2"/>
+        />
 
 
     <TextView

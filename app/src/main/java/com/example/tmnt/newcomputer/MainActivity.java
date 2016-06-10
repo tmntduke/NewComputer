@@ -1,20 +1,13 @@
 package com.example.tmnt.newcomputer;
 
-import android.annotation.TargetApi;
 import android.app.ActivityOptions;
 import android.app.AlertDialog;
 import android.content.Intent;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.provider.MediaStore;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
@@ -31,23 +24,19 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
-import android.widget.ImageView;
 
-import com.bigkoo.convenientbanner.ConvenientBanner;
-import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
+import com.example.tmnt.newcomputer.Activity.FirstUseActivity;
 import com.example.tmnt.newcomputer.Activity.ShowUIconActivity;
 import com.example.tmnt.newcomputer.Activity.ShowUseActivity;
 import com.example.tmnt.newcomputer.DAO.QuestionDAO;
 import com.example.tmnt.newcomputer.DView.CircleImageView;
 import com.example.tmnt.newcomputer.Fragment.HomeFragment;
-import com.example.tmnt.newcomputer.Fragment.MessageFragment;
+import com.example.tmnt.newcomputer.Fragment.SortFragment;
 import com.example.tmnt.newcomputer.Fragment.UserMessageFragment;
 import com.example.tmnt.newcomputer.InterFace.IMPL.ShowIcon;
 import com.example.tmnt.newcomputer.InterFace.OnClickShowIcon;
-import com.example.tmnt.newcomputer.Utils.ChangeUIMode;
 import com.example.tmnt.newcomputer.Utils.ImageUtils;
 import com.example.tmnt.newcomputer.Utils.Utils;
-import com.example.tmnt.newcomputer.ViewHolder.MainViewHolder;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 import com.yalantis.contextmenu.lib.ContextMenuDialogFragment;
 import com.yalantis.contextmenu.lib.MenuObject;
@@ -55,7 +44,6 @@ import com.yalantis.contextmenu.lib.MenuParams;
 import com.yalantis.contextmenu.lib.interfaces.OnMenuItemClickListener;
 import com.yalantis.contextmenu.lib.interfaces.OnMenuItemLongClickListener;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
@@ -114,6 +102,7 @@ public class MainActivity extends AppCompatActivity implements OnMenuItemClickLi
         tintManager.setStatusBarTintResource(R.color.colorPrimary);
 
         setContentView(R.layout.activity_main);
+        setEnterAnmition();
         showExit();
         ButterKnife.bind(this);
 
@@ -137,14 +126,18 @@ public class MainActivity extends AppCompatActivity implements OnMenuItemClickLi
         setDefaultFragment();
 
         showNavigationBar();
-        showIcon();
+
 
     }
 
 
+    /**
+     * 显示默认fragment
+     */
     private void setDefaultFragment() {
         FragmentManager manager = getSupportFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
+        transaction.setCustomAnimations(R.anim.push_up_in, R.anim.push_up_out);
         HomeFragment homeFragment = new HomeFragment();
         transaction.add(R.id.id_content, homeFragment);
         transaction.commit();
@@ -166,7 +159,7 @@ public class MainActivity extends AppCompatActivity implements OnMenuItemClickLi
                 .setDefaultColor(0xFFACACAC)
                 .setSelectedColor(getResources().getColor(R.color.colorPrimary))
                 .setDefaultIcon(R.drawable.lfl)
-                .setText("标题")
+                .setText("分类")
                 .setTag("这是一个TAG")
                 .build();
 
@@ -198,7 +191,7 @@ public class MainActivity extends AppCompatActivity implements OnMenuItemClickLi
                         break;
                     case 1:
                         isUser = false;
-                        transaction.replace(R.id.id_content, new MessageFragment());
+                        transaction.replace(R.id.id_content, new SortFragment());
                         transaction.commit();
                         break;
                     case 2:
@@ -233,14 +226,6 @@ public class MainActivity extends AppCompatActivity implements OnMenuItemClickLi
     protected void onStart() {
         super.onStart();
 
-
-        /**
-         * 设置头像
-         */
-
-        Log.i(TAG, "onStart: " + isUser);
-
-
         /**
          * 进入相册或相机进行选择图片
          */
@@ -266,17 +251,10 @@ public class MainActivity extends AppCompatActivity implements OnMenuItemClickLi
         mToolbarIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isUser) {
-                    Intent intent = new Intent(MainActivity.this, ShowUIconActivity.class);
-                    intent.putExtra(UserMessageFragment.PATH, mDAO.queryUserIconPath(username));
-                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-                        ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(MainActivity.this, v, getString(R.string.share));
-                        startActivity(intent, options.toBundle());
-                    }
-                } else {
-                    mAlertDialog = Utils.shoeDialog(MainActivity.this, username, mDAO);
-                    mAlertDialog.show();
-                }
+
+
+                mAlertDialog = Utils.shoeDialog(MainActivity.this, username, mDAO);
+                mAlertDialog.show();
             }
         });
 
@@ -290,6 +268,7 @@ public class MainActivity extends AppCompatActivity implements OnMenuItemClickLi
     @Override
     protected void onResume() {
         super.onResume();
+        showIcon();
         controller.setSelect(0);
         Log.i(TAG, "onResume: start");
 
@@ -324,53 +303,17 @@ public class MainActivity extends AppCompatActivity implements OnMenuItemClickLi
         MenuObject close = new MenuObject();
         close.setResource(R.drawable.icn_close);
 
-        MenuObject send = new MenuObject("Setting");
+        MenuObject send = new MenuObject("退出");
         send.setResource(R.drawable.icon_setup_normal);
-
-        MenuObject like = new MenuObject("about");
-        Bitmap b = BitmapFactory.decodeResource(getResources(), R.drawable.icn_3);
-        like.setBitmap(b);
-
 
         menuObjects.add(close);
         menuObjects.add(send);
-        menuObjects.add(like);
 
         return menuObjects;
 
     }
 
-    /**
-     * 初始化控件
-     */
-//    public void showConvenientBanner() {
-//        mList = new ArrayList<>();
-//        mList.add(R.drawable.zhuan_3);
-//        mList.add(R.drawable.java);
-//        mList.add(R.drawable.python);
-//        mConvenientBanner.setPages(new CBViewHolderCreator() {
-//            @Override
-//            public Object createHolder() {
-//                return new MainViewHolder();
-//            }
-//        }, mList)
-//                .setPageIndicator(new int[]{R.drawable.ic_page_indicator, R.drawable.ic_page_indicator_focused})
-//                .setPageIndicatorAlign(ConvenientBanner.PageIndicatorAlign.ALIGN_PARENT_RIGHT);
-//
-//        MainViewHolder.setOnClickImageListener(new MainViewHolder.OnClickImageListener() {
-//            @Override
-//            public void itemClick(View v, int position) {
-//                switch (position) {
-//                    case 0:
-//                        break;
-//                    case 1:
-//                        break;
-//                    case 2:
-//                        break;
-//                }
-//            }
-//        });
-//    }
+
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -408,6 +351,15 @@ public class MainActivity extends AppCompatActivity implements OnMenuItemClickLi
 
     @Override
     public void onMenuItemClick(View clickedView, int position) {
+        if (position == 1) {
+            mDAO.updateUserLogin(mDAO.queryLoginUsername(), false);
+            mDAO.updateLogin(false);
+            Intent intent = new Intent(MainActivity.this, FirstUseActivity.class);
+            SharedPreferences.Editor editor = getSharedPreferences("exit", MODE_PRIVATE).edit();
+            editor.putString("exitValue", "exit").commit();
+            startActivity(intent);
+            finish();
+        }
 
     }
 
@@ -452,6 +404,10 @@ public class MainActivity extends AppCompatActivity implements OnMenuItemClickLi
         }
     }
 
+
+    /**
+     * 退出主界面动画
+     */
     public void showExit() {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
             Explode explode = new Explode();
@@ -460,6 +416,20 @@ public class MainActivity extends AppCompatActivity implements OnMenuItemClickLi
 
             Fade fade = new Fade();
             fade.setDuration(2000);
+            getWindow().setReturnTransition(fade);
+        }
+
+    }
+
+    /**
+     * 进入主界面动画
+     */
+    public void setEnterAnmition() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            //Fade fade = new Fade();
+            Fade fade = new Fade();
+            fade.setDuration(2000);
+            getWindow().setEnterTransition(fade);
             getWindow().setReturnTransition(fade);
         }
 

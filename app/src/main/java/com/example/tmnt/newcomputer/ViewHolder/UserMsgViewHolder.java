@@ -53,7 +53,12 @@ public class UserMsgViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void setUserHeader(Context context, String path, String name, String sub) {
-        mCircleImageView.setImageBitmap(ImageUtils.readBitMap(context, path));
+        if (path == null) {
+            mCircleImageView.setImageResource(R.drawable.image);
+        } else {
+            mCircleImageView.setImageBitmap(ImageUtils.readBitMap(context, path));
+        }
+
         userMsgname.setText(name);
         userSub.setText(sub);
     }

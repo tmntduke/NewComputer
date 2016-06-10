@@ -10,4 +10,10 @@
     <color name="android">#2ec72b</color>
     <color name="java">#f47717</color>
     <color name="python">#005897</color>
+    <color name="cc">#b963ff</color>
+
+    <color name="androidPor">#a02ec72b</color>
+    <color name="javaPro">#a0f47717</color>
+    <color name="pythonPro">#a0005897</color>
+    <color name="ccPro">#a0b963ff</color>
 </resources>
