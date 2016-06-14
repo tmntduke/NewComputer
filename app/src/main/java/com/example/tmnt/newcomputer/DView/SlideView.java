@@ -35,11 +35,11 @@ public class SlideView extends LinearLayout {
      */
     private int mContentLayoutWidth;
 
-    private ViewDragListener mViewDragListener;
+    private static ViewDragListener mViewDragListener;
 
     private boolean isOpen;
 
-    interface ViewDragListener {
+    public interface ViewDragListener {
         void onOpen();
 
         void onClose();
@@ -49,13 +49,13 @@ public class SlideView extends LinearLayout {
 
     public SlideView(Context context) {
         super(context);
-        Log.i(TAG, "SlideView: start");
+        //Log.i(TAG, "SlideView: start");
         init();
     }
 
     public SlideView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        Log.i(TAG, "SlideView: start");
+        //Log.i(TAG, "SlideView: start");
         init();
     }
 
@@ -131,11 +131,11 @@ public class SlideView extends LinearLayout {
          */
         @Override
         public int clampViewPositionHorizontal(View child, int left, int dx) {
-           // Log.i(TAG, "clampViewPositionHorizontal: "+left);
+            // Log.i(TAG, "clampViewPositionHorizontal: "+left);
             if (child == mContent) {
                 int newLeft = Math.min(
                         Math.max((-getPaddingLeft() - mBehindLayoutWidth), left), 0);
-                Log.i(TAG, "clampViewPositionHorizontal: "+newLeft);
+                //Log.i(TAG, "clampViewPositionHorizontal: "+newLeft);
                 return newLeft;
             } else {
                 return 0;
@@ -164,7 +164,7 @@ public class SlideView extends LinearLayout {
         @Override
         public void onViewReleased(View releasedChild, float xvel, float yvel) {
             if (releasedChild == mContent) {
-                Log.i(TAG, "onViewReleased: " + mViewDragRange);
+                //Log.i(TAG, "onViewReleased: " + mViewDragRange);
                 if (xvel <= 0) {//向左滑动
                     if (-mViewDragRange >= mBehindLayoutWidth / 2
                             && -mViewDragRange <= mBehindLayoutWidth) {
@@ -195,7 +195,7 @@ public class SlideView extends LinearLayout {
         @Override
         public void onViewPositionChanged(View changedView, int left, int top, int dx, int dy) {
             mViewDragRange = left;
-            Log.i(TAG, "onViewPositionChanged: " + left);
+            //Log.i(TAG, "onViewPositionChanged: " + left);
             float percent = Math.abs((float) left / (float) mContentLayoutWidth);
 //            if (null != mViewDragListener) {
 //                mViewDragListener.onDrag(percent);

@@ -46,7 +46,7 @@ public class ShowUseActivity extends AppCompatActivity {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
             //Fade fade = new Fade();
             Fade fade = new Fade();
-            fade.setDuration(2000);
+            fade.setDuration(1500);
             getWindow().setEnterTransition(fade);
 
 

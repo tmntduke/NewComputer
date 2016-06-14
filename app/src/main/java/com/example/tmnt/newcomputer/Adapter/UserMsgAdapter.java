@@ -1,6 +1,7 @@
 package com.example.tmnt.newcomputer.Adapter;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.example.tmnt.newcomputer.DView.SlideView;
 import com.example.tmnt.newcomputer.Model.Questions;
 import com.example.tmnt.newcomputer.R;
 
@@ -28,11 +30,16 @@ public class UserMsgAdapter extends BaseAdapter {
 
     public void deleteData(int position) {
         mList.remove(position);
+        notifyDataSetChanged();
     }
 
     @Override
     public int getCount() {
-        return mList.size();
+        if (mList.size() != 0) {
+            return mList.size();
+        } else {
+            return 1;
+        }
 
 
     }
@@ -44,7 +51,6 @@ public class UserMsgAdapter extends BaseAdapter {
         } else {
             return 1;
         }
-
     }
 
     @Override
@@ -62,26 +68,39 @@ public class UserMsgAdapter extends BaseAdapter {
                 viewHolder = new ViewHolder();
                 viewHolder.mTextView = (TextView) view.findViewById(R.id.text);
                 viewHolder.delete = (ImageView) view.findViewById(R.id.delete);
+                viewHolder.mSlideView = (SlideView) view.findViewById(R.id.wrong_contain);
+                viewHolder.mTextViewNo = (TextView) view.findViewById(R.id.textNo);
+                viewHolder.content = (LinearLayout) view.findViewById(R.id.mContentView);
                 view.setTag(viewHolder);
             } else {
                 view = convertView;
                 viewHolder = (ViewHolder) view.getTag();
             }
 
+            viewHolder.mTextViewNo.setText(String.valueOf(position + 1) + ".");
             viewHolder.delete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (mOnClickSlideItemListener != null) {
-                        mOnClickSlideItemListener.clickDelete();
+                        mOnClickSlideItemListener.clickDelete(v, mList.get(position), position);
                     }
                 }
             });
 
-            viewHolder.mTextView.setText(mList.get(position));
-        } else {
-            view = LayoutInflater.from(mContext).inflate(R.layout.user_msg_empty, parent, false);
-        }
+            SharedPreferences.Editor editor = mContext.getSharedPreferences("isOpen", Context.MODE_PRIVATE).edit();
+            editor.putBoolean("isOpen", viewHolder.mSlideView.isOpen()).commit();
 
+                viewHolder.content.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (mOnClickSlideItemListener != null) {
+                            mOnClickSlideItemListener.onClickQurstionItem(v, position, viewHolder.mSlideView.isOpen());
+                        }
+                    }
+                });
+
+            viewHolder.mTextView.setText(mList.get(position));
+        }
         return view;
     }
 
@@ -92,13 +111,19 @@ public class UserMsgAdapter extends BaseAdapter {
     }
 
     public interface OnClickSlideItemListener {
-        void clickDelete();
+        void clickDelete(View view, String question, int position);
+
+        void recover(int position);
+
+        void onClickQurstionItem(View v, int position, boolean isOpen);
     }
 
     class ViewHolder {
         public TextView mTextView;
         public ImageView delete;
         public LinearLayout content;
+        public SlideView mSlideView;
+        public TextView mTextViewNo;
     }
 
 }

@@ -16,4 +16,7 @@
     <color name="javaPro">#a0f47717</color>
     <color name="pythonPro">#a0005897</color>
     <color name="ccPro">#a0b963ff</color>
+
+    <color name="colorOtherPrimary">#e5ff62</color>
+    <color name="colorOtherPrimaryDark">#bef701</color>
 </resources>

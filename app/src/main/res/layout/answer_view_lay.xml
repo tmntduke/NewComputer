@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:plan="http://schemas.android.com/apk/res-auto"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@drawable/start"
+              android:orientation="vertical"
+              android:padding="10dp">
+    <FrameLayout android:layout_width="match_parent"
+                 android:layout_height="0dp"
+                 android:layout_weight="1">
+
+        <com.example.tmnt.newcomputer.DView.PlanBar
+            android:id="@+id/test"
+            android:layout_width="225dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="85dp"
+            android:visibility="gone"
+            plan:leftPositionX="50dp"
+            plan:leftPositionY="40dp"
+            plan:strochWidth="23dp"
+        />
+
+        <TextView
+            android:id="@+id/count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textColor="#ffffff"
+            android:textSize="16sp"
+            android:visibility="gone"
+            tools:text="hhhhhh"
+        />
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/question_title_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1.5"
+        android:textColor="#ffffff"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        tools:text="fffffffffff"
+
+    />
+
+    <LinearLayout android:layout_width="match_parent"
+                  android:layout_height="0dp"
+                  android:layout_weight="6.5"
+                  android:gravity="center"
+                  android:orientation="vertical">
+
+        <Button
+            android:id="@+id/optionA"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_margin="25dp"
+            android:layout_weight="1"
+            android:background="@drawable/answer_selector"
+            android:gravity="center"
+            android:textColor="#7d8278"
+            android:textStyle="bold"
+        />
+
+        <Button
+            android:id="@+id/optionB"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_margin="25dp"
+            android:layout_weight="1"
+            android:background="@drawable/answer_selector"
+            android:gravity="center"
+            android:textColor="#7d8278"
+            android:textStyle="bold"
+        />
+
+        <Button
+            android:id="@+id/optionC"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_margin="25dp"
+            android:layout_weight="1"
+            android:background="@drawable/answer_selector"
+            android:gravity="center"
+            android:textColor="#7d8278"
+            android:textStyle="bold"
+        />
+
+        <Button
+            android:id="@+id/optionD"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_margin="25dp"
+            android:layout_weight="1"
+            android:background="@drawable/answer_selector"
+            android:gravity="center"
+            android:textColor="#7d8278"
+            android:textStyle="bold"
+        />
+    </LinearLayout>
+
+</LinearLayout>

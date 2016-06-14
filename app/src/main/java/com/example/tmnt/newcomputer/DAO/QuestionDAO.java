@@ -10,6 +10,7 @@ import com.example.tmnt.newcomputer.Model.AnotherAnswer;
 import com.example.tmnt.newcomputer.Model.Questions;
 import com.example.tmnt.newcomputer.Utils.Finallay;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -264,7 +265,6 @@ public class QuestionDAO {
                     cursor.getBlob(9)));
         }
         cursor.close();
-        closeConn();
         return arrayList;
     }
 
@@ -346,6 +346,67 @@ public class QuestionDAO {
         }
 
         return path;
+    }
+
+
+    /**
+     * 获取模拟考试次数
+     *
+     * @return
+     */
+    public int queryModelCount() {
+        int count = 0;
+        db = mDBHelper.getReadableDatabase();
+        Cursor cursor = db.query("T_Count", new String[]{"count"}, "cid=1", null, null, null, null);
+        if (cursor.moveToNext()) {
+            count = cursor.getInt(0);
+        }
+        return count;
+    }
+
+    public void updateModelCount(int count) {
+        db = mDBHelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("count", count);
+        db.update("T_Count", values, "cid=1", null);
+    }
+
+
+    /**
+     * 删除错误题目
+     *
+     * @param question
+     */
+    public void deleteWrong(String question) {
+        db = mDBHelper.getWritableDatabase();
+        db.delete("T_Wrong", "question=?", new String[]{question});
+    }
+
+    /**
+     * 根据题目查找
+     *
+     * @param question
+     * @return
+     */
+    public Questions queryWrongQuestions(String question) {
+//        byte[] bytes = question.getBytes();
+//        String s = null;
+//        try {
+//            s = new String(bytes, "GBK");
+//        } catch (UnsupportedEncodingException e) {
+//            e.printStackTrace();
+//        }
+        Questions questions = null;
+        db = mDBHelper.getReadableDatabase();
+        //Cursor cursor = db.query("T_Wrong", null, "question=?", new String[]{question}, null, null, null, null);
+        Cursor cursor = db.rawQuery("select * from T_Wrong where question=?", new String[]{question});
+
+        if (cursor.moveToNext()) {
+            questions = new Questions(cursor.getInt(0), 0, cursor.getString(1), cursor.getString(2)
+                    , cursor.getString(3), cursor.getString(4), cursor.getString(5), cursor.getInt(6), cursor.getInt(7), null);
+        }
+        return questions;
+
     }
 
 }

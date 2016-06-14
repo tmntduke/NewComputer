@@ -8,8 +8,11 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.text.InputType;
 import android.view.MotionEvent;
+import android.view.View;
 import android.view.Window;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 import com.dd.processbutton.iml.ActionProcessButton;
@@ -85,7 +88,11 @@ public class RegisterActivity extends AppCompatActivity implements ProgressGener
             } else if (mDAO.queryUserName(mRegisterUsername.getText().toString())) {
                 mRegisterUsername.setError("username already have");
 
-                Snackbar snackbar = Snackbar.make(view, "you have a account you can login", Snackbar.LENGTH_LONG)
+//                InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+//                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                hideSoftInput();
+                mRegisterPassword.setInputType(InputType.TYPE_DATETIME_VARIATION_NORMAL);//隐藏软键盘
+                Snackbar snackbar = Snackbar.make(view, "you have a account you can login", Snackbar.LENGTH_INDEFINITE)
                         .setAction("click here", (v) -> {
                             Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
                             SharedPreferences sharedPreferences = getSharedPreferences("haveLogin", MODE_PRIVATE);
@@ -125,48 +132,13 @@ public class RegisterActivity extends AppCompatActivity implements ProgressGener
                             || (mRegisterPasswordCommit.getText().toString().isEmpty()) || mRegisterMail.getText().toString().isEmpty()) {
                         mRegisterPasswordCommit.setError("password not identical");
                     } else if ((mRegisterPasswordCommit.getText().toString().equals(mRegisterPassword.getText().toString()) && isUsername && isPassword)) {
-//                        Animator animator = ViewAnimationUtils.createCircularReveal(mRegisterBtn, x, y, (float) (mRegisterBtn.getWidth() * 2.5), 0);
-//                        animator.setInterpolator(new BounceInterpolator());
-//                        animator.setDuration(1500);
-//                        animator.addListener(new Animator.AnimatorListener() {
-//                            @Override
-//                            public void onAnimationStart(Animator animation) {
 //
-//                            }
-//
-//                            @Override
-//                            public void onAnimationEnd(Animator animation) {
-//                                mRegisterBtn.setBackgroundResource(R.drawable.fgt);
-//                                mRegisterBtn.setText("");
-//                                try {
-//                                    Thread.sleep(1500);
-//                                } catch (InterruptedException e) {
-//                                    e.printStackTrace();
-//                                }
-//
-//
-//                            }
-//
-//                            @Override
-//                            public void onAnimationCancel(Animator animation) {
-//
-//                            }
-//
-//                            @Override
-//                            public void onAnimationRepeat(Animator animation) {
-//
-//                            }
-//                        });
-//                        animator.setTarget(mRegisterBtn);
-//                        animator.start();
                         isOver = true;
                         progressGenerator.start(mRegisterBtn);
                         mRegisterBtn.setEnabled(false);
 
-
                     }
                 }
-
         );
 
     }
@@ -181,6 +153,14 @@ public class RegisterActivity extends AppCompatActivity implements ProgressGener
         intent.putExtra("password", mRegisterPasswordCommit.getText().toString());
         startActivity(intent);
         finish();
+    }
+
+    public void hideSoftInput() {
+        View view = getWindow().peekDecorView();
+        if (view != null) {
+            InputMethodManager inputmanger = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+            inputmanger.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
     }
 }
 

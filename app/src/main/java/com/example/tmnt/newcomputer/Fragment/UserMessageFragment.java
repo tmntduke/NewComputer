@@ -2,8 +2,10 @@ package com.example.tmnt.newcomputer.Fragment;
 
 import android.app.ActivityOptions;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -11,19 +13,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.TextView;
 
+import com.example.tmnt.newcomputer.Activity.AboutActivity;
 import com.example.tmnt.newcomputer.Activity.ShowUIconActivity;
+import com.example.tmnt.newcomputer.Activity.TotalActivity;
 import com.example.tmnt.newcomputer.Activity.WrongListActivity;
 import com.example.tmnt.newcomputer.Adapter.UserMsgItemAdapter;
-import com.example.tmnt.newcomputer.DAO.QuestionDAO;
-import com.example.tmnt.newcomputer.DView.CircleImageView;
 import com.example.tmnt.newcomputer.R;
-import com.example.tmnt.newcomputer.Utils.ImageUtils;
-import com.example.tmnt.newcomputer.Utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +38,8 @@ public class UserMessageFragment extends Fragment {
 
     @Bind(R.id.user_meg_list)
     RecyclerView mUserMegList;
+    @Bind(R.id.floatButton)
+    FloatingActionButton mFloatButton;
 
     private ArrayList<String> mArrayList;
     private String user, path;
@@ -104,7 +102,8 @@ public class UserMessageFragment extends Fragment {
                         startActivity(intent);
                         break;
                     case 2:
-
+                        Intent intent1 = new Intent(getActivity(), TotalActivity.class);
+                        startActivity(intent1);
                         break;
 
                 }
@@ -114,10 +113,24 @@ public class UserMessageFragment extends Fragment {
             public void turnToShow(View v) {
                 Intent intent = new Intent(getActivity(), ShowUIconActivity.class);
                 intent.putExtra(PATH, path);
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(getActivity(), v, getString(R.string.share));
                     startActivity(intent, options.toBundle());
                 }
+            }
+        });
+
+        mFloatButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ActivityOptions options = null;
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                    options = ActivityOptions.makeSceneTransitionAnimation(getActivity(), mFloatButton, mFloatButton.getTransitionName());
+                    startActivity(new Intent(getActivity(), AboutActivity.class), options.toBundle());
+                } else {
+                    startActivity(new Intent(getActivity(), AboutActivity.class));
+                }
+
             }
         });
         return view;

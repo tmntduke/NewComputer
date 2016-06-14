@@ -61,7 +61,7 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         } else if (viewType == IS_NORMAL) {
             View view = LayoutInflater.from(mContext).inflate(R.layout.homt_list_fragment, parent, false);
             mCardView = (CardView) view.findViewById(R.id.home_Item);
-            Log.i(TAG, "onCreateViewHolder: list");
+            //Log.i(TAG, "onCreateViewHolder: list");
             return HomeListViewHolder.getInstance(view, viewType);
         } else {
             return null;

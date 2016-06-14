@@ -25,6 +25,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public DBHelper(Context context) {
         super(context, DBNAME, null, VERSION);
+        mContext = context;
     }
 
     @Override
@@ -34,10 +35,13 @@ public class DBHelper extends SQLiteOpenHelper {
                 "answerB varchar(25),answerC varchar(25),answerD varchar(25),answer integer,kind varchar(15))");
         db.execSQL("create table T_First(fid integer primary key AUTOINCREMENT , isFirst bool ,isLogin bool )");
         db.execSQL("insert into T_First(isFirst,isLogin) values(0,0)");
-        db.execSQL("create table T_Wrong (wid integer primary key AUTOINCREMENT,question varchar(200),answerA varchar(25)," +
+        db.execSQL("create table T_Wrong (wid integer primary key AUTOINCREMENT,question text,answerA varchar(25)," +
                 "answerB varchar(25),answerC varchar(25),answerD varchar(25),answer integer,kind integer)");
 
         db.execSQL("create table T_UserIcon(Iid integer primary key AUTOINCREMENT,username varchar(25),iconPath varchar(200))");
+
+        db.execSQL("create table T_Count(cid integer primary key AUTOINCREMENT,count integer)");
+        db.execSQL("insert into T_Count(count) values (0)");
     }
 
     @Override

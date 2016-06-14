@@ -1,7 +1,9 @@
 package com.example.tmnt.newcomputer.Fragment;
 
 import android.app.ActivityOptions;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -15,8 +17,10 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Toast;
 
+import com.example.tmnt.newcomputer.Activity.ExamActivity;
 import com.example.tmnt.newcomputer.Activity.TitleSlideActivity;
 import com.example.tmnt.newcomputer.Adapter.HomeAdapter;
+import com.example.tmnt.newcomputer.DAO.QuestionDAO;
 import com.example.tmnt.newcomputer.R;
 import com.example.tmnt.newcomputer.UIModel.UIQuestionData;
 import com.example.tmnt.newcomputer.Utils.Utils;
@@ -36,10 +40,17 @@ public class HomeFragment extends Fragment {
     @Bind(R.id.homeList)
     RecyclerView mHomeList;
 
+    private QuestionDAO mDAO;
+    private int count;
+    public static final String COUNT = "count";
+
+    public static final String FLAG = "flag";
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setEnterAnmition();
+        mDAO = new QuestionDAO(getActivity());
     }
 
     @Nullable
@@ -59,7 +70,24 @@ public class HomeFragment extends Fragment {
 
             @Override
             public void itemClickEvent(View view, int position) {
-                Utils.showToast(getActivity(), "start");
+                Intent intent = new Intent(getActivity(), ExamActivity.class);
+                switch (position) {
+                    case 1:
+                        intent.putExtra(FLAG, 1);
+                        break;
+                    case 2:
+                        intent.putExtra(FLAG, 2);
+                        break;
+                    case 3:
+                        count = mDAO.queryModelCount() + 1;
+                        mDAO.updateModelCount(count);
+                        intent.putExtra(FLAG, 3);
+                        break;
+                    case 4:
+                        intent.putExtra(FLAG, 4);
+                        break;
+                }
+                startActivity(intent);
             }
         });
 

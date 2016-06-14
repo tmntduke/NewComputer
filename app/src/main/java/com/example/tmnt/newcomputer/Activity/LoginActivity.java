@@ -144,11 +144,11 @@ public class LoginActivity extends AppCompatActivity implements ProgressGenerato
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
             //Fade fade = new Fade();
             Explode explode = new Explode();
-            explode.setDuration(2000);
+            explode.setDuration(1500);
             getWindow().setEnterTransition(explode);
 
             Fade fade = new Fade();
-            fade.setDuration(2000);
+            fade.setDuration(1500);
             getWindow().setReturnTransition(fade);
         }
     }

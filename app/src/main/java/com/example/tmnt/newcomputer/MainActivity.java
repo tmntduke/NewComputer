@@ -70,6 +70,8 @@ public class MainActivity extends AppCompatActivity implements OnMenuItemClickLi
     private static final int RESULT_IMAGE = 100;
     private static final int RESULT_CAMERA = 200;
 
+    private boolean a1, a2, a3;
+
     private NavigationView navigationView;
 
     private AlertDialog mAlertDialog;
@@ -102,6 +104,8 @@ public class MainActivity extends AppCompatActivity implements OnMenuItemClickLi
         tintManager.setStatusBarTintResource(R.color.colorPrimary);
 
         setContentView(R.layout.activity_main);
+
+        Log.i(TAG, "onCreate: start");
         setEnterAnmition();
         showExit();
         ButterKnife.bind(this);
@@ -185,16 +189,25 @@ public class MainActivity extends AppCompatActivity implements OnMenuItemClickLi
                 switch (index) {
                     case 0:
                         isUser = false;
+                        a1 = true;
+                        a2 = false;
+                        a3 = false;
                         HomeFragment homeFragment = new HomeFragment();
                         transaction.replace(R.id.id_content, homeFragment);
                         transaction.commit();
                         break;
                     case 1:
                         isUser = false;
+                        a1 = false;
+                        a2 = true;
+                        a3 = false;
                         transaction.replace(R.id.id_content, new SortFragment());
                         transaction.commit();
                         break;
                     case 2:
+                        a1 = false;
+                        a2 = false;
+                        a3 = true;
                         isUser = true;
                         Intent intent = new Intent(MainActivity.this, ShowUseActivity.class);
                         intent.putExtra("user", username);
@@ -268,15 +281,25 @@ public class MainActivity extends AppCompatActivity implements OnMenuItemClickLi
     @Override
     protected void onResume() {
         super.onResume();
+
         showIcon();
-        controller.setSelect(0);
-        Log.i(TAG, "onResume: start");
+        if (a3 || a1) {
+            controller.setSelect(0);
+        } else if (a2) {
+            controller.setSelect(1);
+        }
+
 
         if (mAlertDialog != null) {
             mAlertDialog.dismiss();
         }
 
 
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
     }
 
     /**

@@ -9,6 +9,10 @@ import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.provider.Settings;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
@@ -19,11 +23,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.tmnt.newcomputer.DAO.QuestionDAO;
+import com.example.tmnt.newcomputer.Fragment.AnswerFragment;
 import com.example.tmnt.newcomputer.InterFace.IMPL.ShowIcon;
 import com.example.tmnt.newcomputer.InterFace.OnClickShowIcon;
+import com.example.tmnt.newcomputer.Model.Questions;
 import com.example.tmnt.newcomputer.R;
 
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Random;
 
 /**
  * Created by tmnt on 2016/5/26.
@@ -37,37 +45,47 @@ public class Utils {
         Toast.makeText(context, title, Toast.LENGTH_SHORT).show();
     }
 
-//    public static FragmentStatePagerAdapter getFragmentAdater(FragmentManager manager, ArrayList<Questions> list, int flag) {
-//        FragmentStatePagerAdapter adapter = new FragmentStatePagerAdapter(manager) {
-//            @Override
-//            public Fragment getItem(int i) {
-//                if (flag == 1) {
+    public static FragmentStatePagerAdapter getFragmentAdater(FragmentManager manager, ArrayList<Questions> list, int flag) {
+        FragmentStatePagerAdapter adapter = new FragmentStatePagerAdapter(manager) {
+            @Override
+            public Fragment getItem(int i) {
+                if (flag == 2) {
+                    Random random = new Random();
+                    int p = random.nextInt(150);
+                    //Log.i(TAG, "getItem: " + i + p);
+                    return AnswerFragment.newInstance(list, i + p, list.get(i + p).getMexam_type(), flag, 0);
+                } else if (flag == 3) {
 //                    Random random = new Random();
-//                    int p = random.nextInt(150);
+//                    int p = random.nextInt(20);
 //                    //Log.i(TAG, "getItem: " + i + p);
-//                    return AnswerFragment.newInstance(list, i + p, list.get(i + p).getMexam_type(), flag);
-//                } else if (flag == 2) {
-////                    Random random = new Random();
-////                    int p = random.nextInt(20);
-////                    //Log.i(TAG, "getItem: " + i + p);
-//                    return AnswerFragment.newInstance(list, i, list.get(i).getMexam_type(), flag);
-//                } else {
-//                    return AnswerFragment.newInstance(list, i, list.get(i).getMexam_type(), flag);
-//                }
-//
-//            }
-//
-//            @Override
-//            public int getCount() {
-//                {
-//                    return list.size();
-//                }
-//
-//            }
-//        };
-//
-//        return adapter;
-//    }
+                    Log.i(TAG, "getItem: " + (i - 1) * 5);
+                    return AnswerFragment.newInstance(list, i, list.get(i).getMexam_type(), flag, i * 24);
+                } else if (flag == 4 && list.size() != 0) {
+                    return AnswerFragment.newInstance(list, i, list.get(i).getMexam_type(), flag, 0);
+                } else if (flag == 4 && list.size() == 0) {
+                    return AnswerFragment.newInstance(list, 0, 0, 0, 0);
+                } else {
+                    return AnswerFragment.newInstance(list, i, list.get(i).getMexam_type(), flag, 0);
+                }
+
+            }
+
+            @Override
+            public int getCount() {
+                {
+                    if (list.size() != 0) {
+                        return list.size();
+                    } else {
+                        return 1;
+                    }
+
+                }
+
+            }
+        };
+
+        return adapter;
+    }
 
     /**
      * 判断网络是否连接

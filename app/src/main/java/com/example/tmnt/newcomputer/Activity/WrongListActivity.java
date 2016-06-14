@@ -1,10 +1,14 @@
 package com.example.tmnt.newcomputer.Activity;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.example.tmnt.newcomputer.Adapter.UserMsgAdapter;
@@ -27,6 +31,8 @@ public class WrongListActivity extends AppCompatActivity {
     Toolbar mWrongTool;
 
     private QuestionDAO mDAO;
+    public static final String QUESTION = "question";
+    private static final String TAG = "WrongListActivity";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -41,16 +47,45 @@ public class WrongListActivity extends AppCompatActivity {
         SystemBarTintManager tintManager = new SystemBarTintManager(this);
         tintManager.setStatusBarTintEnabled(true);
         tintManager.setStatusBarTintResource(R.color.colorPrimary);
-        setContentView(R.layout.wrong_contain);
-
-        ButterKnife.bind(this);
-
-        mWrongTool.setTitle("我的错题");
-        setSupportActionBar(mWrongTool);
-
         mDAO = new QuestionDAO(getApplicationContext());
-        UserMsgAdapter adapter = new UserMsgAdapter(getApplicationContext(), mDAO.queryWrongQuestion());
-        mWrongContain.setAdapter(adapter);
+        int wrong = mDAO.queryWrongQuestion().size();
+        if (wrong != 0) {
+            setContentView(R.layout.wrong_contain);
+            ButterKnife.bind(this);
+            mWrongTool.setTitle("我的错题");
+            setSupportActionBar(mWrongTool);
+
+            UserMsgAdapter adapter = new UserMsgAdapter(getApplicationContext(), mDAO.queryWrongQuestion());
+            mWrongContain.setAdapter(adapter);
+
+
+            adapter.setOnClickSlideItemListener(new UserMsgAdapter.OnClickSlideItemListener() {
+                @Override
+                public void clickDelete(View view, String question, int position) {
+                    mDAO.deleteWrong(question);
+                    adapter.deleteData(position);
+                    adapter.notifyDataSetChanged();
+                }
+
+                @Override
+                public void recover(int position) {
+
+                }
+
+                @Override
+                public void onClickQurstionItem(View v, int position, boolean isOpen) {
+                    if (!isOpen) {
+                        Intent intent = new Intent(WrongListActivity.this, WrongItemActivity.class);
+                        intent.putExtra(QUESTION, position);
+                        Log.i(TAG, "onClickQurstionItem: start" + mDAO.queryWrongQuestion().get(position));
+                        startActivity(intent);
+                    }
+                }
+            });
+
+        } else {
+            setContentView(R.layout.user_msg_empty);
+        }
 
 
     }

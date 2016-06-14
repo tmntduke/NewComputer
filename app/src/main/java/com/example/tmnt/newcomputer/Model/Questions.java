@@ -1,6 +1,8 @@
 package com.example.tmnt.newcomputer.Model;
 
-public class Questions  {
+import java.io.Serializable;
+
+public class Questions implements Serializable {
     private int _id;
     private int q_type;//题型类型
     private String question;//题目
