@@ -179,7 +179,7 @@ public class QuestionDAO {
     public ArrayList<Questions> queryAllWrong() {
         ArrayList<Questions> list = new ArrayList<>();
         db = mDBHelper.getReadableDatabase();
-        Cursor cursor = db.query("T_Wrong", null, null, null, null, null, null);
+        Cursor cursor = db.query("T_Wrong", null, null, null, null, null, "wid DESC");
         while (cursor.moveToNext()) {
             list.add(new Questions(cursor.getInt(0), 0, cursor.getString(1), cursor.getString(2)
                     , cursor.getString(3), cursor.getString(4), cursor.getString(5), cursor.getInt(6), cursor.getInt(7), null));
@@ -256,7 +256,7 @@ public class QuestionDAO {
         ArrayList<Questions> arrayList = new ArrayList<Questions>();
 
         Cursor cursor = createFromSD.query(Finallay.TABLE_NAME, null, null, null, null,
-                null, null);
+                null, "_id desc");
         while (cursor.moveToNext()) {
             arrayList.add(new Questions(cursor.getInt(0), cursor.getInt(1),
                     cursor.getString(2), cursor.getString(3), cursor
@@ -409,4 +409,43 @@ public class QuestionDAO {
 
     }
 
+    /**
+     * 查询云端数据总量
+     *
+     * @return
+     */
+    public int queryBmobCount() {
+        int count = 0;
+        db = mDBHelper.getReadableDatabase();
+        Cursor cursor = db.query("T_Count", new String[]{"bmobCount"}, "cid=1", null, null, null, null);
+        if (cursor.moveToNext()) {
+            count = cursor.getInt(0);
+        }
+        return count;
+    }
+
+    public void updateBombCount(int count) {
+        db = mDBHelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("bmobCount", count);
+        db.update("T_Count", values, "cid=1", null);
+    }
+
+    public void addQuestion(AnotherAnswer questions, int count, int type) {
+        ContentValues values = new ContentValues();
+        values.put("_id", count);
+        values.put("question", questions.getQuestion());
+        values.put("optionA", questions.getOptionA());
+        values.put("optionB", questions.getOptionB());
+        values.put("optionC", questions.getOptionC());
+        values.put("optionD", questions.getOptionD());
+        values.put("answer", questions.getAnswer());
+        values.put("q_type", type);
+        values.put("mexam_type", count);
+        values.put("image", "");
+        values.put("q_year_mouth", "");
+        createFromSD.insert((Finallay.TABLE_NAME), null, values);
+    }
 }
+
+

@@ -6,6 +6,8 @@ import android.util.Log;
 import android.view.View;
 
 import com.a.a.V;
+import com.example.tmnt.newcomputer.InterFace.IFristLoad;
+import com.example.tmnt.newcomputer.InterFace.IMPL.FristLoadIMPL;
 import com.example.tmnt.newcomputer.Model.AnotherAnswer;
 import com.example.tmnt.newcomputer.R;
 import com.example.tmnt.newcomputer.Utils.Utils;
@@ -65,6 +67,30 @@ public class BmobUtils {
             public void onSuccess(List<AnotherAnswer> list) {
                 if (dataRe != null) {
                     dataRe.getQuestionData(list);
+                }
+
+            }
+
+
+            @Override
+            public void onError(int i, String s) {
+                Utils.showToast(context, "wrong");
+            }
+        });
+
+
+    }
+
+    public static void getyBmobAnswer(Context context, int count) {
+        BmobQuery<AnotherAnswer> mAnotherQuestionBmobQuery = new BmobQuery<>();
+        ArrayList<AnotherAnswer> question = new ArrayList<>();
+        mAnotherQuestionBmobQuery.addWhereGreaterThan("id", count);
+        mAnotherQuestionBmobQuery.findObjects(context, new FindListener<AnotherAnswer>() {
+
+            @Override
+            public void onSuccess(List<AnotherAnswer> list) {
+                if (FristLoadIMPL.mIFristLoad != null) {
+                    FristLoadIMPL.mIFristLoad.fristLoad(list);
                 }
 
             }

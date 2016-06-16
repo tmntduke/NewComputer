@@ -47,6 +47,7 @@ public class SortFragment extends Fragment {
         ButterKnife.bind(this, view);
 
         SortAdapter adapter = new SortAdapter(getActivity(), getTitleSort(), getIconSort());
+        adapter.notifyDataSetChanged();
         mSortList.setAdapter(adapter);
 
         mSortList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -80,12 +81,6 @@ public class SortFragment extends Fragment {
                             case 1:
                                 turnNext(1);
                                 break;
-                            case 2:
-                                turnNext(2);
-                                break;
-                            case 3:
-                                turnNext(3);
-                                break;
 
                             default:
                                 break;
@@ -100,12 +95,7 @@ public class SortFragment extends Fragment {
                             case 1:
                                 turnNext(1);
                                 break;
-                            case 2:
-                                turnNext(2);
-                                break;
-                            case 3:
-                                turnNext(3);
-                                break;
+
                             default:
                                 break;
                         }
@@ -149,19 +139,16 @@ public class SortFragment extends Fragment {
 
     public List<String> getTitleSort() {
         List<String> list = new ArrayList<>();
-        list.add("android");
-        list.add("java");
-        list.add("python");
-        list.add("c#");
+        list.add("选择");
+        list.add("填空");
         return list;
     }
 
     public List<Integer> getIconSort() {
         List<Integer> list = new ArrayList<>();
-        list.add(R.drawable.androidicon);
-        list.add(R.drawable.javaicon);
-        list.add(R.drawable.pythonicon);
-        list.add(R.drawable.cicon);
+        list.add(R.drawable.select);
+        list.add(R.drawable.fill_blank);
+
         return list;
     }
 

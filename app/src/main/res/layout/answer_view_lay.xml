@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:plan="http://schemas.android.com/apk/res-auto"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:background="@drawable/start"
-              android:orientation="vertical"
-              android:padding="10dp">
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:plan="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/start"
+    android:orientation="vertical"
+    android:padding="10dp">
+
+
     <FrameLayout android:layout_width="match_parent"
                  android:layout_height="0dp"
                  android:layout_weight="1">
@@ -38,7 +41,7 @@
         android:id="@+id/question_title_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1.5"
+        android:layout_weight="2.0"
         android:textColor="#ffffff"
         android:textSize="24sp"
         android:textStyle="bold"
@@ -46,59 +49,99 @@
 
     />
 
-    <LinearLayout android:layout_width="match_parent"
-                  android:layout_height="0dp"
-                  android:layout_weight="6.5"
-                  android:gravity="center"
-                  android:orientation="vertical">
-
-        <Button
-            android:id="@+id/optionA"
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="6.5"
+    >
+        <LinearLayout
+            android:id="@+id/select_view"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_margin="25dp"
-            android:layout_weight="1"
-            android:background="@drawable/answer_selector"
+            android:layout_height="match_parent"
             android:gravity="center"
-            android:textColor="#7d8278"
-            android:textStyle="bold"
-        />
+            android:orientation="vertical">
 
-        <Button
-            android:id="@+id/optionB"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_margin="25dp"
-            android:layout_weight="1"
-            android:background="@drawable/answer_selector"
-            android:gravity="center"
-            android:textColor="#7d8278"
-            android:textStyle="bold"
-        />
+            <Button
+                android:id="@+id/optionA"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_margin="25dp"
+                android:layout_weight="1"
+                android:background="@drawable/answer_selector"
+                android:gravity="center"
+                android:textColor="#7d8278"
+                android:textStyle="bold"
+            />
 
-        <Button
-            android:id="@+id/optionC"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_margin="25dp"
-            android:layout_weight="1"
-            android:background="@drawable/answer_selector"
-            android:gravity="center"
-            android:textColor="#7d8278"
-            android:textStyle="bold"
-        />
+            <Button
+                android:id="@+id/optionB"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_margin="25dp"
+                android:layout_weight="1"
+                android:background="@drawable/answer_selector"
+                android:gravity="center"
+                android:textColor="#7d8278"
+                android:textStyle="bold"
+            />
 
-        <Button
-            android:id="@+id/optionD"
+            <Button
+                android:id="@+id/optionC"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_margin="25dp"
+                android:layout_weight="1"
+                android:background="@drawable/answer_selector"
+                android:gravity="center"
+                android:textColor="#7d8278"
+                android:textStyle="bold"
+            />
+
+            <Button
+                android:id="@+id/optionD"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_margin="25dp"
+                android:layout_weight="1"
+                android:background="@drawable/answer_selector"
+                android:gravity="center"
+                android:textColor="#7d8278"
+                android:textStyle="bold"
+            />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/fillBlank_view"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_margin="25dp"
-            android:layout_weight="1"
-            android:background="@drawable/answer_selector"
+            android:layout_height="match_parent"
             android:gravity="center"
-            android:textColor="#7d8278"
-            android:textStyle="bold"
-        />
-    </LinearLayout>
+            android:orientation="vertical"
+            android:padding="25dp"
+            android:visibility="gone">
+
+            <EditText
+                android:id="@+id/fill_blank_answer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+            />
+
+            <Button
+                android:id="@+id/confirm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:background="@drawable/answer_selector"
+                android:gravity="center"
+                android:text="确认"
+                android:textColor="#7d8278"
+                android:textStyle="bold"
+            />
+        </LinearLayout>
+
+    </FrameLayout>
 
 </LinearLayout>
+
+
+

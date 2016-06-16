@@ -110,7 +110,7 @@ public class AnswerFragment extends Fragment {
                 }
             } else {
                 mCount.setVisibility(View.VISIBLE);
-                mCount.setText(mQuestionses.get(position).get_id() + "/" + mQuestionses.size());
+                mCount.setText(position + 1 + "/" + mQuestionses.size());
             }
 
 

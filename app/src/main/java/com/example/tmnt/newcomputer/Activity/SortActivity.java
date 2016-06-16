@@ -13,7 +13,9 @@ import android.util.Log;
 import android.view.Window;
 
 import com.example.tmnt.newcomputer.BMOB.BmobUtils;
+import com.example.tmnt.newcomputer.DAO.QuestionDAO;
 import com.example.tmnt.newcomputer.Fragment.AnotherFragment;
+import com.example.tmnt.newcomputer.Fragment.AnswerFragment;
 import com.example.tmnt.newcomputer.Model.AnotherAnswer;
 import com.example.tmnt.newcomputer.R;
 import com.example.tmnt.newcomputer.Utils.Utils;
@@ -31,6 +33,8 @@ public class SortActivity extends AppCompatActivity {
     private ViewPager mViewPager;
     private static final String TAG = "SortActivity";
 
+    private QuestionDAO mDAO;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,6 +48,7 @@ public class SortActivity extends AppCompatActivity {
         tintManager.setStatusBarTintResource(android.R.color.transparent);
 
         Bmob.initialize(this, "5b5167d530b5db1c3696b59f02b904bb");
+        mDAO = new QuestionDAO(getApplicationContext());
 
         mViewPager = new ViewPager(this);
         mViewPager.setId(R.id.ViewPager);
@@ -54,18 +59,13 @@ public class SortActivity extends AppCompatActivity {
 
         switch (intent.getIntExtra("flag1", 0)) {
             case 0:
-                getAnotherAdapter("java", 0);
+                getAnotherAdapter("select", 0);
 
                 break;
             case 1:
-                getAnotherAdapter("python", 1);
+                getAnotherAdapter("fill_Blank", 1);
                 break;
-            case 2:
-                getAnotherAdapter("c#", 2);
-                break;
-            case 3:
-                getAnotherAdapter("other", 3);
-                break;
+
         }
     }
 
@@ -80,12 +80,24 @@ public class SortActivity extends AppCompatActivity {
                     @Override
                     public Fragment getItem(int i) {
                         ArrayList<AnotherAnswer> ll = (ArrayList<AnotherAnswer>) l;
-                        return AnotherFragment.newInstance(ll, i, 0, flag);
+                        if (ll.size() == 0) {
+                            return AnotherFragment.newInstance(ll, i, 0, flag);
+                        } else {
+                            mDAO.updateBombCount(ll.size());
+                            return AnotherFragment.newInstance(ll, i, ll.get(i).getQ_type(), flag);
+                        }
+
                     }
 
                     @Override
                     public int getCount() {
-                        return l.size();
+                        if (l.size() == 0) {
+                            return 1;
+                        } else {
+                            return l.size();
+                        }
+
+
                     }
                 };
                 mViewPager.setAdapter(adapter);

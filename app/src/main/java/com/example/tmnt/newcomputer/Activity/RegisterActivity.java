@@ -25,6 +25,7 @@ import com.readystatesoftware.systembartint.SystemBarTintManager;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import cn.bmob.v3.Bmob;
 
 /**
  * Created by tmnt on 2016/5/7.
@@ -75,6 +76,8 @@ public class RegisterActivity extends AppCompatActivity implements ProgressGener
         setContentView(R.layout.register_layout);
         ButterKnife.bind(this);
         mDAO = new QuestionDAO(getApplicationContext());
+
+        Bmob.initialize(this, "5b5167d530b5db1c3696b59f02b904bb");
 
         mRegisterBtn.setMode(ActionProcessButton.Mode.PROGRESS);
 

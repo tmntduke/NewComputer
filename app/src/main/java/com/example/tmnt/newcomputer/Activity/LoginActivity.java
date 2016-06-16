@@ -73,6 +73,7 @@ public class LoginActivity extends AppCompatActivity implements ProgressGenerato
         mLogin.setMode(ActionProcessButton.Mode.PROGRESS);
 
         LoginAutoCompleteAdapter adapter = new LoginAutoCompleteAdapter(LoginActivity.this, R.layout.activity_autocomplete_item, mDAO.queryAlluser());
+        adapter.notifyDataSetChanged();
         mEditUsername.setAdapter(adapter);
 
         if (!mDAO.isLogin()) {

@@ -56,6 +56,7 @@ public class WrongListActivity extends AppCompatActivity {
             setSupportActionBar(mWrongTool);
 
             UserMsgAdapter adapter = new UserMsgAdapter(getApplicationContext(), mDAO.queryWrongQuestion());
+            adapter.notifyDataSetChanged();
             mWrongContain.setAdapter(adapter);
 
 

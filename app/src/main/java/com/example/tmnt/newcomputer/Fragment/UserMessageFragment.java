@@ -91,6 +91,7 @@ public class UserMessageFragment extends Fragment {
 
         mUserMegList.setLayoutManager(new LinearLayoutManager(getActivity()));
         UserMsgItemAdapter adapter = new UserMsgItemAdapter(setIconMsg(), setTitleMsg(), getActivity(), path, user, "一级等考");
+        adapter.notifyDataSetChanged();
         mUserMegList.setAdapter(adapter);
         adapter.setOnclickUserMsgListener(new UserMsgItemAdapter.OnclickUserMsgListener() {
             @Override

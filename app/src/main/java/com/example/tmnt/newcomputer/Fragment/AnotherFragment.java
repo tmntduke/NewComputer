@@ -1,6 +1,5 @@
 package com.example.tmnt.newcomputer.Fragment;
 
-import android.app.AlertDialog;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -8,6 +7,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.tmnt.newcomputer.DView.PlanBar;
@@ -45,6 +46,15 @@ public class AnotherFragment extends Fragment {
     Button mOptionC;
     @Bind(R.id.optionD)
     Button mOptionD;
+    @Bind(R.id.select_view)
+    LinearLayout mSelectView;
+    @Bind(R.id.fill_blank_answer)
+    EditText mFillBlankAnswer;
+    @Bind(R.id.confirm)
+    Button mConfirm;
+    @Bind(R.id.fillBlank_view)
+    LinearLayout mFillBlankView;
+
 
     private boolean a1, a2, a3, a4;
 
@@ -69,18 +79,52 @@ public class AnotherFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        view = inflater.inflate(R.layout.answer_view_lay, null, false);
+        if (mQuestionses.size() == 0) {
+            view = inflater.inflate(R.layout.user_msg_empty, container, false);
+        } else {
+
+
+            view = inflater.inflate(R.layout.answer_view_lay, null, false);
+            ButterKnife.bind(this, view);
+
+            if (kind == 0) {
+                mQuestionTitleView.setText(mQuestionses.get(position).getQuestion());
+                mCount.setVisibility(View.VISIBLE);
+                mCount.setText(position + 1 + "/" + mQuestionses.size());
+                mOptionA.setText(mQuestionses.get(position).getOptionA());
+                mOptionB.setText(mQuestionses.get(position).getOptionB());
+
+                if (type == 0) {
+
+                    mOptionC.setText(mQuestionses.get(position).getOptionC());
+                    mOptionD.setText(mQuestionses.get(position).getOptionD());
+
+                } else if (type == 1) {
+                    mOptionC.setVisibility(View.INVISIBLE);
+                    mOptionD.setVisibility(View.INVISIBLE);
+                }
+
+                mOptionC.setText(mQuestionses.get(position).getOptionC());
+                mOptionD.setText(mQuestionses.get(position).getOptionD());
+            } else {
+                mSelectView.setVisibility(View.GONE);
+                mFillBlankView.setVisibility(View.VISIBLE);
+                mConfirm.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (mFillBlankAnswer.getText().toString().equals(mQuestionses.get(position).getAnswer())) {
+                            Snackbar snackbar = Snackbar.make(view, "answer is " + mQuestionses.get(position).getAnswer(), Snackbar.LENGTH_LONG);
+                            snackbar.getView().setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+                            snackbar.show();
+                        }
+                    }
+                });
+            }
+
+        }
+
+
         ButterKnife.bind(this, view);
-        mQuestionTitleView.setText(mQuestionses.get(position).getQuestion());
-
-        mCount.setVisibility(View.VISIBLE);
-        mCount.setText(position + 1 + "/" + mQuestionses.size());
-        mOptionA.setText(mQuestionses.get(position).getOptionA());
-        mOptionB.setText(mQuestionses.get(position).getOptionB());
-        mOptionC.setText(mQuestionses.get(position).getOptionC());
-        mOptionD.setText(mQuestionses.get(position).getOptionD());
-
-
         return view;
 
     }

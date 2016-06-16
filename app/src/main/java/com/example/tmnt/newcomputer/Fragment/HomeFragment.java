@@ -61,6 +61,7 @@ public class HomeFragment extends Fragment {
         ButterKnife.bind(this, view);
         mHomeList.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext()));
         HomeAdapter adapter = new HomeAdapter(getQuestionData(), showConvenientBanner(), getActivity());
+        adapter.notifyDataSetChanged();
         mHomeList.setAdapter(adapter);
         adapter.setOnItemCardClickListener(new HomeAdapter.OnItemCardClickListener() {
             @Override

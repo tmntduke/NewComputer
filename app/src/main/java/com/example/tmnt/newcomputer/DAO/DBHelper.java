@@ -40,8 +40,8 @@ public class DBHelper extends SQLiteOpenHelper {
 
         db.execSQL("create table T_UserIcon(Iid integer primary key AUTOINCREMENT,username varchar(25),iconPath varchar(200))");
 
-        db.execSQL("create table T_Count(cid integer primary key AUTOINCREMENT,count integer)");
-        db.execSQL("insert into T_Count(count) values (0)");
+        db.execSQL("create table T_Count(cid integer primary key AUTOINCREMENT,count integer,bmobCount integer)");
+        db.execSQL("insert into T_Count(count,bmobCount) values (0,0)");
     }
 
     @Override

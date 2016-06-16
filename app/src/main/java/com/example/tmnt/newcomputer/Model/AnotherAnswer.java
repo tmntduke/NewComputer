@@ -40,8 +40,9 @@ public class AnotherAnswer extends BmobObject implements Serializable {
      * @param optionD
      * @param answer
      */
+
     public AnotherAnswer(String question, String optionA, String optionB, String optionC, String optionD,
-                         int answer, String kind) {
+                         int answer, String kind, int q_type) {
 
 
         this.question = question;
@@ -51,9 +52,16 @@ public class AnotherAnswer extends BmobObject implements Serializable {
         this.optionD = optionD;
         this.answer = answer;
         this.kind = kind;
-
+        this.q_type = q_type;
     }
 
+    public int getQ_type() {
+        return q_type;
+    }
+
+    public void setQ_type(int q_type) {
+        this.q_type = q_type;
+    }
 
     public String getQuestion() {
         return question;

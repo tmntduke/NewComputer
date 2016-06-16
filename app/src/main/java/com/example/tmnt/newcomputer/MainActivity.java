@@ -28,13 +28,17 @@ import android.view.Window;
 import com.example.tmnt.newcomputer.Activity.FirstUseActivity;
 import com.example.tmnt.newcomputer.Activity.ShowUIconActivity;
 import com.example.tmnt.newcomputer.Activity.ShowUseActivity;
+import com.example.tmnt.newcomputer.BMOB.BmobUtils;
 import com.example.tmnt.newcomputer.DAO.QuestionDAO;
 import com.example.tmnt.newcomputer.DView.CircleImageView;
 import com.example.tmnt.newcomputer.Fragment.HomeFragment;
 import com.example.tmnt.newcomputer.Fragment.SortFragment;
 import com.example.tmnt.newcomputer.Fragment.UserMessageFragment;
+import com.example.tmnt.newcomputer.InterFace.IFristLoad;
+import com.example.tmnt.newcomputer.InterFace.IMPL.FristLoadIMPL;
 import com.example.tmnt.newcomputer.InterFace.IMPL.ShowIcon;
 import com.example.tmnt.newcomputer.InterFace.OnClickShowIcon;
+import com.example.tmnt.newcomputer.Model.AnotherAnswer;
 import com.example.tmnt.newcomputer.Utils.ImageUtils;
 import com.example.tmnt.newcomputer.Utils.Utils;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
@@ -51,6 +55,7 @@ import java.util.TimerTask;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import cn.bmob.v3.Bmob;
 import me.majiajie.pagerbottomtabstrip.Controller;
 import me.majiajie.pagerbottomtabstrip.PagerBottomTabLayout;
 import me.majiajie.pagerbottomtabstrip.TabItemBuilder;
@@ -102,6 +107,8 @@ public class MainActivity extends AppCompatActivity implements OnMenuItemClickLi
         SystemBarTintManager tintManager = new SystemBarTintManager(this);
         tintManager.setStatusBarTintEnabled(true);
         tintManager.setStatusBarTintResource(R.color.colorPrimary);
+
+        Bmob.initialize(this, "5b5167d530b5db1c3696b59f02b904bb");
 
         setContentView(R.layout.activity_main);
 
@@ -253,6 +260,25 @@ public class MainActivity extends AppCompatActivity implements OnMenuItemClickLi
                 ImageUtils.toCamera(MainActivity.this, TEMP_IMAGE_PATH, RESULT_CAMERA);
             }
         });
+
+        if (Utils.isWifiConnected(getApplicationContext())) {
+            if (mDAO.queryBmobCount() > 0) {
+                BmobUtils.getyBmobAnswer(getApplicationContext(), mDAO.queryBmobCount());
+                FristLoadIMPL.setFirstLoad(new IFristLoad() {
+                    @Override
+                    public void fristLoad(List<AnotherAnswer> list) {
+                        for (AnotherAnswer answer : list) {
+                            if (answer.getKind().equals("fill_blank")) {
+                                mDAO.addQuestion(answer, mDAO.queryBmobCount() + 1, 3);
+                            } else {
+                                mDAO.addQuestion(answer, mDAO.queryBmobCount() + 1, answer.getQ_type());
+                            }
+
+                        }
+                    }
+                });
+            }
+        }
     }
 
     /**
