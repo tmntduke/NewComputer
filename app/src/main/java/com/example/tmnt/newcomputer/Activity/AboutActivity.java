@@ -68,39 +68,43 @@ public class AboutActivity extends AppCompatActivity {
 
 
     private void setupEnterAnimation() {
-        Transition transition = TransitionInflater.from(AboutActivity.this).inflateTransition(R.transition.arc_transition);
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Transition transition = TransitionInflater.from(AboutActivity.this).inflateTransition(R.transition.arc_transition);
             getWindow().setSharedElementEnterTransition(transition);
+            transition.addListener(new Transition.TransitionListener() {
+                @Override
+                public void onTransitionStart(Transition transition) {
+
+                }
+
+                @Override
+                public void onTransitionEnd(Transition transition) {
+
+                    transition.removeListener(this);
+                    animationShow();
+
+                }
+
+                @Override
+                public void onTransitionCancel(Transition transition) {
+
+                }
+
+                @Override
+                public void onTransitionPause(Transition transition) {
+
+                }
+
+                @Override
+                public void onTransitionResume(Transition transition) {
+
+                }
+            });
+        } else {
+            initViews();
         }
-        transition.addListener(new Transition.TransitionListener() {
-            @Override
-            public void onTransitionStart(Transition transition) {
 
-            }
-
-            @Override
-            public void onTransitionEnd(Transition transition) {
-
-                transition.removeListener(this);
-                animationShow();
-
-            }
-
-            @Override
-            public void onTransitionCancel(Transition transition) {
-
-            }
-
-            @Override
-            public void onTransitionPause(Transition transition) {
-
-            }
-
-            @Override
-            public void onTransitionResume(Transition transition) {
-
-            }
-        });
     }
 
     private void setupExitAnimation() {
@@ -129,17 +133,22 @@ public class AboutActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        GuiUtils.animateRevealHide(AboutActivity.this, mRelative, mOtherFabCircle.getWidth() / 2, R.color.colorOtherPrimaryDark, true, new GuiUtils.OnRevealAnimationListener() {
-            @Override
-            public void onRevealHide() {
-                defaultBack();
-            }
 
-            @Override
-            public void onRevealShow() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            GuiUtils.animateRevealHide(AboutActivity.this, mRelative, mOtherFabCircle.getWidth() / 2, R.color.colorOtherPrimaryDark, true, new GuiUtils.OnRevealAnimationListener() {
+                @Override
+                public void onRevealHide() {
+                    defaultBack();
+                }
 
-            }
-        });
+                @Override
+                public void onRevealShow() {
+
+                }
+            });
+        } else {
+            defaultBack();
+        }
     }
 
     private void defaultBack() {

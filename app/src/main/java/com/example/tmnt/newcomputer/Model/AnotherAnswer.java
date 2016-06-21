@@ -18,7 +18,17 @@ public class AnotherAnswer extends BmobObject implements Serializable {
     private String optionD;
     private int answer;//答案
     private String kind;//类型
+    private String fillAnswer;
+    private boolean isLoad;
+    private int id;
 
+    public int getQuestionId() {
+        return id;
+    }
+
+    public void setQuestionId(int id) {
+        this.id = id;
+    }
 
     public String getKind() {
         return kind;
@@ -26,6 +36,18 @@ public class AnotherAnswer extends BmobObject implements Serializable {
 
     public void setKind(String kind) {
         this.kind = kind;
+    }
+
+    public String getFillAnswer() {
+        return fillAnswer;
+    }
+
+    public void setFillAnswer(String fillAnswer) {
+        this.fillAnswer = fillAnswer;
+    }
+
+
+    public AnotherAnswer() {
     }
 
     /**
@@ -42,7 +64,7 @@ public class AnotherAnswer extends BmobObject implements Serializable {
      */
 
     public AnotherAnswer(String question, String optionA, String optionB, String optionC, String optionD,
-                         int answer, String kind, int q_type) {
+                         int answer, String kind, int q_type, String fillAnswer, boolean isLoad) {
 
 
         this.question = question;
@@ -53,6 +75,17 @@ public class AnotherAnswer extends BmobObject implements Serializable {
         this.answer = answer;
         this.kind = kind;
         this.q_type = q_type;
+        this.fillAnswer = fillAnswer;
+        this.isLoad = isLoad;
+
+    }
+
+    public boolean isLoad() {
+        return isLoad;
+    }
+
+    public void setLoad(boolean load) {
+        isLoad = load;
     }
 
     public int getQ_type() {

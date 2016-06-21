@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:custom="http://schemas.android.com/apk/res-auto"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical"
+              android:padding="15dp">
+
+    <RadioGroup
+        android:id="@+id/kind"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="horizontal">
+        <RadioButton
+            android:id="@+id/select"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/colorPrimary"
+            android:checked="true"
+            android:text="选择"
+            android:textColor="#686868"
+            android:textColorHint="@color/colorAccent"
+            android:textSize="24sp"
+            android:textStyle="bold"
+        />
+        <RadioButton
+            android:id="@+id/fill_blank"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="填空"
+            android:textColor="#686868"
+            android:textSize="24sp"
+            android:textStyle="bold"/>
+    </RadioGroup>
+
+
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1.5">
+        <EditText
+            android:id="@+id/add_question"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:hint="题目"
+            />
+    </android.support.design.widget.TextInputLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="9"
+    >
+        <include
+            layout="@layout/select_question_lay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"></include>
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/textInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+        >
+            <EditText
+                android:id="@+id/fill_blank_answer"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="答案"
+                />
+        </android.support.design.widget.TextInputLayout>
+    </FrameLayout>
+
+
+    <com.dd.processbutton.iml.ActionProcessButton
+        android:id="@+id/add_commit"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="16dp"
+        android:layout_weight="1"
+        android:text="提交"
+        android:textColor="@android:color/white"
+        android:textSize="18sp"
+        custom:pb_colorComplete="@color/green_complete"
+        custom:pb_colorError="@color/red_error"
+        custom:pb_colorNormal="@color/blue_normal"
+        custom:pb_colorPressed="@color/blue_pressed"
+        custom:pb_colorProgress="@color/purple_progress"
+        custom:pb_textComplete="Success"
+        custom:pb_textError="Error"
+        custom:pb_textProgress="Loading"
+    />
+
+</LinearLayout>

@@ -3,15 +3,15 @@ package com.example.tmnt.newcomputer.Fragment;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.tmnt.newcomputer.DAO.QuestionDAO;
@@ -48,6 +48,14 @@ public class WrongQuestionFragment extends Fragment {
     Button mOptionD;
     @Bind(R.id.count)
     TextView mCount;
+    @Bind(R.id.select_view)
+    LinearLayout mSelectView;
+    @Bind(R.id.fill_blank_answer)
+    EditText mFillBlankAnswer;
+    @Bind(R.id.confirm)
+    Button mConfirm;
+    @Bind(R.id.fillBlank_view)
+    LinearLayout mFillBlankView;
 
     private View view;
 
@@ -97,8 +105,21 @@ public class WrongQuestionFragment extends Fragment {
             mOptionD.setText(mQuestionses.getOptionD());
 
         } else if (type == 0) {
-            mOptionC.setVisibility(View.GONE);
-            mOptionD.setVisibility(View.GONE);
+            mOptionC.setVisibility(View.INVISIBLE);
+            mOptionD.setVisibility(View.INVISIBLE);
+        } else if (type == 3) {
+            mSelectView.setVisibility(View.GONE);
+            mFillBlankView.setVisibility(View.VISIBLE);
+            mConfirm.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mFillBlankAnswer.getText().toString().equals(mQuestionses.getAnswer())) {
+                        Snackbar snackbar = Snackbar.make(view, "answer is " + mQuestionses.getAnswer(), Snackbar.LENGTH_LONG);
+                        snackbar.getView().setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+                        snackbar.show();
+                    }
+                }
+            });
         }
 
         return view;

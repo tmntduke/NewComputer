@@ -5,17 +5,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.tmnt.newcomputer.Activity.ExamActivity;
@@ -23,7 +22,6 @@ import com.example.tmnt.newcomputer.DAO.QuestionDAO;
 import com.example.tmnt.newcomputer.DView.PlanBar;
 import com.example.tmnt.newcomputer.Model.Questions;
 import com.example.tmnt.newcomputer.R;
-import com.example.tmnt.newcomputer.Utils.ImageUtils;
 import com.example.tmnt.newcomputer.Utils.Utils;
 
 import java.util.ArrayList;
@@ -40,6 +38,7 @@ public class AnswerFragment extends Fragment {
     public static final String KIND = "kind";
     public static final String ANOTHER = "another";
     public static final String UPDATEPROGRESS = "updateProgress";
+
     @Bind(R.id.test)
     PlanBar mTest;
     @Bind(R.id.question_title_view)
@@ -54,6 +53,14 @@ public class AnswerFragment extends Fragment {
     Button mOptionD;
     @Bind(R.id.count)
     TextView mCount;
+    @Bind(R.id.select_view)
+    LinearLayout mSelectView;
+    @Bind(R.id.fill_blank_answer)
+    EditText mFillBlankAnswer;
+    @Bind(R.id.confirm)
+    Button mConfirm;
+    @Bind(R.id.fillBlank_view)
+    LinearLayout mFillBlankView;
 
     private View view;
 
@@ -105,7 +112,7 @@ public class AnswerFragment extends Fragment {
                 mCount.setText((position + 1) + "/" + "20");
                 mTest.setVisibility(View.VISIBLE);
                 if (updateProgress != -1) {
-                    Log.i(TAG, "onCreateView: " + updateProgress);
+                    //Log.i(TAG, "onCreateView: " + updateProgress);
                     mTest.update(updateProgress);
                 }
             } else {
@@ -125,12 +132,40 @@ public class AnswerFragment extends Fragment {
             } else if (type == 0) {
                 mOptionC.setVisibility(View.INVISIBLE);
                 mOptionD.setVisibility(View.INVISIBLE);
-            }
+            } else if (type == 3) {
+                mSelectView.setVisibility(View.GONE);
+                mFillBlankView.setVisibility(View.VISIBLE);
+                mConfirm.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (!mFillBlankAnswer.getText().toString().equals(mDAO.queryFillAnswer(mQuestionses.get(position).getQuestion())) && kind == 3) {
+                            mConfirm.setBackgroundColor(getResources().getColor(android.R.color.transparent));
+                            //mDAO.addWrong(mQuestionses.get(position));
+                            mDAO.addFillWrong(mQuestionses.get(position).getQuestion(), mDAO.queryFillAnswer(mQuestionses.get(position).getQuestion()));
 
-//            if (kind == 2 && position == 19) {
-//                if (position == 19) {
-//                }
-//            }
+                            if (position == 19) {
+                                Snackbar snackbar = Snackbar.make(view, "wrong:  " + mDAO.queryAllWrong().size() + "   turn to other view", Snackbar.LENGTH_INDEFINITE).setAction("click", new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        Intent intent = new Intent(getActivity(), ExamActivity.class);
+                                        intent.putExtra(HomeFragment.FLAG, 4);
+                                        startActivity(intent);
+                                        getActivity().finish();
+                                    }
+                                });
+                                snackbar.getView().setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+                                snackbar.setActionTextColor(getResources().getColor(R.color.colorAccent));
+                                snackbar.show();
+                            }
+                        } else {
+                            Snackbar snackbar = Snackbar.make(view, "answer is " + mDAO.queryFillAnswer(mQuestionses.get(position).getQuestion()), Snackbar.LENGTH_SHORT);
+                            snackbar.getView().setBackgroundColor(getResources().getColor(R.color.blue_normal));
+                            snackbar.show();
+                        }
+
+                    }
+                });
+            }
 
         }
 
@@ -182,13 +217,12 @@ public class AnswerFragment extends Fragment {
         } else if (kind != 3 && (mQuestionses.get(position).getAnswer() != useranswer)) {
             isClickItem = false;
 
-            Snackbar snackbar = Snackbar.make(view, "answer is " + getAnswer(mQuestionses.get(position).getAnswer()), Snackbar.LENGTH_LONG);
+            Snackbar snackbar = Snackbar.make(view, "answer is " + getAnswer(mQuestionses.get(position).getAnswer()), Snackbar.LENGTH_SHORT);
             snackbar.getView().setBackgroundColor(getResources().getColor(R.color.blue_normal));
             snackbar.show();
 
-        } else if (kind == 3 && (mQuestionses.get(position).getAnswer() != useranswer) && !a1 && !a2 && !a3 && !a4) {
+        } else if (kind == 3 && type != 3 && (mQuestionses.get(position).getAnswer() != useranswer) && !a1 && !a2 && !a3 && !a4) {
             isClickItem = false;
-            Log.i(TAG, "show: " + mQuestionses.get(position));
             wrongCount.add(mQuestionses.get(position));
             mDAO.addWrong(mQuestionses.get(position));
         } else if (kind == 3 && (mQuestionses.get(position).getAnswer() == useranswer)) {
@@ -265,17 +299,17 @@ public class AnswerFragment extends Fragment {
                 showResult();
                 break;
             case R.id.optionB:
-                isClickOtherAnswer(mOptionB, !a1 && !a2 && !a3 && !a4, 1);
+                isClickOtherAnswer(mOptionB, !a1 && !a2 && !a3 && !a4, 2);
                 a2 = true;
                 showResult();
                 break;
             case R.id.optionC:
-                isClickOtherAnswer(mOptionC, !a1 && !a2 && !a3 && !a4, 1);
+                isClickOtherAnswer(mOptionC, !a1 && !a2 && !a3 && !a4, 3);
                 a3 = true;
                 showResult();
                 break;
             case R.id.optionD:
-                isClickOtherAnswer(mOptionD, !a1 && !a2 && !a3 && !a4, 1);
+                isClickOtherAnswer(mOptionD, !a1 && !a2 && !a3 && !a4, 4);
                 a4 = true;
                 showResult();
                 break;

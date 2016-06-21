@@ -41,7 +41,7 @@
         android:id="@+id/question_title_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="2.0"
+        android:layout_weight="2.5"
         android:textColor="#ffffff"
         android:textSize="24sp"
         android:textStyle="bold"
@@ -123,14 +123,16 @@
                 android:id="@+id/fill_blank_answer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:backgroundTint="#ffffff"
                 android:singleLine="true"
+                android:textColor="#ffffff"
             />
 
             <Button
                 android:id="@+id/confirm"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
+                android:layout_gravity="bottom|center_horizontal"
                 android:background="@drawable/answer_selector"
                 android:gravity="center"
                 android:text="确认"

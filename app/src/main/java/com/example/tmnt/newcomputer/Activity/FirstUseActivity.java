@@ -106,13 +106,5 @@ public class FirstUseActivity extends AppCompatActivity {
         }
     }
 
-    private Bitmap getBitmapFromAsset(Context context, int res) {
-        AssetManager assetManager = context.getAssets();
-        InputStream istr;
-        Bitmap bitmap = null;
-
-        bitmap = BitmapFactory.decodeResource(getResources(), res);
-        return bitmap;
-    }
 
 }

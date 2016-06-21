@@ -90,14 +90,14 @@ public class UserMsgAdapter extends BaseAdapter {
             SharedPreferences.Editor editor = mContext.getSharedPreferences("isOpen", Context.MODE_PRIVATE).edit();
             editor.putBoolean("isOpen", viewHolder.mSlideView.isOpen()).commit();
 
-                viewHolder.content.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (mOnClickSlideItemListener != null) {
-                            mOnClickSlideItemListener.onClickQurstionItem(v, position, viewHolder.mSlideView.isOpen());
-                        }
+            viewHolder.content.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mOnClickSlideItemListener != null) {
+                        mOnClickSlideItemListener.onClickQurstionItem(v, mList.get(position), viewHolder.mSlideView.isOpen());
                     }
-                });
+                }
+            });
 
             viewHolder.mTextView.setText(mList.get(position));
         }
@@ -115,7 +115,7 @@ public class UserMsgAdapter extends BaseAdapter {
 
         void recover(int position);
 
-        void onClickQurstionItem(View v, int position, boolean isOpen);
+        void onClickQurstionItem(View v, String question, boolean isOpen);
     }
 
     class ViewHolder {

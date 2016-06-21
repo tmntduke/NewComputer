@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.tmnt.newcomputer.DView.DragBubbleView;
 import com.example.tmnt.newcomputer.R;
 import com.example.tmnt.newcomputer.UIModel.UIQuestionData;
 import com.example.tmnt.newcomputer.ViewHolder.HomeListViewHolder;
@@ -24,10 +25,12 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<Integer> mList;
     private Context mContext;
     private CardView mCardView;
+    private DragBubbleView dbv;
 
     public static final int IS_HEADER = 2;
     public static final int IS_NORMAL = 1;
     private int t;
+    private boolean isLoad;
 
     private static final String TAG = "HomeAdapter";
 
@@ -61,6 +64,7 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         } else if (viewType == IS_NORMAL) {
             View view = LayoutInflater.from(mContext).inflate(R.layout.homt_list_fragment, parent, false);
             mCardView = (CardView) view.findViewById(R.id.home_Item);
+            dbv = (DragBubbleView) view.findViewById(R.id.dbv);
             //Log.i(TAG, "onCreateViewHolder: list");
             return HomeListViewHolder.getInstance(view, viewType);
         } else {
@@ -82,27 +86,37 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
             homeListViewHolder.getItemDate(mDatas.get(position - 1));
 
+            homeListViewHolder.showDrag(position, isLoad);
 
-            if (mOnItemCardClickListener != null) {
-                mCardView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
+            mCardView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mOnItemCardClickListener != null) {
                         mOnItemCardClickListener.itemClickEvent(v, position);
                     }
-                });
+                    dbv.setVisibility(View.GONE);
+                }
+            });
 
-                mCardView.setOnLongClickListener(new View.OnLongClickListener() {
-                    @Override
-                    public boolean onLongClick(View v) {
+            mCardView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    if (mOnItemCardClickListener != null) {
                         mOnItemCardClickListener.longClickEvent(v, position);
-                        return true;
+
                     }
-                });
-            }
+                    return true;
+                }
+            });
+
 
         }
     }
 
+
+    public void showDragWhenLoad(boolean isLoad) {
+        this.isLoad = isLoad;
+    }
 
     @Override
     public int getItemCount() {

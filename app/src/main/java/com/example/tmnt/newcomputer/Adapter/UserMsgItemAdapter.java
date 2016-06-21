@@ -71,7 +71,6 @@ public class UserMsgItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 @Override
                 public void onClick(View v) {
                     if (mOnclickUserMsgListener != null) {
-                        Log.i(TAG, "onClick: start");
                         mOnclickUserMsgListener.onClickMsgItem(v, position);
                     }
                 }

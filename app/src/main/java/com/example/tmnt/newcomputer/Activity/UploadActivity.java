@@ -7,48 +7,47 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 
-import com.example.tmnt.newcomputer.DAO.QuestionDAO;
-import com.example.tmnt.newcomputer.Fragment.WrongQuestionFragment;
-import com.example.tmnt.newcomputer.Model.Questions;
+import com.example.tmnt.newcomputer.Fragment.SingleUploadFragment;
 import com.example.tmnt.newcomputer.R;
 import com.example.tmnt.newcomputer.Utils.Utils;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 
-/**
- * Created by tmnt on 2016/6/12.
- */
-public class WrongItemActivity extends AppCompatActivity {
-    private QuestionDAO mDAO;
-    private Questions mQuestions;
-    private static final String TAG = "WrongItemActivity";
+import cn.bmob.v3.Bmob;
 
+/**
+ * Created by tmnt on 2016/6/17.
+ */
+public class UploadActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setStatusBarColor(getResources().getColor(R.color.colorPrimary));
         }
         if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) {
-            Utils.setTranslucentStatus(WrongItemActivity.this, true);
+            Utils.setTranslucentStatus(UploadActivity.this, true);
         }
         SystemBarTintManager tintManager = new SystemBarTintManager(this);
         tintManager.setStatusBarTintEnabled(true);
         tintManager.setStatusBarTintResource(android.R.color.transparent);
 
-        setContentView(R.layout.wrong_question_view_lay);
+        Bmob.initialize(this, "5b5167d530b5db1c3696b59f02b904bb");
 
-        mDAO = new QuestionDAO(getApplicationContext());
+        setContentView(R.layout.upload_contain);
         Intent intent = getIntent();
-        String question = intent.getStringExtra(WrongListActivity.QUESTION);
-
-        mQuestions = mDAO.queryWrongByQuestion(question);
-
+        int flag = intent.getIntExtra(AdminActivity.ADD, 0);
         FragmentManager manager = getSupportFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
-        transaction.replace(R.id.wrong_view_contain, WrongQuestionFragment.newInstance(mQuestions, mQuestions.getMexam_type()));
-        transaction.commit();
+
+
+        if (flag == 001) {
+            transaction.replace(R.id.upload_contain, SingleUploadFragment.getInstance(flag)).commit();
+        } else if (flag == 002) {
+            transaction.replace(R.id.upload_contain, SingleUploadFragment.getInstance(flag)).commit();
+        } else {
+            transaction.replace(R.id.upload_contain, SingleUploadFragment.getInstance(000)).commit();
+        }
+
     }
 }

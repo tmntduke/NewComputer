@@ -43,14 +43,18 @@ public class HomeFragment extends Fragment {
     private QuestionDAO mDAO;
     private int count;
     public static final String COUNT = "count";
+    public static final String ISLOAD = "isLoad";
 
     public static final String FLAG = "flag";
+
+    private boolean load;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setEnterAnmition();
         mDAO = new QuestionDAO(getActivity());
+        load = getArguments().getBoolean(ISLOAD);
     }
 
     @Nullable
@@ -63,6 +67,8 @@ public class HomeFragment extends Fragment {
         HomeAdapter adapter = new HomeAdapter(getQuestionData(), showConvenientBanner(), getActivity());
         adapter.notifyDataSetChanged();
         mHomeList.setAdapter(adapter);
+
+        adapter.showDragWhenLoad(load);
         adapter.setOnItemCardClickListener(new HomeAdapter.OnItemCardClickListener() {
             @Override
             public void longClickEvent(View view, int position) {
@@ -122,6 +128,14 @@ public class HomeFragment extends Fragment {
 
 
         return view;
+    }
+
+    public static HomeFragment getIntance(boolean isLoad) {
+        HomeFragment fragment = new HomeFragment();
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(ISLOAD, isLoad);
+        fragment.setArguments(bundle);
+        return fragment;
     }
 
     @Override

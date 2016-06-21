@@ -30,7 +30,7 @@ import java.util.Random;
  */
 public class ExamActivity extends FragmentActivity {
 
-    private QuestionDAO mDAO;
+    private static QuestionDAO mDAO;
     private static ViewPager mViewPager;
     private ArrayList<Questions> mList;
     private static final String TAG = "ExamActivity";
@@ -52,20 +52,22 @@ public class ExamActivity extends FragmentActivity {
                 if (flag == 1 || flag == 2) {
 
                     FragmentStatePagerAdapter adapter = Utils.getFragmentAdater(manager, mList, flag);
-                    adapter.notifyDataSetChanged();
+
                     mViewPager.setAdapter(adapter);
+                    adapter.notifyDataSetChanged();
                 } else if (flag == 3) {
 
                     for (int i = 0; i <= 19; i++) {
                         Random random = new Random();
-                        int p = random.nextInt(19);
+                        int p = random.nextInt(mDAO.queryAll().size());
                         turn.add(mList.get(p));
                     }
-                    Log.i(TAG, "handleMessage: " + turn.size());
+                    //Log.i(TAG, "handleMessage: " + turn.size());
                     //QuestionsIndex=readQuestionIndex();
                     FragmentStatePagerAdapter adapter = Utils.getFragmentAdater(manager, turn, flag);
-                    adapter.notifyDataSetChanged();
+
                     mViewPager.setAdapter(adapter);
+                    adapter.notifyDataSetChanged();
 
                 }
             } else if (msg.what == 1) {
@@ -73,8 +75,9 @@ public class ExamActivity extends FragmentActivity {
                     ArrayList<Questions> mList1 = new ArrayList<>();
                     mList1 = (ArrayList<Questions>) msg.obj;
                     FragmentStatePagerAdapter adapter = Utils.getFragmentAdater(manager, mList1, flag);
-                    adapter.notifyDataSetChanged();
+
                     mViewPager.setAdapter(adapter);
+                    adapter.notifyDataSetChanged();
                 }
 
             }

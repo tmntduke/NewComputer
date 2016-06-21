@@ -36,7 +36,9 @@ import com.example.tmnt.newcomputer.Fragment.SortFragment;
 import com.example.tmnt.newcomputer.Fragment.UserMessageFragment;
 import com.example.tmnt.newcomputer.InterFace.IFristLoad;
 import com.example.tmnt.newcomputer.InterFace.IMPL.FristLoadIMPL;
+import com.example.tmnt.newcomputer.InterFace.IMPL.MaxIdIMPL;
 import com.example.tmnt.newcomputer.InterFace.IMPL.ShowIcon;
+import com.example.tmnt.newcomputer.InterFace.IMaxId;
 import com.example.tmnt.newcomputer.InterFace.OnClickShowIcon;
 import com.example.tmnt.newcomputer.Model.AnotherAnswer;
 import com.example.tmnt.newcomputer.Utils.ImageUtils;
@@ -48,6 +50,10 @@ import com.yalantis.contextmenu.lib.MenuParams;
 import com.yalantis.contextmenu.lib.interfaces.OnMenuItemClickListener;
 import com.yalantis.contextmenu.lib.interfaces.OnMenuItemLongClickListener;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
@@ -56,6 +62,8 @@ import java.util.TimerTask;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import cn.bmob.v3.Bmob;
+import cn.bmob.v3.BmobQuery;
+import cn.bmob.v3.listener.FindStatisticsListener;
 import me.majiajie.pagerbottomtabstrip.Controller;
 import me.majiajie.pagerbottomtabstrip.PagerBottomTabLayout;
 import me.majiajie.pagerbottomtabstrip.TabItemBuilder;
@@ -81,6 +89,8 @@ public class MainActivity extends AppCompatActivity implements OnMenuItemClickLi
 
     private AlertDialog mAlertDialog;
 
+    private boolean isLoad = false;
+
     private ContextMenuDialogFragment mMenuDialogFragment;
 
     private DrawerLayout drawer;
@@ -94,6 +104,10 @@ public class MainActivity extends AppCompatActivity implements OnMenuItemClickLi
     private static boolean isUser;
 
     private Controller controller;
+
+    private int count;
+    private int max;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,9 +124,9 @@ public class MainActivity extends AppCompatActivity implements OnMenuItemClickLi
 
         Bmob.initialize(this, "5b5167d530b5db1c3696b59f02b904bb");
 
+
         setContentView(R.layout.activity_main);
 
-        Log.i(TAG, "onCreate: start");
         setEnterAnmition();
         showExit();
         ButterKnife.bind(this);
@@ -134,9 +148,19 @@ public class MainActivity extends AppCompatActivity implements OnMenuItemClickLi
         initMenuFragment();
         //showConvenientBanner();
 
-        setDefaultFragment();
+        if (Utils.isWifiConnected(getApplicationContext())) {
+            BmobUtils.maxIdToBmob(getApplicationContext());
+            MaxIdIMPL.setMaxId(new IMaxId() {
+                @Override
+                public void maxId(int id) {
+                    max = id;
+                }
+            });
 
-        showNavigationBar();
+
+
+
+        }
 
 
     }
@@ -149,7 +173,7 @@ public class MainActivity extends AppCompatActivity implements OnMenuItemClickLi
         FragmentManager manager = getSupportFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
         transaction.setCustomAnimations(R.anim.push_up_in, R.anim.push_up_out);
-        HomeFragment homeFragment = new HomeFragment();
+        HomeFragment homeFragment = HomeFragment.getIntance(isLoad);
         transaction.add(R.id.id_content, homeFragment);
         transaction.commit();
     }
@@ -199,9 +223,9 @@ public class MainActivity extends AppCompatActivity implements OnMenuItemClickLi
                         a1 = true;
                         a2 = false;
                         a3 = false;
-                        HomeFragment homeFragment = new HomeFragment();
+                        HomeFragment homeFragment = HomeFragment.getIntance(isLoad);
                         transaction.replace(R.id.id_content, homeFragment);
-                        transaction.commit();
+                        transaction.commitAllowingStateLoss();
                         break;
                     case 1:
                         isUser = false;
@@ -209,7 +233,7 @@ public class MainActivity extends AppCompatActivity implements OnMenuItemClickLi
                         a2 = true;
                         a3 = false;
                         transaction.replace(R.id.id_content, new SortFragment());
-                        transaction.commit();
+                        transaction.commitAllowingStateLoss();
                         break;
                     case 2:
                         a1 = false;
@@ -246,6 +270,47 @@ public class MainActivity extends AppCompatActivity implements OnMenuItemClickLi
     protected void onStart() {
         super.onStart();
 
+        if (Utils.isWifiConnected(getApplicationContext())){
+            if (mDAO.queryAll().size() - 199 == 0) {
+                BmobUtils.getyAnotherAnswer(getApplicationContext(), true, 0, "isLoad");
+                isLoad = true;
+                BmobUtils.setDataResult(new BmobUtils.DataResult() {
+                    @Override
+                    public void getQuestionData(List<AnotherAnswer> l) {
+                        count = l.size();
+                        for (AnotherAnswer answer : l) {
+                            if (answer.getKind().equals("fillBlank")) {
+                                mDAO.addFillQuestion(answer, mDAO.queryAll().size() + 1, 3, answer.getQuestionId());
+                            } else {
+                                mDAO.addSelectQuestion(answer, mDAO.queryAll().size() + 1, answer.getQuestionId());
+                            }
+                        }
+
+                    }
+                });
+            } else if (max > mDAO.maxQuestionId()) {
+                isLoad = true;
+                BmobUtils.getyBmobAnswer(getApplicationContext(), mDAO.maxQuestionId());
+                FristLoadIMPL.setFirstLoad(new IFristLoad() {
+                    @Override
+                    public void fristLoad(List<AnotherAnswer> list) {
+                        for (AnotherAnswer answer : list) {
+
+                            if (answer.getKind().equals("fillBlank")) {
+                                mDAO.addFillQuestion(answer, mDAO.queryAll().size() + 1, 3, answer.getQuestionId());
+                            } else {
+                                mDAO.addSelectQuestion(answer, mDAO.queryAll().size() + 1, answer.getQuestionId());
+                            }
+                        }
+
+                    }
+                });
+            }
+        }
+
+        setDefaultFragment();
+        showNavigationBar();
+
         /**
          * 进入相册或相机进行选择图片
          */
@@ -261,24 +326,14 @@ public class MainActivity extends AppCompatActivity implements OnMenuItemClickLi
             }
         });
 
-        if (Utils.isWifiConnected(getApplicationContext())) {
-            if (mDAO.queryBmobCount() > 0) {
-                BmobUtils.getyBmobAnswer(getApplicationContext(), mDAO.queryBmobCount());
-                FristLoadIMPL.setFirstLoad(new IFristLoad() {
-                    @Override
-                    public void fristLoad(List<AnotherAnswer> list) {
-                        for (AnotherAnswer answer : list) {
-                            if (answer.getKind().equals("fill_blank")) {
-                                mDAO.addQuestion(answer, mDAO.queryBmobCount() + 1, 3);
-                            } else {
-                                mDAO.addQuestion(answer, mDAO.queryBmobCount() + 1, answer.getQ_type());
-                            }
 
-                        }
-                    }
-                });
-            }
-        }
+    }
+
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        isLoad = false;
     }
 
     /**
@@ -308,7 +363,17 @@ public class MainActivity extends AppCompatActivity implements OnMenuItemClickLi
     protected void onResume() {
         super.onResume();
 
+
         showIcon();
+
+    }
+
+
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+
         if (a3 || a1) {
             controller.setSelect(0);
         } else if (a2) {
@@ -319,13 +384,6 @@ public class MainActivity extends AppCompatActivity implements OnMenuItemClickLi
         if (mAlertDialog != null) {
             mAlertDialog.dismiss();
         }
-
-
-    }
-
-    @Override
-    protected void onRestart() {
-        super.onRestart();
     }
 
     /**

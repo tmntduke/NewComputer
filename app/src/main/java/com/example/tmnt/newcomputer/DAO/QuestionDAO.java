@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 
 import com.example.tmnt.newcomputer.Model.AnotherAnswer;
@@ -22,6 +23,8 @@ public class QuestionDAO {
     private Context mContext;
     private DBHelper mDBHelper;
     private SQLiteDatabase db, createFromSD;
+
+    private static final String TAG = "QuestionDAO";
 
     public QuestionDAO(Context mContext) {
         this.mContext = mContext;
@@ -186,6 +189,22 @@ public class QuestionDAO {
         }
 
         return list;
+    }
+
+    /**
+     * 根据题目查询
+     * @param question
+     * @return
+     */
+    public Questions queryWrongByQuestion(String question) {
+        db = mDBHelper.getReadableDatabase();
+        Questions questions = null;
+        Cursor cursor = db.query("T_Wrong", null, "question=?", new String[]{question}, null, null, "wid DESC");
+        if (cursor.moveToNext()) {
+            questions = new Questions(cursor.getInt(0), 0, cursor.getString(1), cursor.getString(2)
+                    , cursor.getString(3), cursor.getString(4), cursor.getString(5), cursor.getInt(6), cursor.getInt(7), null);
+        }
+        return questions;
     }
 
     /**
@@ -424,6 +443,11 @@ public class QuestionDAO {
         return count;
     }
 
+    /**
+     * 更新云端数据数量
+     *
+     * @param count
+     */
     public void updateBombCount(int count) {
         db = mDBHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -431,7 +455,15 @@ public class QuestionDAO {
         db.update("T_Count", values, "cid=1", null);
     }
 
-    public void addQuestion(AnotherAnswer questions, int count, int type) {
+
+    /**
+     * 当第一次加载时将云端选择题保存在本地
+     *
+     * @param questions
+     * @param count
+     * @param
+     */
+    public void addSelectQuestion(AnotherAnswer questions, int count, int id) {
         ContentValues values = new ContentValues();
         values.put("_id", count);
         values.put("question", questions.getQuestion());
@@ -440,11 +472,112 @@ public class QuestionDAO {
         values.put("optionC", questions.getOptionC());
         values.put("optionD", questions.getOptionD());
         values.put("answer", questions.getAnswer());
-        values.put("q_type", type);
-        values.put("mexam_type", count);
-        values.put("image", "");
-        values.put("q_year_mouth", "");
-        createFromSD.insert((Finallay.TABLE_NAME), null, values);
+        values.put("q_type", questions.getQ_type());
+        values.put("mexam_type", id);
+        createFromSD.insert("copy", null, values);
+    }
+
+    /**
+     * 在第一次加载时将云端天空题保存在本地
+     *
+     * @param anotherAnswer
+     * @param count
+     * @param type
+     */
+    public void addFillQuestion(AnotherAnswer anotherAnswer, int count, int type, int id) {
+        Cursor cursor = createFromSD.rawQuery("select * from sqlite_master where name = ? and sql like ?"
+                , new String[]{"copy", "%" + "fillAnswer" + "%"});
+        Log.i(TAG, "addFillQuestion: " + cursor.moveToFirst());
+        boolean is = cursor.moveToFirst();
+        if (is) {
+            ContentValues values = new ContentValues();
+            values.put("_id", count);
+            values.put("question", anotherAnswer.getQuestion());
+
+            values.put("fillAnswer", anotherAnswer.getFillAnswer());
+            values.put("q_type", type);
+            values.put("mexam_type", id);
+
+            values.put("answer", 0);
+            createFromSD.insert("copy", null, values);
+        } else {
+            createFromSD.execSQL("alter table copy add fillAnswer varchar(30) ");
+            ContentValues values = new ContentValues();
+            values.put("_id", count);
+            values.put("question", anotherAnswer.getQuestion());
+
+            values.put("fillAnswer", anotherAnswer.getFillAnswer());
+            values.put("q_type", type);
+            values.put("mexam_type", count);
+            values.put("answer", 0);
+            createFromSD.insert("copy", null, values);
+        }
+
+    }
+
+    /**
+     * 查询填空题答案
+     *
+     * @param question
+     * @return
+     */
+    public String queryFillAnswer(String question) {
+
+        String answer = null;
+
+        Cursor c = createFromSD.query("copy", new String[]{"fillAnswer"}, "question=?", new String[]{question}, null, null, null, null);
+        if (c.moveToNext()) {
+            answer = c.getString(0);
+
+
+        }
+        return answer;
+    }
+
+    /**
+     * 更新填空题答案
+     *
+     * @param question
+     * @param answer
+     */
+    public void addFillWrong(String question, String answer) {
+        db = mDBHelper.getReadableDatabase();
+        Cursor cursor = db.rawQuery("select * from sqlite_master where name = ? and sql like ?"
+                , new String[]{"T_Wrong", "%" + "fillAnswer" + "%"});
+        boolean is = cursor.moveToFirst();
+
+        if (is) {
+            db = mDBHelper.getWritableDatabase();
+            ContentValues values = new ContentValues();
+            values.put("question", question);
+            values.put("fillAnswer", answer);
+            values.put("kind", 3);
+            db.insert("T_Wrong", "wid", values);
+        } else {
+
+            db.execSQL("alter table T_Wrong add fillAnswer varchar(30) ");
+
+            db = mDBHelper.getWritableDatabase();
+            ContentValues values = new ContentValues();
+            values.put("question", question);
+            values.put("fillAnswer", answer);
+            values.put("kind", 3);
+            db.insert("T_Wrong", "wid", values);
+        }
+    }
+
+    /**
+     * 查询数据库中id值最大的数据
+     *
+     * @return
+     */
+    public int maxQuestionId() {
+        int maxId = 0;
+        Cursor cursor = createFromSD.rawQuery("select max(mexam_type) from copy ", null);
+        if (cursor.moveToNext()) {
+            maxId = cursor.getInt(0);
+        }
+        return maxId;
     }
 }
 

@@ -7,11 +7,13 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.PopupWindow;
 
 import com.example.tmnt.newcomputer.Activity.SortActivity;
 import com.example.tmnt.newcomputer.Adapter.SortAdapter;
@@ -35,6 +37,8 @@ public class SortFragment extends Fragment {
     private Intent randomIntent;
     private Snackbar snackbar1;
 
+    private static final String TAG = "SortFragment";
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,11 +53,10 @@ public class SortFragment extends Fragment {
         SortAdapter adapter = new SortAdapter(getActivity(), getTitleSort(), getIconSort());
         adapter.notifyDataSetChanged();
         mSortList.setAdapter(adapter);
-
         mSortList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
+                randomIntent = new Intent(getActivity(), SortActivity.class);
                 if (Utils.isConnected(getActivity())) {
 
 
@@ -62,8 +65,9 @@ public class SortFragment extends Fragment {
                         snackbar = Snackbar.make(view, "you are  open the MobileConnected,are you continue", Snackbar.LENGTH_INDEFINITE).setAction("click", new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                isMoblie = true;
-                                snackbar.dismiss();
+                                Log.i(TAG, "onClick: " + position);
+
+                                turnNext(position);
                             }
                         });
                         snackbar.getView().setBackgroundColor(getResources().getColor(R.color.colorPrimary));
@@ -72,8 +76,8 @@ public class SortFragment extends Fragment {
 
 
                     } else if (Utils.isWifiConnected(getActivity())) {
-                        isMoblie = true;
-                        randomIntent = new Intent(getActivity(), SortActivity.class);
+
+
                         switch (position) {
                             case 0:
                                 turnNext(0);
@@ -86,19 +90,7 @@ public class SortFragment extends Fragment {
                                 break;
                         }
 
-                    } else if (isMoblie) {
-                        randomIntent = new Intent(getActivity(), SortActivity.class);
-                        switch (position) {
-                            case 0:
-                                turnNext(0);
-                                break;
-                            case 1:
-                                turnNext(1);
-                                break;
 
-                            default:
-                                break;
-                        }
                     }
 
 
@@ -153,10 +145,10 @@ public class SortFragment extends Fragment {
     }
 
     public void turnNext(int flag) {
-        if (isMoblie) {
-            randomIntent.putExtra("flag1", flag);
-            startActivity(randomIntent);
-        }
+        isMoblie = false;
+        randomIntent.putExtra("flag1", flag);
+        startActivity(randomIntent);
+
 
     }
 }

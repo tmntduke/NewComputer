@@ -90,8 +90,11 @@ public class LoginActivity extends AppCompatActivity implements ProgressGenerato
             }
 
             mEditPwd.setOnFocusChangeListener((view, isCheck) -> {
-                if (!mDAO.queryUserName(mEditUsername.getText().toString()) || mEditUsername.getText().toString().isEmpty()) {
-                    mEditUsername.setError("username not have");
+                if (mEditUsername.getText().toString().isEmpty() || !mDAO.queryUserName(mEditUsername.getText().toString())) {
+                    if (!mEditUsername.getText().toString().equals("admin")) {
+                        mEditUsername.setError("username not have");
+                    }
+
                 }
             });
 
@@ -99,6 +102,9 @@ public class LoginActivity extends AppCompatActivity implements ProgressGenerato
 
                 if (mDAO.queryUser(mEditUsername.getText().toString(), mEditPwd.getText().toString())) {
                     isClick = true;
+                    progressGenerator.start(mLogin);
+                    mLogin.setEnabled(false);
+                } else if ((mEditUsername.getText().toString().equals("admin") && mEditPwd.getText().toString().equals("12345"))) {
                     progressGenerator.start(mLogin);
                     mLogin.setEnabled(false);
                 } else {
@@ -115,18 +121,26 @@ public class LoginActivity extends AppCompatActivity implements ProgressGenerato
 
     @Override
     public void onComplete() {
-        Intent turnMain = new Intent(LoginActivity.this, MainActivity.class);
-        mDAO.updateLogin(true);
-        mDAO.updateUserLogin(mEditUsername.getText().toString(), true);
-        turnMain.putExtra("user", mEditUsername.getText().toString());
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-            ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(LoginActivity.this);
-            startActivity(turnMain, options.toBundle());
+
+        if ((mEditUsername.getText().toString().equals("admin") && mEditPwd.getText().toString().equals("12345"))) {
+            Intent intent = new Intent(LoginActivity.this, AdminActivity.class);
+            startActivity(intent);
             finish();
         } else {
-            startActivity(turnMain);
-            finish();
+            Intent turnMain = new Intent(LoginActivity.this, MainActivity.class);
+            mDAO.updateLogin(true);
+            mDAO.updateUserLogin(mEditUsername.getText().toString(), true);
+            turnMain.putExtra("user", mEditUsername.getText().toString());
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(LoginActivity.this);
+                startActivity(turnMain, options.toBundle());
+                finish();
+            } else {
+                startActivity(turnMain);
+                finish();
+            }
         }
+
     }
 
     public void showExit() {

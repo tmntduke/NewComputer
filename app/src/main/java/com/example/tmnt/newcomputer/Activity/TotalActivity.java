@@ -3,7 +3,6 @@ package com.example.tmnt.newcomputer.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -57,7 +56,6 @@ public class TotalActivity extends AppCompatActivity {
             mTag.setText(String.valueOf(wrong));
             mTotal.setText(String.valueOf(total));
             float show = ((float) wrong) / total * 12;
-            Log.i(TAG, "onCreate: " + show + "  wrong:" + wrong + "  total:" + total);
             mProgress.update((int) show, 3500);
         } else {
             mTag.setText(String.valueOf(0));

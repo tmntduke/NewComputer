@@ -8,6 +8,7 @@ import android.widget.TextView;
 import com.bigkoo.convenientbanner.ConvenientBanner;
 import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.example.tmnt.newcomputer.Adapter.HomeAdapter;
+import com.example.tmnt.newcomputer.DView.DragBubbleView;
 import com.example.tmnt.newcomputer.R;
 import com.example.tmnt.newcomputer.UIModel.UIQuestionData;
 
@@ -22,13 +23,15 @@ public class HomeListViewHolder extends RecyclerView.ViewHolder {
     private ImageView mImageView;
     private TextView title, subTitle;
     public int type;
+    private DragBubbleView dbv;
 
-    public HomeListViewHolder(View itemView, ImageView imageView, TextView title, TextView subTitle, int type) {
+    public HomeListViewHolder(View itemView, ImageView imageView, TextView title, TextView subTitle, int type, DragBubbleView dbv) {
         super(itemView);
         mImageView = imageView;
         this.title = title;
         this.subTitle = subTitle;
         this.type = type;
+        this.dbv = dbv;
     }
 
     public HomeListViewHolder(View itemView, ConvenientBanner mConvenientBanner, int type) {
@@ -46,7 +49,8 @@ public class HomeListViewHolder extends RecyclerView.ViewHolder {
             ImageView icon = (ImageView) view.findViewById(R.id.question_sort_icon);
             TextView title = (TextView) view.findViewById(R.id.question_sort_title);
             TextView subtitle = (TextView) view.findViewById(R.id.question_sort_subtitle);
-            return new HomeListViewHolder(view, icon, title, subtitle, type);
+            DragBubbleView dragBubbleView = (DragBubbleView) view.findViewById(R.id.dbv);
+            return new HomeListViewHolder(view, icon, title, subtitle, type, dragBubbleView);
         }
     }
 
@@ -67,4 +71,12 @@ public class HomeListViewHolder extends RecyclerView.ViewHolder {
                 .setPageIndicator(new int[]{R.drawable.ic_page_indicator, R.drawable.ic_page_indicator_focused})
                 .setPageIndicatorAlign(ConvenientBanner.PageIndicatorAlign.ALIGN_PARENT_RIGHT);
     }
+
+    public void showDrag(int position, boolean isLoad) {
+        if (position == 1 && isLoad) {
+            dbv.setVisibility(View.VISIBLE);
+        }
+    }
+
+
 }

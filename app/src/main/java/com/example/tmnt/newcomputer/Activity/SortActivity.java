@@ -63,14 +63,14 @@ public class SortActivity extends AppCompatActivity {
 
                 break;
             case 1:
-                getAnotherAdapter("fill_Blank", 1);
+                getAnotherAdapter("fillBlank", 1);
                 break;
 
         }
     }
 
     public void getAnotherAdapter(String kind, int flag) {
-        BmobUtils.getyAnotherAnswer(getApplicationContext(), kind, flag);
+        BmobUtils.getyAnotherAnswer(getApplicationContext(), kind, flag, "kind");
         FragmentManager manager = getSupportFragmentManager();
 
         BmobUtils.setDataResult(new BmobUtils.DataResult() {
@@ -83,7 +83,7 @@ public class SortActivity extends AppCompatActivity {
                         if (ll.size() == 0) {
                             return AnotherFragment.newInstance(ll, i, 0, flag);
                         } else {
-                            mDAO.updateBombCount(ll.size());
+
                             return AnotherFragment.newInstance(ll, i, ll.get(i).getQ_type(), flag);
                         }
 

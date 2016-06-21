@@ -19,4 +19,5 @@
 
     <color name="colorOtherPrimary">#e5ff62</color>
     <color name="colorOtherPrimaryDark">#bef701</color>
+    <color name="transWhite">#ff0000</color>
 </resources>

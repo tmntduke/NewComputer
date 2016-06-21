@@ -94,12 +94,12 @@ public class AnotherFragment extends Fragment {
                 mOptionA.setText(mQuestionses.get(position).getOptionA());
                 mOptionB.setText(mQuestionses.get(position).getOptionB());
 
-                if (type == 0) {
+                if (type == 1) {
 
                     mOptionC.setText(mQuestionses.get(position).getOptionC());
                     mOptionD.setText(mQuestionses.get(position).getOptionD());
 
-                } else if (type == 1) {
+                } else if (type == 0) {
                     mOptionC.setVisibility(View.INVISIBLE);
                     mOptionD.setVisibility(View.INVISIBLE);
                 }
@@ -107,15 +107,20 @@ public class AnotherFragment extends Fragment {
                 mOptionC.setText(mQuestionses.get(position).getOptionC());
                 mOptionD.setText(mQuestionses.get(position).getOptionD());
             } else {
+                mQuestionTitleView.setText(mQuestionses.get(position).getQuestion());
+                mCount.setVisibility(View.VISIBLE);
+                mCount.setText(position + 1 + "/" + mQuestionses.size());
                 mSelectView.setVisibility(View.GONE);
                 mFillBlankView.setVisibility(View.VISIBLE);
                 mConfirm.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (mFillBlankAnswer.getText().toString().equals(mQuestionses.get(position).getAnswer())) {
-                            Snackbar snackbar = Snackbar.make(view, "answer is " + mQuestionses.get(position).getAnswer(), Snackbar.LENGTH_LONG);
+                        if (!mFillBlankAnswer.getText().toString().equals(mQuestionses.get(position).getFillAnswer())) {
+                            Snackbar snackbar = Snackbar.make(view, "answer is " + mQuestionses.get(position).getFillAnswer(), Snackbar.LENGTH_SHORT);
                             snackbar.getView().setBackgroundColor(getResources().getColor(R.color.colorPrimary));
                             snackbar.show();
+                        } else {
+                            Utils.showToast(getActivity(), "right");
                         }
                     }
                 });
@@ -124,7 +129,6 @@ public class AnotherFragment extends Fragment {
         }
 
 
-        ButterKnife.bind(this, view);
         return view;
 
     }
@@ -185,12 +189,15 @@ public class AnotherFragment extends Fragment {
         if (mQuestionses.get(position).getAnswer() == useranswer) {
 
             Utils.showToast(getActivity(), "right");
-        } else if ((mQuestionses.get(position).getAnswer() != useranswer)) {
-            Snackbar snackbar = Snackbar.make(view, "answer is " + getAnswer(mQuestionses.get(position).getAnswer()), Snackbar.LENGTH_LONG);
+        } else if ((mQuestionses.get(position).getAnswer() != useranswer) && kind == 0) {
+            Snackbar snackbar = Snackbar.make(view, "answer is " + getAnswer(mQuestionses.get(position).getAnswer()), Snackbar.LENGTH_SHORT);
             snackbar.getView().setBackgroundColor(getResources().getColor(R.color.blue_normal));
             snackbar.show();
+        } else if (kind == 1 && (mQuestionses.get(position).getFillAnswer() != mFillBlankAnswer.getText().toString())) {
+            Snackbar snackbar2 = Snackbar.make(view, "answer is " + mQuestionses.get(position).getFillAnswer(), Snackbar.LENGTH_SHORT);
+            snackbar2.getView().setBackgroundColor(getResources().getColor(R.color.blue_normal));
+            snackbar2.show();
         }
-
     }
 
     @OnClick({R.id.optionA, R.id.optionB, R.id.optionC, R.id.optionD})
@@ -201,15 +208,15 @@ public class AnotherFragment extends Fragment {
                 a1 = true;
                 break;
             case R.id.optionB:
-                isClickOtherAnswer(mOptionB, !a1 && !a2 && !a3 && !a4, 1);
+                isClickOtherAnswer(mOptionB, !a1 && !a2 && !a3 && !a4, 2);
                 a2 = true;
                 break;
             case R.id.optionC:
-                isClickOtherAnswer(mOptionC, !a1 && !a2 && !a3 && !a4, 1);
+                isClickOtherAnswer(mOptionC, !a1 && !a2 && !a3 && !a4, 3);
                 a3 = true;
                 break;
             case R.id.optionD:
-                isClickOtherAnswer(mOptionD, !a1 && !a2 && !a3 && !a4, 1);
+                isClickOtherAnswer(mOptionD, !a1 && !a2 && !a3 && !a4, 4);
                 a4 = true;
                 break;
         }

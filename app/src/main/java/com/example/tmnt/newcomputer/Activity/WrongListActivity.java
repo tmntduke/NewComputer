@@ -65,7 +65,6 @@ public class WrongListActivity extends AppCompatActivity {
                 public void clickDelete(View view, String question, int position) {
                     mDAO.deleteWrong(question);
                     adapter.deleteData(position);
-                    adapter.notifyDataSetChanged();
                 }
 
                 @Override
@@ -74,11 +73,10 @@ public class WrongListActivity extends AppCompatActivity {
                 }
 
                 @Override
-                public void onClickQurstionItem(View v, int position, boolean isOpen) {
+                public void onClickQurstionItem(View v, String question, boolean isOpen) {
                     if (!isOpen) {
                         Intent intent = new Intent(WrongListActivity.this, WrongItemActivity.class);
-                        intent.putExtra(QUESTION, position);
-                        Log.i(TAG, "onClickQurstionItem: start" + mDAO.queryWrongQuestion().get(position));
+                        intent.putExtra(QUESTION, question);
                         startActivity(intent);
                     }
                 }
