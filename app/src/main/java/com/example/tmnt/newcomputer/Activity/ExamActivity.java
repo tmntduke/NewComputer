@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Random;
 
 /**
+ * 控制试题显示界面
  * Created by tmnt on 2016/6/11.
  */
 public class ExamActivity extends FragmentActivity {
@@ -46,24 +47,25 @@ public class ExamActivity extends FragmentActivity {
         @Override
         public void handleMessage(Message msg) {
 
+            //判断不同类别
             if (msg.what == 0) {
                 ArrayList<Questions> mList = new ArrayList<>();
                 mList = (ArrayList<Questions>) msg.obj;
+                //点击顺序和随机练习取出数据
                 if (flag == 1 || flag == 2) {
-
+                    //创建viewPager的adapter
                     FragmentStatePagerAdapter adapter = Utils.getFragmentAdater(manager, mList, flag);
 
                     mViewPager.setAdapter(adapter);
-                    adapter.notifyDataSetChanged();
+                    adapter.notifyDataSetChanged();//刷新适配器
                 } else if (flag == 3) {
-
+                    //点击模拟考试时随机取出20条数据
                     for (int i = 0; i <= 19; i++) {
                         Random random = new Random();
                         int p = random.nextInt(mDAO.queryAll().size());
                         turn.add(mList.get(p));
                     }
-                    //Log.i(TAG, "handleMessage: " + turn.size());
-                    //QuestionsIndex=readQuestionIndex();
+
                     FragmentStatePagerAdapter adapter = Utils.getFragmentAdater(manager, turn, flag);
 
                     mViewPager.setAdapter(adapter);
@@ -72,6 +74,7 @@ public class ExamActivity extends FragmentActivity {
                 }
             } else if (msg.what == 1) {
                 if (flag == 4) {
+                    //点击待加强时
                     ArrayList<Questions> mList1 = new ArrayList<>();
                     mList1 = (ArrayList<Questions>) msg.obj;
                     FragmentStatePagerAdapter adapter = Utils.getFragmentAdater(manager, mList1, flag);
@@ -88,6 +91,8 @@ public class ExamActivity extends FragmentActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //适配4.4系统 沉浸状态栏
         if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) {
             Utils.setTranslucentStatus(ExamActivity.this, true);
         }
@@ -95,16 +100,23 @@ public class ExamActivity extends FragmentActivity {
         tintManager.setStatusBarTintEnabled(true);
         tintManager.setStatusBarTintResource(android.R.color.transparent);
 
+
         mDAO = new QuestionDAO(getApplicationContext());
-        mViewPager = new ViewPager(this);
+        mViewPager = new ViewPager(this);//创建ViewPager
         mViewPager.setId(R.id.ViewPager);
         setContentView(mViewPager);
+
         mList = new ArrayList<Questions>();
         Intent intent = getIntent();
+        //判断传入的类别
         flag = intent.getIntExtra(HomeFragment.FLAG, 0);
+
         turn = new ArrayList<>();
+
         manager = getSupportFragmentManager();
         fragment = new AnswerFragment();
+
+        //在子线程中从数据库中将数据取出
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -116,6 +128,7 @@ public class ExamActivity extends FragmentActivity {
             }
         }).start();
 
+        //将错误表中的数据取出
         new Thread(new Runnable() {
             @Override
             public void run() {

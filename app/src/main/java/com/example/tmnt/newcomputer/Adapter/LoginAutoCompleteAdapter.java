@@ -15,6 +15,7 @@ import com.example.tmnt.newcomputer.R;
 import java.util.List;
 
 /**
+ * 登陆界面用户名输入框 点击出现所有用户信息
  * Created by tmnt on 2016/6/4.
  */
 public class LoginAutoCompleteAdapter extends ArrayAdapter {

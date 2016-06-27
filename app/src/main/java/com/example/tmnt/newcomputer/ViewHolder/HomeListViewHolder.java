@@ -24,6 +24,7 @@ public class HomeListViewHolder extends RecyclerView.ViewHolder {
     private TextView title, subTitle;
     public int type;
     private DragBubbleView dbv;
+    public static ConvenientBanner convenientBanner;
 
     public HomeListViewHolder(View itemView, ImageView imageView, TextView title, TextView subTitle, int type, DragBubbleView dbv) {
         super(itemView);
@@ -44,6 +45,7 @@ public class HomeListViewHolder extends RecyclerView.ViewHolder {
     public static HomeListViewHolder getInstance(View view, int type) {
         if (type == HomeAdapter.IS_HEADER) {
             ConvenientBanner convenientBanner = (ConvenientBanner) view.findViewById(R.id.convenientBanner);
+            //convenientBanner.startTurning(4000);
             return new HomeListViewHolder(view, convenientBanner, type);
         } else {
             ImageView icon = (ImageView) view.findViewById(R.id.question_sort_icon);

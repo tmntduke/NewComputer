@@ -138,8 +138,8 @@ public class SortFragment extends Fragment {
 
     public List<Integer> getIconSort() {
         List<Integer> list = new ArrayList<>();
-        list.add(R.drawable.select);
-        list.add(R.drawable.fill_blank);
+        list.add(R.drawable.apps_select);
+        list.add(R.drawable.apps_fill_blank);
 
         return list;
     }

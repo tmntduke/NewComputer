@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 /**
+ * 滑动控件
  * Created by tmnt on 2016/5/15.
  */
 public class SlideView extends LinearLayout {

@@ -28,6 +28,7 @@ import cn.bmob.v3.listener.SaveListener;
 import cn.bmob.v3.listener.UpdateListener;
 
 /**
+ * bmob工具类
  * Created by tmnt on 2016/6/13.
  */
 public class BmobUtils {
@@ -35,6 +36,13 @@ public class BmobUtils {
     private static final String TAG = "BmobUtils";
     int max;
 
+    /**
+     * 像云端保存数据
+     *
+     * @param o
+     * @param context
+     * @param view
+     */
     public static void saveDataToBmob(Object o, Context context, View view) {
         if (o instanceof BmobObject) {
             ((BmobObject) o).save(context, new SaveListener() {
@@ -55,6 +63,7 @@ public class BmobUtils {
         }
     }
 
+    //取数据接口
     public interface DataResult {
         void getQuestionData(List<AnotherAnswer> l);
     }
@@ -65,6 +74,13 @@ public class BmobUtils {
         dataRe = data;
     }
 
+    /**
+     * 查询指定类型数据
+     * @param context
+     * @param kind
+     * @param flag
+     * @param filed
+     */
     public static void getyAnotherAnswer(Context context, Object kind, int flag, String filed) {
         BmobQuery<AnotherAnswer> mAnotherQuestionBmobQuery = new BmobQuery<>();
         ArrayList<AnotherAnswer> question = new ArrayList<>();
@@ -89,6 +105,11 @@ public class BmobUtils {
 
     }
 
+    /**
+     * 查询大于count的数据
+     * @param context
+     * @param count
+     */
     public static void getyBmobAnswer(Context context, int count) {
         BmobQuery<AnotherAnswer> mAnotherQuestionBmobQuery = new BmobQuery<>();
         ArrayList<AnotherAnswer> question = new ArrayList<>();
@@ -113,6 +134,11 @@ public class BmobUtils {
 
     }
 
+    /**
+     * 更新数据
+     * @param context
+     * @param id
+     */
     public static void updateLoad(Context context, String id) {
         AnotherAnswer answer = new AnotherAnswer();
         answer.setLoad(true);
@@ -130,6 +156,10 @@ public class BmobUtils {
     }
 
 
+    /**
+     * 查询最大id
+     * @param context
+     */
     public static void maxIdToBmob(Context context) {
 
         BmobQuery<AnotherAnswer> mAnotherQuestionBmobQuery = new BmobQuery<>();

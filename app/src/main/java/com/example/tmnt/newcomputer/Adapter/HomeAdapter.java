@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.bigkoo.convenientbanner.ConvenientBanner;
 import com.example.tmnt.newcomputer.DView.DragBubbleView;
 import com.example.tmnt.newcomputer.R;
 import com.example.tmnt.newcomputer.UIModel.UIQuestionData;
@@ -16,7 +17,7 @@ import com.example.tmnt.newcomputer.ViewHolder.HomeListViewHolder;
 import java.util.List;
 
 /**
- * Home适配器
+ * Home界面适配器
  * Created by tmnt on 2016/6/6.
  */
 public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -26,6 +27,7 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private Context mContext;
     private CardView mCardView;
     private DragBubbleView dbv;
+    private ConvenientBanner mConvenientBanner;
 
     public static final int IS_HEADER = 2;
     public static final int IS_NORMAL = 1;
@@ -41,6 +43,7 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     }
 
+    //item单机事件
     public interface OnItemCardClickListener {
         void longClickEvent(View view, int position);
 
@@ -50,6 +53,7 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private OnItemCardClickListener mOnItemCardClickListener;
 
+    //设置单击事件
     public void setOnItemCardClickListener(OnItemCardClickListener mOnItemCardClickListener) {
         this.mOnItemCardClickListener = mOnItemCardClickListener;
     }
@@ -58,10 +62,13 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
+        //当type为header
         if (viewType == IS_HEADER) {
             View view = LayoutInflater.from(mContext).inflate(R.layout.hoem_header_fragment, parent, false);
+            mConvenientBanner = (ConvenientBanner) view.findViewById(R.id.convenientBanner);
             return HomeListViewHolder.getInstance(view, viewType);
         } else if (viewType == IS_NORMAL) {
+            //不为header时
             View view = LayoutInflater.from(mContext).inflate(R.layout.homt_list_fragment, parent, false);
             mCardView = (CardView) view.findViewById(R.id.home_Item);
             dbv = (DragBubbleView) view.findViewById(R.id.dbv);
@@ -75,15 +82,36 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void onViewAttachedToWindow(RecyclerView.ViewHolder holder) {
+        super.onViewAttachedToWindow(holder);
+        Log.i(TAG, "onViewAttachedToWindow: start");
+        mConvenientBanner.stopTurning();
+    }
+
+    @Override
+    public void onViewDetachedFromWindow(RecyclerView.ViewHolder holder) {
+        super.onViewDetachedFromWindow(holder);
+        mConvenientBanner.startTurning(4000);
+
+    }
+
+    @Override
+    public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
+        super.onDetachedFromRecyclerView(recyclerView);
+    }
+
+    @Override
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
 
         HomeListViewHolder homeListViewHolder = (HomeListViewHolder) holder;
 
+        //显示header
         if (position == 0 && homeListViewHolder.type == IS_HEADER) {
             homeListViewHolder.showConvenientBanner(mList);
 
         } else {
 
+            //item添加数据
             homeListViewHolder.getItemDate(mDatas.get(position - 1));
 
             homeListViewHolder.showDrag(position, isLoad);
@@ -97,6 +125,7 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     dbv.setVisibility(View.GONE);
                 }
             });
+
 
             mCardView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
@@ -114,6 +143,7 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
 
+    //显示拖拽红点
     public void showDragWhenLoad(boolean isLoad) {
         this.isLoad = isLoad;
     }

@@ -22,37 +22,40 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.TextView;
 
-import com.example.tmnt.newcomputer.Activity.FirstUseActivity;
-import com.example.tmnt.newcomputer.Activity.ShowUIconActivity;
+import com.bigkoo.convenientbanner.ConvenientBanner;
+import com.example.tmnt.newcomputer.Activity.LoginActivity;
 import com.example.tmnt.newcomputer.Activity.ShowUseActivity;
+import com.example.tmnt.newcomputer.Adapter.HomeAdapter;
 import com.example.tmnt.newcomputer.BMOB.BmobUtils;
 import com.example.tmnt.newcomputer.DAO.QuestionDAO;
 import com.example.tmnt.newcomputer.DView.CircleImageView;
 import com.example.tmnt.newcomputer.Fragment.HomeFragment;
 import com.example.tmnt.newcomputer.Fragment.SortFragment;
-import com.example.tmnt.newcomputer.Fragment.UserMessageFragment;
 import com.example.tmnt.newcomputer.InterFace.IFristLoad;
 import com.example.tmnt.newcomputer.InterFace.IMPL.FristLoadIMPL;
 import com.example.tmnt.newcomputer.InterFace.IMPL.MaxIdIMPL;
 import com.example.tmnt.newcomputer.InterFace.IMPL.ShowIcon;
+import com.example.tmnt.newcomputer.InterFace.IMPL.TitleSrollIMPL;
 import com.example.tmnt.newcomputer.InterFace.IMaxId;
+import com.example.tmnt.newcomputer.InterFace.ITitleSrcoll;
 import com.example.tmnt.newcomputer.InterFace.OnClickShowIcon;
 import com.example.tmnt.newcomputer.Model.AnotherAnswer;
 import com.example.tmnt.newcomputer.Utils.ImageUtils;
 import com.example.tmnt.newcomputer.Utils.Utils;
+import com.example.tmnt.newcomputer.ViewHolder.HomeListViewHolder;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 import com.yalantis.contextmenu.lib.ContextMenuDialogFragment;
 import com.yalantis.contextmenu.lib.MenuObject;
 import com.yalantis.contextmenu.lib.MenuParams;
 import com.yalantis.contextmenu.lib.interfaces.OnMenuItemClickListener;
 import com.yalantis.contextmenu.lib.interfaces.OnMenuItemLongClickListener;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,26 +65,32 @@ import java.util.TimerTask;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import cn.bmob.v3.Bmob;
-import cn.bmob.v3.BmobQuery;
-import cn.bmob.v3.listener.FindStatisticsListener;
 import me.majiajie.pagerbottomtabstrip.Controller;
 import me.majiajie.pagerbottomtabstrip.PagerBottomTabLayout;
 import me.majiajie.pagerbottomtabstrip.TabItemBuilder;
 import me.majiajie.pagerbottomtabstrip.listener.OnTabItemSelectListener;
 
-public class MainActivity extends AppCompatActivity implements OnMenuItemClickListener, OnMenuItemLongClickListener {
+public class MainActivity extends AppCompatActivity implements OnMenuItemClickListener, OnMenuItemLongClickListener, NavigationView.OnNavigationItemSelectedListener {
 
     @Bind(R.id.toolbarIcon)
     CircleImageView mToolbarIcon;
-    //    @Bind(R.id.convenientBanner)
-//    ConvenientBanner mConvenientBanner;
-    @Bind(R.id.toolbar)
-    Toolbar mToolbar;
+
     @Bind(R.id.tab)
     PagerBottomTabLayout mTab;
 
-    private static final int RESULT_IMAGE = 100;
-    private static final int RESULT_CAMERA = 200;
+    public static final int RESULT_IMAGE = 100;
+    public static final int RESULT_CAMERA = 200;
+
+    @Bind(R.id.id_content)
+    FrameLayout mIdContent;
+    @Bind(R.id.nav_view)
+    NavigationView mNavView;
+    @Bind(R.id.drawer_layout)
+    DrawerLayout mDrawerLayout;
+    @Bind(R.id.home_username)
+    TextView mHomeUsername;
+    @Bind(R.id.toolbar)
+    Toolbar mToolbar;
 
     private boolean a1, a2, a3;
 
@@ -90,6 +99,7 @@ public class MainActivity extends AppCompatActivity implements OnMenuItemClickLi
     private AlertDialog mAlertDialog;
 
     private boolean isLoad = false;
+    private HomeAdapter mHomeAdapter;
 
     private ContextMenuDialogFragment mMenuDialogFragment;
 
@@ -127,6 +137,7 @@ public class MainActivity extends AppCompatActivity implements OnMenuItemClickLi
 
         setContentView(R.layout.activity_main);
 
+
         setEnterAnmition();
         showExit();
         ButterKnife.bind(this);
@@ -145,7 +156,7 @@ public class MainActivity extends AppCompatActivity implements OnMenuItemClickLi
         username = mDAO.queryLoginUsername();
         fragmentManager = getSupportFragmentManager();
 
-        initMenuFragment();
+        // initMenuFragment();
         //showConvenientBanner();
 
         if (Utils.isWifiConnected(getApplicationContext())) {
@@ -158,13 +169,29 @@ public class MainActivity extends AppCompatActivity implements OnMenuItemClickLi
             });
 
 
-
-
         }
+
+        mNavView.setNavigationItemSelectedListener(this);
+
+        setDefaultFragment();
+        showNavigationBar();
 
 
     }
 
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        float y = event.getY();
+        if (event.getAction() == MotionEvent.ACTION_MOVE) {
+            if (event.getY() - y > 0 && (event.getY() - y > 150 || event.getY() - y == 150)) {
+                //HomeListViewHolder.convenientBanner.startTurning(1500);
+            } else if (event.getY() - y < 0 && (event.getY() - y < -150 || event.getY() - y == -150)) {
+                // HomeListViewHolder.convenientBanner.stopTurning();
+            }
+        }
+        return super.onTouchEvent(event);
+
+    }
 
     /**
      * 显示默认fragment
@@ -243,7 +270,7 @@ public class MainActivity extends AppCompatActivity implements OnMenuItemClickLi
                         Intent intent = new Intent(MainActivity.this, ShowUseActivity.class);
                         intent.putExtra("user", username);
                         ActivityOptions transitionActivityOptions = null;
-                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                             transitionActivityOptions = ActivityOptions.makeSceneTransitionAnimation(MainActivity.this);
                             startActivity(intent, transitionActivityOptions.toBundle());
 
@@ -270,7 +297,9 @@ public class MainActivity extends AppCompatActivity implements OnMenuItemClickLi
     protected void onStart() {
         super.onStart();
 
-        if (Utils.isWifiConnected(getApplicationContext())){
+        //mHomeAdapter = new HomeAdapter();
+
+        if (Utils.isWifiConnected(getApplicationContext())) {
             if (mDAO.queryAll().size() - 199 == 0) {
                 BmobUtils.getyAnotherAnswer(getApplicationContext(), true, 0, "isLoad");
                 isLoad = true;
@@ -308,8 +337,6 @@ public class MainActivity extends AppCompatActivity implements OnMenuItemClickLi
             }
         }
 
-        setDefaultFragment();
-        showNavigationBar();
 
         /**
          * 进入相册或相机进行选择图片
@@ -347,11 +374,15 @@ public class MainActivity extends AppCompatActivity implements OnMenuItemClickLi
             public void onClick(View v) {
 
 
-                mAlertDialog = Utils.shoeDialog(MainActivity.this, username, mDAO);
-                mAlertDialog.show();
+//                mAlertDialog = Utils.shoeDialog(MainActivity.this, username, mDAO);
+//                mAlertDialog.show();
+
+                mDrawerLayout.openDrawer(GravityCompat.START);
+
             }
         });
 
+        mHomeUsername.setText(mDAO.queryLoginUsername());
         if (mDAO.queryUserIcon(username)) {
             mToolbarIcon.setImageBitmap(ImageUtils.readBitMap(MainActivity.this, mDAO.queryUserIconPath(username)));
 
@@ -365,9 +396,10 @@ public class MainActivity extends AppCompatActivity implements OnMenuItemClickLi
 
 
         showIcon();
+        getNavigation();
+
 
     }
-
 
 
     @Override
@@ -461,7 +493,7 @@ public class MainActivity extends AppCompatActivity implements OnMenuItemClickLi
         if (position == 1) {
             mDAO.updateUserLogin(mDAO.queryLoginUsername(), false);
             mDAO.updateLogin(false);
-            Intent intent = new Intent(MainActivity.this, FirstUseActivity.class);
+            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
             SharedPreferences.Editor editor = getSharedPreferences("exit", MODE_PRIVATE).edit();
             editor.putString("exitValue", "exit").commit();
             startActivity(intent);
@@ -478,16 +510,16 @@ public class MainActivity extends AppCompatActivity implements OnMenuItemClickLi
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.main, menu);
+        //inflater.inflate(R.menu.main, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.context_menu) {
-            mMenuDialogFragment.show(fragmentManager, "ContextMenuDialogFragment");
-
-        }
+//        if (item.getItemId() == R.id.context_menu) {
+//            mMenuDialogFragment.show(fragmentManager, "ContextMenuDialogFragment");
+//
+//        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -513,16 +545,56 @@ public class MainActivity extends AppCompatActivity implements OnMenuItemClickLi
 
 
     /**
+     * 打开抽屉
+     */
+    public void getNavigation() {
+        //Log.i(TAG, "getNavigation: start");
+        View view = mNavView.getHeaderView(0);//获取头View
+        //navigationView.inflateHeaderView(R.layout.nav_header_main);//加载头布局
+        TextView username1 = (TextView) view.findViewById(R.id.username_main_navigation_list);
+        ImageView userIcon = (ImageView) view.findViewById(R.id.userIcon);
+        ImageView exiteLogin = (ImageView) view.findViewById(R.id.exitLogin);
+        //userIcon.setImageResource(R.drawable.a1_2);
+        if (mDAO.queryUserIconPath(username) == null) {
+            userIcon.setImageResource(R.drawable.image);
+        } else {
+            userIcon.setImageBitmap(ImageUtils.readBitMap(getApplicationContext(), mDAO.queryUserIconPath(username)));
+        }
+
+        userIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mDrawerLayout.closeDrawers();
+                mAlertDialog = Utils.shoeDialog(MainActivity.this, username, mDAO);
+                mAlertDialog.show();
+            }
+        });
+
+        //Log.i(TAG, "getNavigation: " + username);
+        username1.setText("hello " + mDAO.queryLoginUsername());
+
+        exiteLogin.setOnClickListener((v -> {
+            mDAO.updateUserLogin(mDAO.queryLoginUsername(), false);
+            mDAO.updateLogin(false);
+            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+            SharedPreferences.Editor editor = getSharedPreferences("exit", MODE_PRIVATE).edit();
+            editor.putString("exitValue", "exit").commit();
+            startActivity(intent);
+            finish();
+        }));
+    }
+
+    /**
      * 退出主界面动画
      */
     public void showExit() {
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Explode explode = new Explode();
-            explode.setDuration(2000);
+            explode.setDuration(1000);
             getWindow().setExitTransition(explode);
 
             Fade fade = new Fade();
-            fade.setDuration(2000);
+            fade.setDuration(1000);
             getWindow().setReturnTransition(fade);
         }
 
@@ -532,13 +604,18 @@ public class MainActivity extends AppCompatActivity implements OnMenuItemClickLi
      * 进入主界面动画
      */
     public void setEnterAnmition() {
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             //Fade fade = new Fade();
             Fade fade = new Fade();
-            fade.setDuration(2000);
+            fade.setDuration(1000);
             getWindow().setEnterTransition(fade);
             getWindow().setReturnTransition(fade);
         }
 
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        return false;
     }
 }

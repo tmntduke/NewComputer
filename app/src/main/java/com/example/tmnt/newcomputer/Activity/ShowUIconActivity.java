@@ -17,6 +17,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 /**
+ * 显示头像
  * Created by tmnt on 2016/6/8.
  */
 public class ShowUIconActivity extends AppCompatActivity {
@@ -39,7 +40,12 @@ public class ShowUIconActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         String p = intent.getStringExtra(UserMessageFragment.PATH);
-        mShowUserIcon.setImageBitmap(ImageUtils.readBitMap(getApplicationContext(), p));
+        if (p != null) {
+            mShowUserIcon.setImageBitmap(ImageUtils.readBitMap(getApplicationContext(), p));
+        } else {
+            mShowUserIcon.setImageResource(R.drawable.image);
+        }
+
 
     }
 }

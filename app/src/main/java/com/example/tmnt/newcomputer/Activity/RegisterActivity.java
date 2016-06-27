@@ -1,24 +1,35 @@
 package com.example.tmnt.newcomputer.Activity;
 
+import android.annotation.TargetApi;
+import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.dd.processbutton.iml.ActionProcessButton;
 import com.example.tmnt.newcomputer.DAO.QuestionDAO;
 import com.example.tmnt.newcomputer.DView.AutoComplete;
+import com.example.tmnt.newcomputer.DView.CircleImageView;
+import com.example.tmnt.newcomputer.InterFace.IMPL.ShowIcon;
+import com.example.tmnt.newcomputer.InterFace.OnClickShowIcon;
+import com.example.tmnt.newcomputer.MainActivity;
 import com.example.tmnt.newcomputer.R;
+import com.example.tmnt.newcomputer.Utils.ImageUtils;
 import com.example.tmnt.newcomputer.Utils.ProgressGenerator;
 import com.example.tmnt.newcomputer.Utils.Utils;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
@@ -28,6 +39,7 @@ import butterknife.ButterKnife;
 import cn.bmob.v3.Bmob;
 
 /**
+ * 注册界面
  * Created by tmnt on 2016/5/7.
  */
 public class RegisterActivity extends AppCompatActivity implements ProgressGenerator.OnCompleteListener {
@@ -41,14 +53,28 @@ public class RegisterActivity extends AppCompatActivity implements ProgressGener
     ActionProcessButton mRegisterBtn;
     @Bind(R.id.register_mail)
     AutoComplete mRegisterMail;
+    @Bind(R.id.register_icon)
+    CircleImageView mRegisterIcon;
+    @Bind(R.id.icon_show)
+    TextView mIconShow;
 
 
     private boolean isOver = false;
 
+    private static final String TAG = "RegisterActivity";
+
+    private String s;
+
     private QuestionDAO mDAO;
 
+    private AlertDialog mAlertDialog;
+
     private boolean isUsername, isPassword;
+    private static String TEMP_IMAGE_PATH = Environment.getExternalStorageDirectory().getPath() + "image/jpg";
     private int x, y;
+
+    private boolean isCamera, isGaerlly;
+    private int i = 1;
 
 
     @Override
@@ -77,24 +103,35 @@ public class RegisterActivity extends AppCompatActivity implements ProgressGener
         ButterKnife.bind(this);
         mDAO = new QuestionDAO(getApplicationContext());
 
-        Bmob.initialize(this, "5b5167d530b5db1c3696b59f02b904bb");
+        Bmob.initialize(this, "5b5167d530b5db1c3696b59f02b904bb");//bmob初始化
 
         mRegisterBtn.setMode(ActionProcessButton.Mode.PROGRESS);
 
 
         //mRegisterBtn.setProgress(100);
 
+        //用户框判断
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
         mRegisterPassword.setOnFocusChangeListener((view, isCheck) -> {
-            String regex = "\\w{4,8}";
+            String regex = "\\w{4,8}";//用户信息验证
+            //当不匹配时显示提示信息
             if (!(mRegisterUsername.getText().toString().matches(regex)) || (mRegisterUsername.getText().toString().isEmpty())) {
                 mRegisterUsername.setError("username illegimate");
             } else if (mDAO.queryUserName(mRegisterUsername.getText().toString())) {
+                //已存在用户名
                 mRegisterUsername.setError("username already have");
 
 //                InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
 //                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                 hideSoftInput();
                 mRegisterPassword.setInputType(InputType.TYPE_DATETIME_VARIATION_NORMAL);//隐藏软键盘
+
+                //显示提示信息 并设置跳转至登陆界面的按钮
                 Snackbar snackbar = Snackbar.make(view, "you have a account you can login", Snackbar.LENGTH_INDEFINITE)
                         .setAction("click here", (v) -> {
                             Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
@@ -111,12 +148,25 @@ public class RegisterActivity extends AppCompatActivity implements ProgressGener
                 snackbar.show();
 
             } else {
-                isUsername = true;
+
+                mRegisterIcon.setVisibility(View.VISIBLE);
+                mIconShow.setVisibility(View.VISIBLE);
+                if ((!isCamera || !isGaerlly) && s == null) {
+                    Utils.showToast(getApplicationContext(), "请先设置头像");
+                    mRegisterPassword.setEnabled(false);
+                    mRegisterPasswordCommit.setEnabled(false);
+                    hideSoftInput();
+                    //mRegisterPassword.setInputType(InputType.TYPE_DATETIME_VARIATION_NORMAL);//隐藏软键盘
+                }
+
             }
         });
 
+        //密码框判断
         mRegisterPasswordCommit.setOnFocusChangeListener((view, isCheck) -> {
-            String regex = "(?=.*\\d)(?=.*[a-zA-Z]).{8,10}";
+            String regex = "(?=.*\\d)(?=.*[a-zA-Z]).{8,10}";//密码验证
+
+            //当密码不匹配时
             if (!(mRegisterPassword.getText().toString().matches(regex)) || (mRegisterPassword.getText().toString().isEmpty())) {
                 mRegisterPassword.setError("password illegimate");
 
@@ -129,8 +179,10 @@ public class RegisterActivity extends AppCompatActivity implements ProgressGener
 //        int a = random.nextInt(100);
         final ProgressGenerator progressGenerator = new ProgressGenerator(this);
 
+        //注册按钮
         mRegisterBtn.setOnClickListener((v) ->
                 {
+                    //用户名和密码不符合要求
                     if (!(mRegisterPasswordCommit.getText().toString().equals(mRegisterPassword.getText().toString()))
                             || (mRegisterPasswordCommit.getText().toString().isEmpty()) || mRegisterMail.getText().toString().isEmpty()) {
                         mRegisterPasswordCommit.setError("password not identical");
@@ -144,20 +196,130 @@ public class RegisterActivity extends AppCompatActivity implements ProgressGener
                 }
         );
 
+
+        mRegisterIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mAlertDialog = Utils.shoeDialog(RegisterActivity.this, mRegisterUsername.getText().toString(), mDAO);
+                mAlertDialog.show();
+            }
+        });
+
+        ShowIcon.setOnClickShowIcon(new OnClickShowIcon() {
+            @Override
+            public void toGallery() {
+                ImageUtils.toGallery(MainActivity.RESULT_IMAGE, RegisterActivity.this);
+            }
+
+            @Override
+            public void toCamera() {
+                ImageUtils.toCamera(RegisterActivity.this, TEMP_IMAGE_PATH, MainActivity.RESULT_CAMERA);
+            }
+        });
     }
 
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        if (isGaerlly || isCamera) {
+            isUsername = true;
+            mRegisterPassword.setEnabled(true);
+            mRegisterPasswordCommit.setEnabled(true);
+            showSoftInput(mRegisterPassword);
+            //mRegisterPassword.setInputType(InputType.TYPE_CLASS_DATETIME | InputType.TYPE_DATETIME_VARIATION_TIME);
+            if (isCamera) {
+                mRegisterIcon.setImageBitmap(ImageUtils.readBitMap(getApplicationContext(), s));
+            } else {
+                mRegisterIcon.setImageBitmap(ImageUtils.readBitMap(getApplicationContext(), TEMP_IMAGE_PATH));
+            }
+
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (mAlertDialog != null) {
+            mAlertDialog.dismiss();
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.i(TAG, "onActivityResult: start");
+        if (resultCode == RESULT_OK) {
+            if (requestCode == MainActivity.RESULT_IMAGE && data != null) {
+                isCamera = true;
+                s = ImageUtils.getImageFromGallery(RegisterActivity.this, data);
+
+//                if (!mDAO.queryUserIcon(mRegisterUsername.getText().toString())) {
+//                    mDAO.addUserIcon(mRegisterUsername.getText().toString(), s);
+//                } else {
+//                    mDAO.updateUserIcon(mRegisterUsername.getText().toString(), s);
+//                }
+//                mDAO.updateUserIconFlag(mRegisterUsername.getText().toString(), true);
+            } else if (requestCode == MainActivity.RESULT_CAMERA) {
+                isGaerlly = true;
+//                mDAO.addUserIcon(mRegisterUsername.getText().toString(), TEMP_IMAGE_PATH);
+                //mDAO.updateUserIconFlag(mRegisterUsername.getText().toString(), true);
+
+
+            }
+        }
+    }
 
     @Override
     public void onComplete() {
+        //验证完成后进入登陆
         Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
         mDAO.addUser(mRegisterUsername.getText().toString(), mRegisterPassword.getText().toString());
-        intent.putExtra("username", mRegisterUsername.getText().toString());
+        if (isCamera) {
+            mDAO.addUserIcon(mRegisterUsername.getText().toString(), s);
+        } else {
+            mDAO.addUserIcon(mRegisterUsername.getText().toString(), TEMP_IMAGE_PATH);
+        }
+        mDAO.updateUserIconFlag(mRegisterUsername.getText().toString(), true);
+        //intent.putExtra("username", mRegisterUsername.getText().toString());
         intent.putExtra("username", mRegisterUsername.getText().toString());
         intent.putExtra("password", mRegisterPasswordCommit.getText().toString());
         startActivity(intent);
         finish();
+
+
     }
 
+
+    /**
+     * 显示软键盘
+     *
+     * @param edit
+     */
+    public void showSoftInput(EditText edit) {
+//        edit.setFocusable(true);
+//        edit.setFocusableInTouchMode(true);
+//        edit.requestFocus();
+        View view = getWindow().peekDecorView();
+        InputMethodManager inputManager =
+                (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+        inputManager.showSoftInputFromInputMethod(view.getWindowToken(), 0);
+    }
+
+
+    /**
+     * 隐藏软键盘
+     */
     public void hideSoftInput() {
         View view = getWindow().peekDecorView();
         if (view != null) {

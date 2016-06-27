@@ -1,9 +1,11 @@
 package com.example.tmnt.newcomputer.Activity;
 
+
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
@@ -19,6 +21,9 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.bmob.v3.Bmob;
 
+/**
+ * 教师选择添加方式界面
+ */
 public class AdminActivity extends AppCompatActivity {
 
     @Bind(R.id.singleUpload)
@@ -30,6 +35,8 @@ public class AdminActivity extends AppCompatActivity {
     FloatingActionButton mFillMain;
     @Bind(R.id.mSortAdd)
     FloatingActionMenu mMSortAdd;
+    @Bind(R.id.fileUpload)
+    Button mFileUpload;
 
     private Snackbar snackbar1;
     public static final String ADD = "add";
@@ -38,6 +45,7 @@ public class AdminActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        //适配4.4系统
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setStatusBarColor(getResources().getColor(R.color.colorPrimary));
         }
@@ -54,7 +62,12 @@ public class AdminActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         //mMSortAdd.showMenuButton(true);
 
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setTitle("教师端");
+        //进入添加题目界面
         Intent intent = new Intent(AdminActivity.this, UploadActivity.class);
+
+        //浮动按钮--填空添加
         mFillMain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -63,6 +76,7 @@ public class AdminActivity extends AppCompatActivity {
             }
         });
 
+        //浮动按钮--选择添加
         mSelectMain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -76,6 +90,8 @@ public class AdminActivity extends AppCompatActivity {
 
     @OnClick({R.id.singleUpload})
     public void onClick(View view) {
+
+        //当连接wifi时进入添加界面
         if (Utils.isWifiConnected(getApplicationContext())) {
             Intent intent = new Intent(AdminActivity.this, UploadActivity.class);
             switch (view.getId()) {
@@ -85,7 +101,9 @@ public class AdminActivity extends AppCompatActivity {
 
             }
         } else {
-            snackbar1 = Snackbar.make(view, "you are not open the network,click turn to setting", Snackbar.LENGTH_INDEFINITE).setAction("click", new View.OnClickListener() {
+            //没有连接时 提示 并进入设置界面
+            snackbar1 = Snackbar.make(view, "you are not open the network,click turn to setting"
+                    , Snackbar.LENGTH_INDEFINITE).setAction("click", new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Utils.openSetting(getApplicationContext());
@@ -103,7 +121,7 @@ public class AdminActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         if (snackbar1 != null) {
-            snackbar1.dismiss();
+            snackbar1.dismiss();//将snackbar取消
         }
     }
 }

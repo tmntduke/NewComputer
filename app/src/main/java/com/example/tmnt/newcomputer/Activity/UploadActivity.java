@@ -16,6 +16,7 @@ import com.readystatesoftware.systembartint.SystemBarTintManager;
 import cn.bmob.v3.Bmob;
 
 /**
+ * 题目添加
  * Created by tmnt on 2016/6/17.
  */
 public class UploadActivity extends AppCompatActivity {
@@ -40,7 +41,7 @@ public class UploadActivity extends AppCompatActivity {
         FragmentManager manager = getSupportFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
 
-
+        //不同类别题目
         if (flag == 001) {
             transaction.replace(R.id.upload_contain, SingleUploadFragment.getInstance(flag)).commit();
         } else if (flag == 002) {

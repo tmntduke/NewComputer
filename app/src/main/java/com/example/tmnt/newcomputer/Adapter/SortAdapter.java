@@ -15,6 +15,7 @@ import com.example.tmnt.newcomputer.R;
 import java.util.List;
 
 /**
+ * 分类信息
  * Created by tmnt on 2016/6/10.
  */
 public class SortAdapter extends BaseAdapter {
@@ -62,6 +63,7 @@ public class SortAdapter extends BaseAdapter {
         viewHolder.mCircleImageView.setImageResource(mList.get(position));
         viewHolder.mTextView.setText(mStringList.get(position));
 
+        //不同item 点击后的背景不同
         if (position == 0) {
             viewHolder.mLinearLayout.setBackgroundResource(R.drawable.selecter_android);
         } else if (position == 1) {

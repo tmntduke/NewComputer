@@ -16,6 +16,7 @@ import com.example.tmnt.newcomputer.Model.Questions;
 import com.example.tmnt.newcomputer.R;
 
 /**
+ * 用户详细信息
  * Created by tmnt on 2016/6/9.
  */
 public class ShowUseActivity extends AppCompatActivity {
@@ -36,6 +37,7 @@ public class ShowUseActivity extends AppCompatActivity {
 
         mDAO = new QuestionDAO(getApplicationContext());
 
+        //加载fragment
         FragmentManager manager = getSupportFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
         transaction.add(R.id.show_id, UserMessageFragment.newInstance(mDAO.queryWrongQuestion(), username, mDAO.queryUserIconPath(username)));

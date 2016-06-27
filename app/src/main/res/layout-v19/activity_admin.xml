@@ -25,6 +25,19 @@
         android:textStyle="bold"
     />
 
+    <Button
+        android:id="@+id/fileUpload"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/singleUpload"
+        android:layout_margin="25dp"
+        android:background="@drawable/btn_shap"
+        android:gravity="center"
+        android:text="文件添加"
+        android:textColor="#7d8278"
+        android:textSize="24sp"
+        android:textStyle="bold"
+    />
 
     <com.github.clans.fab.FloatingActionMenu
         android:id="@+id/mSortAdd"

@@ -14,6 +14,7 @@ import com.example.tmnt.newcomputer.R;
 import java.text.DecimalFormat;
 
 /**
+ * 进度条
  * Created by tmnt on 2016/5/21.
  */
 public class PlanBar extends View {

@@ -6,6 +6,9 @@ import com.dd.processbutton.ProcessButton;
 
 import java.util.Random;
 
+/**
+ * 加载进度
+ */
 public class ProgressGenerator {
 
     public interface OnCompleteListener {

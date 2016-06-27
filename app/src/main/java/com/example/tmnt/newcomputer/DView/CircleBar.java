@@ -14,6 +14,9 @@ import android.view.animation.Transformation;
 
 import java.text.DecimalFormat;
 
+/**
+ * 圆形图片控件
+ */
 public class CircleBar extends View {
 
     private RectF mColorWheelRectangle = new RectF();//定义一个矩形,包含矩形的四个单精度浮点坐标

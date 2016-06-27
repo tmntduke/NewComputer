@@ -1,9 +1,8 @@
 package com.example.tmnt.newcomputer.Fragment;
 
 import android.app.ActivityOptions;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -12,18 +11,20 @@ import android.support.v7.widget.RecyclerView;
 import android.transition.Explode;
 import android.transition.Fade;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.widget.Toast;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 
+import com.bigkoo.convenientbanner.ConvenientBanner;
+import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.example.tmnt.newcomputer.Activity.ExamActivity;
 import com.example.tmnt.newcomputer.Activity.TitleSlideActivity;
 import com.example.tmnt.newcomputer.Adapter.HomeAdapter;
 import com.example.tmnt.newcomputer.DAO.QuestionDAO;
 import com.example.tmnt.newcomputer.R;
 import com.example.tmnt.newcomputer.UIModel.UIQuestionData;
-import com.example.tmnt.newcomputer.Utils.Utils;
 import com.example.tmnt.newcomputer.ViewHolder.MainViewHolder;
 
 import java.util.ArrayList;
@@ -39,15 +40,24 @@ import butterknife.ButterKnife;
 public class HomeFragment extends Fragment {
     @Bind(R.id.homeList)
     RecyclerView mHomeList;
+//    @Bind(R.id.convenientBanner)
+//    ConvenientBanner mConvenientBanner;
 
     private QuestionDAO mDAO;
     private int count;
     public static final String COUNT = "count";
     public static final String ISLOAD = "isLoad";
 
+    public static final String SRCOLL = "SRCOLL";
     public static final String FLAG = "flag";
+    private HomeAdapter adapter;
 
+    private static final String TAG = "HomeFragment";
+
+    private int index;
     private boolean load;
+
+    private float scroll;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -55,6 +65,7 @@ public class HomeFragment extends Fragment {
         setEnterAnmition();
         mDAO = new QuestionDAO(getActivity());
         load = getArguments().getBoolean(ISLOAD);
+
     }
 
     @Nullable
@@ -64,9 +75,18 @@ public class HomeFragment extends Fragment {
         View view = inflater.inflate(R.layout.home_fragment_lay, container, false);
         ButterKnife.bind(this, view);
         mHomeList.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext()));
-        HomeAdapter adapter = new HomeAdapter(getQuestionData(), showConvenientBanner(), getActivity());
+        adapter = new HomeAdapter(getQuestionData(), showConvenientBanner(), getActivity());
         adapter.notifyDataSetChanged();
         mHomeList.setAdapter(adapter);
+
+//        mConvenientBanner.setPages(new CBViewHolderCreator() {
+//            @Override
+//            public Object createHolder() {
+//                return new MainViewHolder();
+//            }
+//        }, showConvenientBanner())
+//                .setPageIndicator(new int[]{R.drawable.ic_page_indicator, R.drawable.ic_page_indicator_focused})
+//                .setPageIndicatorAlign(ConvenientBanner.PageIndicatorAlign.ALIGN_PARENT_RIGHT);
 
         adapter.showDragWhenLoad(load);
         adapter.setOnItemCardClickListener(new HomeAdapter.OnItemCardClickListener() {
@@ -98,6 +118,16 @@ public class HomeFragment extends Fragment {
             }
         });
 
+
+        mHomeList.setOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+            }
+        });
+
+
         MainViewHolder.setOnClickImageListener(new MainViewHolder.OnClickImageListener() {
             @Override
             public void itemClick(View v, int position) {
@@ -115,7 +145,7 @@ public class HomeFragment extends Fragment {
                 }
                 String transitionName = getString(R.string.share);
                 ActivityOptions transitionActivityOptions = null;
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     transitionActivityOptions = ActivityOptions.makeSceneTransitionAnimation(getActivity());
                     startActivity(intent, transitionActivityOptions.toBundle());
 
@@ -130,6 +160,7 @@ public class HomeFragment extends Fragment {
         return view;
     }
 
+
     public static HomeFragment getIntance(boolean isLoad) {
         HomeFragment fragment = new HomeFragment();
         Bundle bundle = new Bundle();
@@ -137,6 +168,27 @@ public class HomeFragment extends Fragment {
         fragment.setArguments(bundle);
         return fragment;
     }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        //Log.i(TAG, "onResume: " + adapter);
+        //adapter.setSrollo(1500);
+//        Log.i(TAG, "onResume: "+ HomeListViewHolder.convenientBanner);
+//        HomeListViewHolder.convenientBanner.startTurning(1500);
+
+        //mConvenientBanner.startTurning(1500);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        // mConvenientBanner.stopTurning();
+        // HomeListViewHolder.convenientBanner.stopTurning();
+
+    }
+
 
     @Override
     public void onDestroyView() {
@@ -162,14 +214,14 @@ public class HomeFragment extends Fragment {
     }
 
     public void setEnterAnmition() {
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             //Fade fade = new Fade();
             Explode explode = new Explode();
-            explode.setDuration(2000);
+            explode.setDuration(1500);
             getActivity().getWindow().setEnterTransition(explode);
 
             Fade fade = new Fade();
-            fade.setDuration(2000);
+            fade.setDuration(1500);
             getActivity().getWindow().setReturnTransition(fade);
         }
 

@@ -41,10 +41,23 @@ public class Utils {
     private static final String TAG = "Utils";
 
 
+    /**
+     * 显示Toast
+     *
+     * @param context
+     * @param title
+     */
     public static void showToast(Context context, String title) {
-        Toast.makeText(context, title, Toast.LENGTH_SHORT).show();
+        Toast.makeText(context, title, Toast.LENGTH_LONG).show();
     }
 
+    /**
+     * 创建ViewPager的适配器
+     * @param manager
+     * @param list
+     * @param flag
+     * @return
+     */
     public static FragmentStatePagerAdapter getFragmentAdater(FragmentManager manager, ArrayList<Questions> list, int flag) {
         FragmentStatePagerAdapter adapter = new FragmentStatePagerAdapter(manager) {
             @Override
@@ -125,6 +138,11 @@ public class Utils {
     }
 
 
+    /**
+     * 判断网络状态
+     * @param context
+     * @return
+     */
     public static int getNetWorkStatus(Context context) {
         int netWorkType = Constants.NETWORK_CLASS_UNKNOWN;
         ConnectivityManager connectivityManager = (ConnectivityManager) context
@@ -160,6 +178,11 @@ public class Utils {
         return mMobileNetworkInfo.isAvailable();
     }
 
+    /**
+     * 适配4.4系统
+     * @param activity
+     * @param b
+     */
     public static void setTranslucentStatus(Activity activity, boolean b) {
         Window win = activity.getWindow();
         WindowManager.LayoutParams winParams = win.getAttributes();
@@ -173,6 +196,13 @@ public class Utils {
     }
 
 
+    /**
+     * 显示Dialog
+     * @param context
+     * @param s
+     * @param dao
+     * @return
+     */
     public static AlertDialog shoeDialog(Context context, String s, QuestionDAO dao) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         View view = LayoutInflater.from(context).inflate(R.layout.dialog_icon_lay, null, false);
@@ -183,10 +213,12 @@ public class Utils {
         Button gallery = (Button) view.findViewById(R.id.gallery);
         t.setText(s);
 
+        //设置头像
         if (dao.queryUserIcon(s)) {
             imageView.setImageBitmap(ImageUtils.readBitMap(context, dao.queryUserIconPath(s)));
         }
 
+        //点击拍照
         camera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -196,6 +228,7 @@ public class Utils {
             }
         });
 
+        //点击相册
         gallery.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

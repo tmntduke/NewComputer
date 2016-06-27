@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 /**
+ * item间距
  * Created by tmnt on 2016/3/23.
  */
 public class ScorllDecoration extends RecyclerView.ItemDecoration {

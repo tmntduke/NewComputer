@@ -17,6 +17,7 @@ import com.example.tmnt.newcomputer.Utils.Utils;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 
 /**
+ * 错误列表
  * Created by tmnt on 2016/6/12.
  */
 public class WrongItemActivity extends AppCompatActivity {
@@ -40,11 +41,13 @@ public class WrongItemActivity extends AppCompatActivity {
 
         setContentView(R.layout.wrong_question_view_lay);
 
+
         mDAO = new QuestionDAO(getApplicationContext());
         Intent intent = getIntent();
         String question = intent.getStringExtra(WrongListActivity.QUESTION);
 
         mQuestions = mDAO.queryWrongByQuestion(question);
+
 
         FragmentManager manager = getSupportFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();

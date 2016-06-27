@@ -7,12 +7,14 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 
 import com.example.tmnt.newcomputer.Activity.FirstUseActivity;
+import com.example.tmnt.newcomputer.Activity.LoginActivity;
 import com.example.tmnt.newcomputer.Fragment.FirstSlideFragment;
 import com.example.tmnt.newcomputer.R;
 import com.github.paolorotolo.appintro.AppIntro;
 import com.github.paolorotolo.appintro.AppIntroFragment;
 
-/**
+/**启动界面
+ *
  * Created by tmnt on 2016/5/16.
  */
 public class FristSlideAppinfo extends AppIntro {
@@ -21,6 +23,7 @@ public class FristSlideAppinfo extends AppIntro {
     @Override
     public void init(@Nullable Bundle savedInstanceState) {
 
+        //添加页面
         addSlide(AppIntroFragment.newInstance("slide1", "this is test ont ", R.drawable.register, getResources().getColor(R.color.colorPrimary)));
         addSlide(AppIntroFragment.newInstance("slide2", "this is test two", R.drawable.login, getResources().getColor(R.color.holo_green_light)));
         addSlide(FirstSlideFragment.newInstance(R.layout.slide_lay));
@@ -41,8 +44,9 @@ public class FristSlideAppinfo extends AppIntro {
         askForPermissions(new String[]{Manifest.permission.CAMERA}, 2);
     }
 
+    //跳转至登陆界面
     private void loadMainActivity() {
-        Intent intent = new Intent(this, FirstUseActivity.class);
+        Intent intent = new Intent(this, LoginActivity.class);
         SharedPreferences send = getSharedPreferences("slideApp", MODE_PRIVATE);
         SharedPreferences.Editor editor = send.edit();
         editor.putString("slide", SLIDE);

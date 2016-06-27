@@ -18,6 +18,7 @@ import com.example.tmnt.newcomputer.ViewHolder.UserMsgViewHolder;
 import java.util.List;
 
 /**
+ * 用户信息
  * Created by tmnt on 2016/6/9.
  */
 public class UserMsgItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -37,6 +38,7 @@ public class UserMsgItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     private static final String TAG = "UserMsgItemAdapter";
 
+    //将信息传入
     public UserMsgItemAdapter(List<Integer> icons, List<String> title, Context cotext, String path, String name, String sub) {
         this.icons = icons;
         this.title = title;
@@ -49,10 +51,12 @@ public class UserMsgItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (viewType == IS_HEADER) {
+            //header
             View view = LayoutInflater.from(cotext).inflate(R.layout.user_meg_list_header, parent, false);
             iCircleImageView = (CircleImageView) view.findViewById(R.id.user_msg_icon);
             return UserMsgViewHolder.getInstance(view, viewType);
         } else {
+            //item
             View view = LayoutInflater.from(cotext).inflate(R.layout.user_msg_list_item, parent, false);
             cardView = (LinearLayout) view.findViewById(R.id.wrong_list_id);
             return UserMsgViewHolder.getInstance(view, viewType);
@@ -87,6 +91,7 @@ public class UserMsgItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     }
 
+    //进入详细界面接口
     public interface OnclickUserMsgListener {
         void onClickMsgItem(View v, int position);
 

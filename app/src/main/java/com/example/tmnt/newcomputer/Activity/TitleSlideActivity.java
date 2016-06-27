@@ -17,6 +17,7 @@ import com.example.tmnt.newcomputer.Utils.Utils;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 
 /**
+ * 标题栏
  * Created by tmnt on 2016/6/7.
  */
 public class TitleSlideActivity extends AppCompatActivity {
@@ -32,6 +33,8 @@ public class TitleSlideActivity extends AppCompatActivity {
             Utils.setTranslucentStatus(TitleSlideActivity.this, true);
         }
         SystemBarTintManager tintManager = new SystemBarTintManager(this);
+
+        //点击不同页面 状态栏颜色不同
         tintManager.setStatusBarTintEnabled(true);
         if (intent.getIntExtra("position", 0) == 0) {
             tintManager.setStatusBarTintResource(R.color.android);
@@ -65,6 +68,7 @@ public class TitleSlideActivity extends AppCompatActivity {
 
     }
 
+    //进场动画
     public void setEnterAnmition() {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
             //Fade fade = new Fade();

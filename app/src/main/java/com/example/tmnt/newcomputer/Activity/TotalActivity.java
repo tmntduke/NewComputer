@@ -18,6 +18,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 /**
+ * 统计界面
  * Created by tmnt on 2016/6/10.
  */
 public class TotalActivity extends AppCompatActivity {
@@ -52,6 +53,7 @@ public class TotalActivity extends AppCompatActivity {
         total = mDAO.queryModelCount() * 20;
 
 
+        //显示统计信息
         if (wrong != 0) {
             mTag.setText(String.valueOf(wrong));
             mTotal.setText(String.valueOf(total));

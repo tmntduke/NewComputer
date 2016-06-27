@@ -27,6 +27,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 /**
+ * about界面
  * Created by tmnt on 2016/6/14.
  */
 public class AboutActivity extends AppCompatActivity {
@@ -43,6 +44,8 @@ public class AboutActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //适配4.4 沉浸状态栏
         if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) {
             Utils.setTranslucentStatus(AboutActivity.this, true);
             requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -52,21 +55,23 @@ public class AboutActivity extends AppCompatActivity {
         }
         SystemBarTintManager tintManager = new SystemBarTintManager(this);
         tintManager.setStatusBarTintEnabled(true);
-        tintManager.setStatusBarTintResource(android.R.color.transparent);
+        tintManager.setStatusBarTintResource(android.R.color.transparent);//状态栏颜色
         setContentView(R.layout.about_lay);
         ButterKnife.bind(this);
 
 
         setupEnterAnimation(); // 入场动画
         //animationShow();
-        setupExitAnimation();
+        setupExitAnimation();//退场的动画
 
+        //返回按键
         mOtherIvClose.setOnClickListener((v) ->
                 onBackPressed()
         );
     }
 
 
+    //入场动画
     private void setupEnterAnimation() {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -80,7 +85,7 @@ public class AboutActivity extends AppCompatActivity {
 
                 @Override
                 public void onTransitionEnd(Transition transition) {
-
+                    //动画结束后显示信息
                     transition.removeListener(this);
                     animationShow();
 
@@ -107,6 +112,7 @@ public class AboutActivity extends AppCompatActivity {
 
     }
 
+    //退场动画
     private void setupExitAnimation() {
         Fade fade = new Fade();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -116,6 +122,7 @@ public class AboutActivity extends AppCompatActivity {
     }
 
 
+    //fab按钮的爆炸效果
     private void animationShow() {
         GuiUtils.animateRevealShow(AboutActivity.this, mRelative, mOtherFabCircle.getWidth() / 2, R.color.colorOtherPrimaryDark, new GuiUtils.OnRevealAnimationListener() {
             @Override
@@ -134,6 +141,7 @@ public class AboutActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
 
+        //返回上级时动画
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             GuiUtils.animateRevealHide(AboutActivity.this, mRelative, mOtherFabCircle.getWidth() / 2, R.color.colorOtherPrimaryDark, true, new GuiUtils.OnRevealAnimationListener() {
                 @Override
@@ -155,6 +163,7 @@ public class AboutActivity extends AppCompatActivity {
         super.onBackPressed();
     }
 
+    //过渡动画完成后将信息显示
     private void initViews() {
         new Handler(Looper.getMainLooper()).post(() -> {
             Animation animation = AnimationUtils.loadAnimation(this, android.R.anim.fade_in);

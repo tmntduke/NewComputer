@@ -21,14 +21,29 @@
             android:fitsSystemWindows="true"
             app:popupTheme="@style/AppTheme.PopupOverlay">
 
-            <com.example.tmnt.newcomputer.DView.CircleImageView
-                android:id="@+id/toolbarIcon"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:padding="17dp"
-                android:src="@drawable/image"
-                tools:src="@drawable/image"
-            />
+            <RelativeLayout android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                <com.example.tmnt.newcomputer.DView.CircleImageView
+                    android:id="@+id/toolbarIcon"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:padding="17dp"
+                    android:src="@drawable/image"
+                    tools:src="@drawable/image"
+                />
+
+                <TextView
+                    android:id="@+id/home_username"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:gravity="center"
+                    android:textColor="#ffffff"
+                    android:textSize="22sp"
+                    tools:text="fffffff"/>
+            </RelativeLayout>
         </android.support.v7.widget.Toolbar>
 
     </android.support.design.widget.AppBarLayout>

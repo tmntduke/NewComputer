@@ -1,6 +1,7 @@
 package com.example.tmnt.newcomputer.UIModel;
 
 /**
+ * home界面item布局
  * Created by tmnt on 2016/6/6.
  */
 public class UIQuestionData {

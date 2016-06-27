@@ -49,6 +49,9 @@ public class DBHelper extends SQLiteOpenHelper {
 
     }
 
+    /**
+     * 在sd卡创建数据库
+     */
     public void OpenDataBase() {
         if (backEnvironment()) {// 判断sd卡是否挂载
             File file = new File(Finallay.FILE_PAPER_PATH);// 建立sd卡路径

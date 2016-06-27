@@ -27,6 +27,7 @@ import java.util.List;
 import cn.bmob.v3.Bmob;
 
 /**
+ * 分类界面
  * Created by tmnt on 2016/6/13.
  */
 public class SortActivity extends AppCompatActivity {
@@ -47,7 +48,7 @@ public class SortActivity extends AppCompatActivity {
         tintManager.setStatusBarTintEnabled(true);
         tintManager.setStatusBarTintResource(android.R.color.transparent);
 
-        Bmob.initialize(this, "5b5167d530b5db1c3696b59f02b904bb");
+        Bmob.initialize(this, "5b5167d530b5db1c3696b59f02b904bb");//bmob初始化
         mDAO = new QuestionDAO(getApplicationContext());
 
         mViewPager = new ViewPager(this);
@@ -56,26 +57,30 @@ public class SortActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
 
-
+        //判断点击那个按钮
         switch (intent.getIntExtra("flag1", 0)) {
             case 0:
-                getAnotherAdapter("select", 0);
+                getAnotherAdapter("select", 0);//点击选择
 
                 break;
             case 1:
-                getAnotherAdapter("fillBlank", 1);
+                getAnotherAdapter("fillBlank", 1);//点击填空
                 break;
 
         }
     }
 
+    //从云端获取指定类型题目数据
     public void getAnotherAdapter(String kind, int flag) {
-        BmobUtils.getyAnotherAnswer(getApplicationContext(), kind, flag, "kind");
+        BmobUtils.getyAnotherAnswer(getApplicationContext(), kind, flag, "kind");//指定类型
         FragmentManager manager = getSupportFragmentManager();
 
+        //获取数据
         BmobUtils.setDataResult(new BmobUtils.DataResult() {
             @Override
             public void getQuestionData(List<AnotherAnswer> l) {
+
+                //创建ViewPager
                 FragmentStatePagerAdapter adapter = new FragmentStatePagerAdapter(manager) {
                     @Override
                     public Fragment getItem(int i) {

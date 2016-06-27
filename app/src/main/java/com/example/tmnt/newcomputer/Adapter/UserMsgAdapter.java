@@ -17,6 +17,7 @@ import com.example.tmnt.newcomputer.R;
 import java.util.List;
 
 /**
+ * 用户详细信息
  * Created by tmnt on 2016/6/8.
  */
 public class UserMsgAdapter extends BaseAdapter {
@@ -28,6 +29,7 @@ public class UserMsgAdapter extends BaseAdapter {
         mList = list;
     }
 
+    //删除错误的题目
     public void deleteData(int position) {
         mList.remove(position);
         notifyDataSetChanged();
@@ -63,6 +65,7 @@ public class UserMsgAdapter extends BaseAdapter {
         View view = null;
         ViewHolder viewHolder;
         if (mList.size() != 0) {
+            //当传入的数据有值时
             if (convertView == null) {
                 view = LayoutInflater.from(mContext).inflate(R.layout.wrong_list_lay, parent, false);
                 viewHolder = new ViewHolder();
@@ -90,6 +93,7 @@ public class UserMsgAdapter extends BaseAdapter {
             SharedPreferences.Editor editor = mContext.getSharedPreferences("isOpen", Context.MODE_PRIVATE).edit();
             editor.putBoolean("isOpen", viewHolder.mSlideView.isOpen()).commit();
 
+            //点击进入详细题目
             viewHolder.content.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -110,8 +114,9 @@ public class UserMsgAdapter extends BaseAdapter {
         this.mOnClickSlideItemListener = mOnClickSlideItemListener;
     }
 
+    //删除错误信息接口
     public interface OnClickSlideItemListener {
-        void clickDelete(View view, String question, int position);
+        void clickDelete(View view, String question, int position);//删除错误
 
         void recover(int position);
 

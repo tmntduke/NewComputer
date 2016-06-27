@@ -21,6 +21,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 /**
+ * 错误列表
  * Created by tmnt on 2016/6/10.
  */
 public class WrongListActivity extends AppCompatActivity {
@@ -47,8 +48,12 @@ public class WrongListActivity extends AppCompatActivity {
         SystemBarTintManager tintManager = new SystemBarTintManager(this);
         tintManager.setStatusBarTintEnabled(true);
         tintManager.setStatusBarTintResource(R.color.colorPrimary);
+
         mDAO = new QuestionDAO(getApplicationContext());
+
         int wrong = mDAO.queryWrongQuestion().size();
+
+        //当有错误题目
         if (wrong != 0) {
             setContentView(R.layout.wrong_contain);
             ButterKnife.bind(this);
@@ -59,7 +64,7 @@ public class WrongListActivity extends AppCompatActivity {
             adapter.notifyDataSetChanged();
             mWrongContain.setAdapter(adapter);
 
-
+            //删除错误题目
             adapter.setOnClickSlideItemListener(new UserMsgAdapter.OnClickSlideItemListener() {
                 @Override
                 public void clickDelete(View view, String question, int position) {
@@ -74,6 +79,7 @@ public class WrongListActivity extends AppCompatActivity {
 
                 @Override
                 public void onClickQurstionItem(View v, String question, boolean isOpen) {
+                    //当删除按钮开启时 不能点击
                     if (!isOpen) {
                         Intent intent = new Intent(WrongListActivity.this, WrongItemActivity.class);
                         intent.putExtra(QUESTION, question);

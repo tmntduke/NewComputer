@@ -16,8 +16,7 @@ import android.view.animation.OvershootInterpolator;
 import com.example.tmnt.newcomputer.R;
 
 /**
- * Created by Joe on 2016/4/3.
- * Email lovejjfg@gmail.com
+ * 脱宅红点控件
  */
 public class DragBubbleView extends View {
 
