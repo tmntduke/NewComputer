@@ -84,7 +84,7 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     @Override
     public void onViewAttachedToWindow(RecyclerView.ViewHolder holder) {
         super.onViewAttachedToWindow(holder);
-        Log.i(TAG, "onViewAttachedToWindow: start");
+        //Log.i(TAG, "onViewAttachedToWindow: start");
         mConvenientBanner.stopTurning();
     }
 

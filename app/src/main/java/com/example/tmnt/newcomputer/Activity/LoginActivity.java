@@ -53,6 +53,8 @@ public class LoginActivity extends AppCompatActivity implements ProgressGenerato
 
     private boolean isClick;
     private boolean isExit;
+    public static final String FIRSTLOGIN = "fristlogin";
+    public static final String NOTFIRST = "notfirst";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -178,6 +180,7 @@ public class LoginActivity extends AppCompatActivity implements ProgressGenerato
         } else if (mDAO.isFirstUser() && mDAO.isLogin()) {
             //当已经登陆 直接进入主界面
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            intent.putExtra(NOTFIRST, 1101);
             startActivity(intent);
             finish();
         }
@@ -198,6 +201,7 @@ public class LoginActivity extends AppCompatActivity implements ProgressGenerato
             Intent turnMain = new Intent(LoginActivity.this, MainActivity.class);
             mDAO.updateLogin(true);
             mDAO.updateUserLogin(mEditUsername.getText().toString(), true);
+            turnMain.putExtra(FIRSTLOGIN, 1100);
             turnMain.putExtra("user", mEditUsername.getText().toString());
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(LoginActivity.this);
