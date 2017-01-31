@@ -53,6 +53,7 @@ public class Utils {
 
     /**
      * 创建ViewPager的适配器
+     *
      * @param manager
      * @param list
      * @param flag
@@ -140,6 +141,7 @@ public class Utils {
 
     /**
      * 判断网络状态
+     *
      * @param context
      * @return
      */
@@ -162,10 +164,23 @@ public class Utils {
     /**
      * 打开网络设置界面
      */
-    public static void openSetting(Context context) {
+    public static void openNetworkSetting(Context context) {
 
-        Intent intent = new Intent(Settings.ACTION_WIFI_SETTINGS);
+        Intent intent = new Intent(Settings.ACTION_SETTINGS);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
+    }
+
+    /**
+     * 打开文件管理器
+     *
+     * @param context
+     */
+    public static void openContent(Context context) {
+        Intent i = new Intent(Intent.ACTION_GET_CONTENT);
+        i.setType("file/*");
+        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(i);
     }
 
     public static boolean isMobileConnected(Context context) {
@@ -180,6 +195,7 @@ public class Utils {
 
     /**
      * 适配4.4系统
+     *
      * @param activity
      * @param b
      */
@@ -198,6 +214,7 @@ public class Utils {
 
     /**
      * 显示Dialog
+     *
      * @param context
      * @param s
      * @param dao

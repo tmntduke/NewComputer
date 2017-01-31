@@ -78,6 +78,7 @@ public class HomeFragment extends Fragment {
         adapter = new HomeAdapter(getQuestionData(), showConvenientBanner(), getActivity());
         adapter.notifyDataSetChanged();
         mHomeList.setAdapter(adapter);
+        
 
 //        mConvenientBanner.setPages(new CBViewHolderCreator() {
 //            @Override

@@ -53,10 +53,6 @@ public class RegisterActivity extends AppCompatActivity implements ProgressGener
     ActionProcessButton mRegisterBtn;
     @Bind(R.id.register_mail)
     AutoComplete mRegisterMail;
-    @Bind(R.id.register_icon)
-    CircleImageView mRegisterIcon;
-    @Bind(R.id.icon_show)
-    TextView mIconShow;
 
 
     private boolean isOver = false;
@@ -148,18 +144,17 @@ public class RegisterActivity extends AppCompatActivity implements ProgressGener
                 snackbar.show();
 
             } else {
-
-                mRegisterIcon.setVisibility(View.VISIBLE);
-                mIconShow.setVisibility(View.VISIBLE);
-                if ((!isCamera || !isGaerlly) && s == null) {
-                    Utils.showToast(getApplicationContext(), "请先设置头像");
-                    mRegisterPassword.setEnabled(false);
-                    mRegisterPasswordCommit.setEnabled(false);
-                    hideSoftInput();
-                    //mRegisterPassword.setInputType(InputType.TYPE_DATETIME_VARIATION_NORMAL);//隐藏软键盘
-                }
-
+                isUsername = true;
+//                mRegisterIcon.setVisibility(View.VISIBLE);
+//                mIconShow.setVisibility(View.VISIBLE);
+//                if ((!isCamera || !isGaerlly) && s == null) {
+//                    Utils.showToast(getApplicationContext(), "请先设置头像");
+//                    mRegisterPassword.setEnabled(false);
+//                    mRegisterPasswordCommit.setEnabled(false);
+//                    hideSoftInput();
+//                    //mRegisterPassword.setInputType(InputType.TYPE_DATETIME_VARIATION_NORMAL);//隐藏软键盘
             }
+
         });
 
         //密码框判断
@@ -186,7 +181,8 @@ public class RegisterActivity extends AppCompatActivity implements ProgressGener
                     if (!(mRegisterPasswordCommit.getText().toString().equals(mRegisterPassword.getText().toString()))
                             || (mRegisterPasswordCommit.getText().toString().isEmpty()) || mRegisterMail.getText().toString().isEmpty()) {
                         mRegisterPasswordCommit.setError("password not identical");
-                    } else if ((mRegisterPasswordCommit.getText().toString().equals(mRegisterPassword.getText().toString()) && isUsername && isPassword)) {
+                    } else if ((mRegisterPasswordCommit.getText().toString().equals(mRegisterPassword.getText().toString())
+                            && isUsername && isPassword)) {
 //
                         isOver = true;
                         progressGenerator.start(mRegisterBtn);
@@ -196,14 +192,6 @@ public class RegisterActivity extends AppCompatActivity implements ProgressGener
                 }
         );
 
-
-        mRegisterIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mAlertDialog = Utils.shoeDialog(RegisterActivity.this, mRegisterUsername.getText().toString(), mDAO);
-                mAlertDialog.show();
-            }
-        });
 
         ShowIcon.setOnClickShowIcon(new OnClickShowIcon() {
             @Override
@@ -221,19 +209,16 @@ public class RegisterActivity extends AppCompatActivity implements ProgressGener
     @Override
     protected void onRestart() {
         super.onRestart();
-        if (isGaerlly || isCamera) {
-            isUsername = true;
-            mRegisterPassword.setEnabled(true);
-            mRegisterPasswordCommit.setEnabled(true);
-            showSoftInput(mRegisterPassword);
-            //mRegisterPassword.setInputType(InputType.TYPE_CLASS_DATETIME | InputType.TYPE_DATETIME_VARIATION_TIME);
-            if (isCamera) {
-                mRegisterIcon.setImageBitmap(ImageUtils.readBitMap(getApplicationContext(), s));
-            } else {
-                mRegisterIcon.setImageBitmap(ImageUtils.readBitMap(getApplicationContext(), TEMP_IMAGE_PATH));
-            }
+//        if (isGaerlly || isCamera) {
+//
+//            mRegisterPassword.setEnabled(true);
+//            mRegisterPasswordCommit.setEnabled(true);
+//            showSoftInput(mRegisterPassword);
+//            //mRegisterPassword.setInputType(InputType.TYPE_CLASS_DATETIME | InputType.TYPE_DATETIME_VARIATION_TIME);
+//
+//
+//        }
 
-        }
     }
 
     @Override
@@ -285,12 +270,7 @@ public class RegisterActivity extends AppCompatActivity implements ProgressGener
         //验证完成后进入登陆
         Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
         mDAO.addUser(mRegisterUsername.getText().toString(), mRegisterPassword.getText().toString());
-        if (isCamera) {
-            mDAO.addUserIcon(mRegisterUsername.getText().toString(), s);
-        } else {
-            mDAO.addUserIcon(mRegisterUsername.getText().toString(), TEMP_IMAGE_PATH);
-        }
-        mDAO.updateUserIconFlag(mRegisterUsername.getText().toString(), true);
+
         //intent.putExtra("username", mRegisterUsername.getText().toString());
         intent.putExtra("username", mRegisterUsername.getText().toString());
         intent.putExtra("password", mRegisterPasswordCommit.getText().toString());

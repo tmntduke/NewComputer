@@ -8,7 +8,9 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
 import android.text.InputType;
+import android.text.TextWatcher;
 import android.transition.Explode;
 import android.transition.Fade;
 import android.view.View;
@@ -84,7 +86,8 @@ public class LoginActivity extends AppCompatActivity implements ProgressGenerato
         mDAO = new QuestionDAO(getApplicationContext());
 
         //用户输入框初始化
-        LoginAutoCompleteAdapter adapter = new LoginAutoCompleteAdapter(LoginActivity.this, R.layout.activity_autocomplete_item, mDAO.queryAlluser());
+        LoginAutoCompleteAdapter adapter = new LoginAutoCompleteAdapter(LoginActivity.this, R.layout.activity_autocomplete_item
+                , mDAO.queryAlluser());
         adapter.notifyDataSetChanged();
 
 
@@ -138,6 +141,7 @@ public class LoginActivity extends AppCompatActivity implements ProgressGenerato
 
                     //登陆按钮
                     mLogin.setOnClickListener((v) -> {
+                        hideSoftInput();
                         mDAO.updateFirst(true);
                         if (mDAO.queryUser(mEditUsername.getText().toString(), mEditPwd.getText().toString())) {
                             //用户名和密码正确
@@ -158,6 +162,26 @@ public class LoginActivity extends AppCompatActivity implements ProgressGenerato
                     });
 
                 }
+
+
+                TextWatcher watcher= new  TextWatcher(){
+
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable s) {
+
+                    }
+                };
+
 
                 //注册按钮
                 mRegister.setOnClickListener(new View.OnClickListener() {

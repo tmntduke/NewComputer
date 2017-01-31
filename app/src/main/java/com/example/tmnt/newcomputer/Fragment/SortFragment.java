@@ -99,7 +99,7 @@ public class SortFragment extends Fragment {
                     snackbar1 = Snackbar.make(view, "you are not open the network,click turn to setting", Snackbar.LENGTH_INDEFINITE).setAction("click", new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            Utils.openSetting(getActivity());
+                            Utils.openNetworkSetting(getActivity());
 
                         }
                     });

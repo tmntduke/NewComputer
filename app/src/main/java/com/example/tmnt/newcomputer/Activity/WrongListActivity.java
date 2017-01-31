@@ -1,6 +1,7 @@
 package com.example.tmnt.newcomputer.Activity;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -58,6 +59,7 @@ public class WrongListActivity extends AppCompatActivity {
             setContentView(R.layout.wrong_contain);
             ButterKnife.bind(this);
             mWrongTool.setTitle("我的错题");
+            mWrongTool.setTitleTextColor(Color.WHITE);
             setSupportActionBar(mWrongTool);
 
             UserMsgAdapter adapter = new UserMsgAdapter(getApplicationContext(), mDAO.queryWrongQuestion());

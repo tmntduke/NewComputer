@@ -4,8 +4,10 @@ import android.content.Context;
 import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 
 import com.a.a.V;
+import com.dd.processbutton.iml.ActionProcessButton;
 import com.example.tmnt.newcomputer.InterFace.IFristLoad;
 import com.example.tmnt.newcomputer.InterFace.IMPL.FristLoadIMPL;
 import com.example.tmnt.newcomputer.InterFace.IMPL.MaxIdIMPL;
@@ -43,7 +45,7 @@ public class BmobUtils {
      * @param context
      * @param view
      */
-    public static void saveDataToBmob(Object o, Context context, View view) {
+    public static void saveDataToBmob(Object o, Context context, View view, ActionProcessButton button) {
         if (o instanceof BmobObject) {
             ((BmobObject) o).save(context, new SaveListener() {
                 @Override
@@ -54,9 +56,12 @@ public class BmobUtils {
 
                 @Override
                 public void onFailure(int i, String s) {
-                    Snackbar snackbar = Snackbar.make(view, "add fail", Snackbar.LENGTH_LONG);
+                    Snackbar snackbar = Snackbar.make(view, "add fail  because" + s, Snackbar.LENGTH_LONG);
                     snackbar.getView().setBackgroundColor(context.getResources().getColor(R.color.colorAccent));
                     snackbar.show();
+                    Log.i(TAG, "onFailure: " + s);
+                    button.setEnabled(true);
+                    button.setProgress(0);
                 }
             });
 
@@ -76,6 +81,7 @@ public class BmobUtils {
 
     /**
      * 查询指定类型数据
+     *
      * @param context
      * @param kind
      * @param flag
@@ -89,6 +95,7 @@ public class BmobUtils {
 
             @Override
             public void onSuccess(List<AnotherAnswer> list) {
+                Log.i(TAG, "onSuccess: " + list.size());
                 if (dataRe != null) {
                     dataRe.getQuestionData(list);
                 }
@@ -107,6 +114,7 @@ public class BmobUtils {
 
     /**
      * 查询大于count的数据
+     *
      * @param context
      * @param count
      */
@@ -136,6 +144,7 @@ public class BmobUtils {
 
     /**
      * 更新数据
+     *
      * @param context
      * @param id
      */
@@ -158,6 +167,7 @@ public class BmobUtils {
 
     /**
      * 查询最大id
+     *
      * @param context
      */
     public static void maxIdToBmob(Context context) {
@@ -168,11 +178,21 @@ public class BmobUtils {
             @Override
             public void onSuccess(Object o) {
                 JSONArray array = (JSONArray) o;
+
                 try {
-                    JSONObject object = array.getJSONObject(0);
-                    if (MaxIdIMPL.sIMaxId != null) {
-                        MaxIdIMPL.sIMaxId.maxId(object.getInt("_maxId"));
+                    if (array == null) {
+                        MaxIdIMPL.sIMaxId.maxId(0);
+                    } else {
+                        JSONObject object = array.getJSONObject(0);
+                        if (object == null) {
+
+                        } else {
+                            if (MaxIdIMPL.sIMaxId != null) {
+                                MaxIdIMPL.sIMaxId.maxId(object.getInt("_maxId"));
+                            }
+                        }
                     }
+
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -183,6 +203,40 @@ public class BmobUtils {
             @Override
             public void onFailure(int i, String s) {
 
+            }
+        });
+    }
+
+    /**
+     * 批量添加
+     *
+     * @param list
+     */
+    public static void addForMore(List<AnotherAnswer> list, Context context, int id) {
+        List<BmobObject> objects = new ArrayList<>();
+        // Log.i(TAG, "addForMore: " + list.size());
+        for (int i = 0; i < list.size(); i++) {
+            objects.add(new AnotherAnswer(list.get(i).getQuestion()
+                    , list.get(i).getOptionA()
+                    , list.get(i).getOptionB()
+                    , list.get(i).getOptionC()
+                    , list.get(i).getOptionD()
+                    , list.get(i).getAnswer()
+                    , list.get(i).getKind()
+                    , list.get(i).getQ_type()
+                    , list.get(i).getFillAnswer(), true, id + i + 1));
+
+        }
+        Log.i(TAG, "addForMore: object" + objects.size());
+        new BmobObject().insertBatch(context, objects, new SaveListener() {
+            @Override
+            public void onSuccess() {
+                Utils.showToast(context, "添加成功");
+            }
+
+            @Override
+            public void onFailure(int i, String s) {
+                Utils.showToast(context, "添加失败" + s);
             }
         });
     }

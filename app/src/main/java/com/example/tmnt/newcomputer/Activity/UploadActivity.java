@@ -33,7 +33,7 @@ public class UploadActivity extends AppCompatActivity {
         tintManager.setStatusBarTintEnabled(true);
         tintManager.setStatusBarTintResource(android.R.color.transparent);
 
-        Bmob.initialize(this, "5b5167d530b5db1c3696b59f02b904bb");
+        Bmob.initialize(this, "4556f6a1fe01d72ebe7e4c62e41d381c");
 
         setContentView(R.layout.upload_contain);
         Intent intent = getIntent();

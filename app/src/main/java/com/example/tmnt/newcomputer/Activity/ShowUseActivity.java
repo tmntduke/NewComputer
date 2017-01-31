@@ -50,8 +50,6 @@ public class ShowUseActivity extends AppCompatActivity {
             Fade fade = new Fade();
             fade.setDuration(1500);
             getWindow().setEnterTransition(fade);
-
-
             getWindow().setReturnTransition(fade);
         }
 

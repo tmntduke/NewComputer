@@ -33,9 +33,25 @@ public class QuestionDAO {
         createFromSD = SQLiteDatabase.openOrCreateDatabase(Finallay.FILE_PATH, null);
     }
 
+    //内部数据库
+    public boolean isConn() {
+        return db.isOpen();
+    }
+
+    //外部数据库
+    public boolean isOutDBConn() {
+        return createFromSD.isOpen();
+    }
+
+    public void closeOutDB() {
+        if (createFromSD != null) {
+            createFromSD.close();
+        }
+    }
+
 
     // 关闭连接
-    private void closeConn() {
+    public void closeConn() {
         if (db != null) {
             db.close();
             db = null;
@@ -185,7 +201,7 @@ public class QuestionDAO {
         Cursor cursor = db.query("T_Wrong", null, null, null, null, null, "wid DESC");
         while (cursor.moveToNext()) {
             list.add(new Questions(cursor.getInt(0), 0, cursor.getString(1), cursor.getString(2)
-                    , cursor.getString(3), cursor.getString(4), cursor.getString(5), cursor.getInt(6), cursor.getInt(7), null));
+                    , cursor.getString(3), cursor.getString(4), cursor.getString(5), cursor.getInt(6), cursor.getInt(7), null, null));
         }
 
         return list;
@@ -193,6 +209,7 @@ public class QuestionDAO {
 
     /**
      * 根据题目查询
+     *
      * @param question
      * @return
      */
@@ -202,7 +219,7 @@ public class QuestionDAO {
         Cursor cursor = db.query("T_Wrong", null, "question=?", new String[]{question}, null, null, "wid DESC");
         if (cursor.moveToNext()) {
             questions = new Questions(cursor.getInt(0), 0, cursor.getString(1), cursor.getString(2)
-                    , cursor.getString(3), cursor.getString(4), cursor.getString(5), cursor.getInt(6), cursor.getInt(7), null);
+                    , cursor.getString(3), cursor.getString(4), cursor.getString(5), cursor.getInt(6), cursor.getInt(7), null, null);
         }
         return questions;
     }
@@ -281,7 +298,7 @@ public class QuestionDAO {
                     cursor.getString(2), cursor.getString(3), cursor
                     .getString(4), cursor.getString(5), cursor
                     .getString(6), cursor.getInt(7), cursor.getInt(8),
-                    cursor.getBlob(9)));
+                    cursor.getBlob(9), null));
         }
         cursor.close();
         return arrayList;
@@ -423,7 +440,7 @@ public class QuestionDAO {
 
         if (cursor.moveToNext()) {
             questions = new Questions(cursor.getInt(0), 0, cursor.getString(1), cursor.getString(2)
-                    , cursor.getString(3), cursor.getString(4), cursor.getString(5), cursor.getInt(6), cursor.getInt(7), null);
+                    , cursor.getString(3), cursor.getString(4), cursor.getString(5), cursor.getInt(6), cursor.getInt(7), null, null);
         }
         return questions;
 
@@ -465,17 +482,41 @@ public class QuestionDAO {
      * @param
      */
     public void addSelectQuestion(AnotherAnswer questions, int count, int id) {
-        ContentValues values = new ContentValues();
-        values.put("_id", count);
-        values.put("question", questions.getQuestion());
-        values.put("optionA", questions.getOptionA());
-        values.put("optionB", questions.getOptionB());
-        values.put("optionC", questions.getOptionC());
-        values.put("optionD", questions.getOptionD());
-        values.put("answer", questions.getAnswer());
-        values.put("q_type", questions.getQ_type());
-        values.put("mexam_type", id);
-        createFromSD.insert("copy", null, values);
+        Cursor cursor = createFromSD.rawQuery("select * from sqlite_master where name = ? and sql like ?"
+                , new String[]{"copy", "%" + "objectId" + "%"});
+        Log.i(TAG, "addFillQuestion: " + cursor.moveToFirst());
+        boolean is = cursor.moveToFirst();
+        if (is) {
+            ContentValues values = new ContentValues();
+            values.put("_id", count);
+            values.put("question", questions.getQuestion());
+            values.put("optionA", questions.getOptionA());
+            values.put("optionB", questions.getOptionB());
+            values.put("optionC", questions.getOptionC());
+            values.put("optionD", questions.getOptionD());
+            values.put("answer", questions.getAnswer());
+            values.put("q_type", questions.getQ_type());
+
+            values.put("mexam_type", id);
+            values.put("objectId", questions.getObjectId());
+            createFromSD.insert("copy", null, values);
+
+        } else {
+            createFromSD.execSQL("alter table copy add objectId varchar(30) ");
+            ContentValues values = new ContentValues();
+            values.put("_id", count);
+            values.put("question", questions.getQuestion());
+            values.put("optionA", questions.getOptionA());
+            values.put("optionB", questions.getOptionB());
+            values.put("optionC", questions.getOptionC());
+            values.put("optionD", questions.getOptionD());
+            values.put("answer", questions.getAnswer());
+            values.put("q_type", questions.getQ_type());
+            values.put("mexam_type", id);
+            values.put("objectId", questions.getObjectId());
+            createFromSD.insert("copy", null, values);
+        }
+
     }
 
     /**
@@ -488,9 +529,12 @@ public class QuestionDAO {
     public void addFillQuestion(AnotherAnswer anotherAnswer, int count, int type, int id) {
         Cursor cursor = createFromSD.rawQuery("select * from sqlite_master where name = ? and sql like ?"
                 , new String[]{"copy", "%" + "fillAnswer" + "%"});
+        Cursor cursor1 = createFromSD.rawQuery("select * from sqlite_master where name = ? and sql like ?"
+                , new String[]{"copy", "%" + "objectId" + "%"});
         Log.i(TAG, "addFillQuestion: " + cursor.moveToFirst());
         boolean is = cursor.moveToFirst();
-        if (is) {
+        boolean ob = cursor1.moveToFirst();
+        if (is && ob) {
             ContentValues values = new ContentValues();
             values.put("_id", count);
             values.put("question", anotherAnswer.getQuestion());
@@ -499,10 +543,12 @@ public class QuestionDAO {
             values.put("q_type", type);
             values.put("mexam_type", id);
 
+            values.put("objectId", anotherAnswer.getObjectId());
             values.put("answer", 0);
             createFromSD.insert("copy", null, values);
         } else {
             createFromSD.execSQL("alter table copy add fillAnswer varchar(30) ");
+            createFromSD.execSQL("alter table copy add objectId varchar(30) ");
             ContentValues values = new ContentValues();
             values.put("_id", count);
             values.put("question", anotherAnswer.getQuestion());
@@ -511,6 +557,7 @@ public class QuestionDAO {
             values.put("q_type", type);
             values.put("mexam_type", count);
             values.put("answer", 0);
+            values.put("objectId", anotherAnswer.getObjectId());
             createFromSD.insert("copy", null, values);
         }
 
@@ -579,6 +626,75 @@ public class QuestionDAO {
             maxId = cursor.getInt(0);
         }
         return maxId;
+    }
+
+    /**
+     * 查找id大于指定值的题目
+     *
+     * @param id
+     * @return
+     */
+    public List<Questions> queryQuestionById(int id) {
+
+        List<Questions> answers = new ArrayList<>();
+
+        Cursor cursor = createFromSD.rawQuery("select * from sqlite_master where name = ? and sql like ?"
+                , new String[]{"copy", "%" + "objectId" + "%"});
+        Log.i(TAG, "addFillQuestion: " + cursor.moveToFirst());
+        boolean is = cursor.moveToFirst();
+
+        if (is) {
+            Cursor cursor1 = createFromSD.rawQuery("select * from copy where id>?", new String[]{String.valueOf(id)});
+
+            while (cursor1.moveToNext()) {
+                answers.add(new Questions(cursor.getInt(0), cursor.getInt(1),
+                        cursor.getString(2), cursor.getString(3), cursor
+                        .getString(4), cursor.getString(5), cursor
+                        .getString(6), cursor.getInt(7), cursor.getInt(8),
+                        cursor.getBlob(9), cursor1.getString(10)));
+            }
+        }
+
+        //Cursor cursor = db.query("T_Wrong", null, "question=?", new String[]{question}, null, null, null, null);
+
+        return answers;
+
+    }
+
+    /**
+     * 删除指定题目
+     *
+     * @param objectId
+     */
+    public void deleteFromService(String objectId) {
+        createFromSD.execSQL("delete from copy where objectId=?", new String[]{objectId});
+        createFromSD.execSQL("update sqlite_sequence set seq=0 where name='copy'");
+
+    }
+
+    /**
+     * 查找objectId
+     *
+     * @param id
+     * @return
+     */
+    public List<String> queryObjectId(int id) {
+        List<String> objects = new ArrayList<>();
+
+        Cursor cursor = createFromSD.rawQuery("select * from sqlite_master where name = ? and sql like ?"
+                , new String[]{"copy", "%" + "objectId" + "%"});
+        Log.i(TAG, "addFillQuestion: " + cursor.moveToFirst());
+        boolean is = cursor.moveToFirst();
+
+        if (is) {
+            Cursor cursor1 = createFromSD.rawQuery("select objectId from copy where _id>?", new String[]{String.valueOf(id)});
+
+            while (cursor1.moveToNext()) {
+                objects.add(cursor1.getString(0));
+            }
+        }
+
+        return objects;
     }
 }
 

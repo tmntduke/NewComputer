@@ -26,7 +26,7 @@ public class AnotherAnswer extends BmobObject implements Serializable {
         return id;
     }
 
-    public void setQuestionId(int id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -64,7 +64,7 @@ public class AnotherAnswer extends BmobObject implements Serializable {
      */
 
     public AnotherAnswer(String question, String optionA, String optionB, String optionC, String optionD,
-                         int answer, String kind, int q_type, String fillAnswer, boolean isLoad) {
+                         int answer, String kind, int q_type, String fillAnswer, boolean isLoad, int id) {
 
 
         this.question = question;
@@ -77,6 +77,7 @@ public class AnotherAnswer extends BmobObject implements Serializable {
         this.q_type = q_type;
         this.fillAnswer = fillAnswer;
         this.isLoad = isLoad;
+        this.id = id;
 
     }
 

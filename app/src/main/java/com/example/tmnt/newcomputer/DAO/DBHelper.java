@@ -47,6 +47,15 @@ public class DBHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
+        if (newVersion == 10) {
+            db.execSQL("alter table copy add fillAnswer varchar(30) ");
+            db.execSQL("alter table copy add objectId varchar(30) ");
+        }
+
+
+        if (newVersion == 20) {
+            db.execSQL("alter table T_Wrong add objectId varchar(30) ");
+        }
     }
 
     /**

@@ -190,7 +190,8 @@ public class AnotherFragment extends Fragment {
 
             Utils.showToast(getActivity(), "right");
         } else if ((mQuestionses.get(position).getAnswer() != useranswer) && kind == 0) {
-            Snackbar snackbar = Snackbar.make(view, "answer is " + getAnswer(mQuestionses.get(position).getAnswer()), Snackbar.LENGTH_SHORT);
+            Snackbar snackbar = Snackbar.make(view, "answer is "
+                    + getAnswer(mQuestionses.get(position).getAnswer()), Snackbar.LENGTH_SHORT);
             snackbar.getView().setBackgroundColor(getResources().getColor(R.color.blue_normal));
             snackbar.show();
         } else if (kind == 1 && (mQuestionses.get(position).getFillAnswer() != mFillBlankAnswer.getText().toString())) {

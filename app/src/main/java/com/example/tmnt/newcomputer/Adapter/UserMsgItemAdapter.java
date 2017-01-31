@@ -30,6 +30,7 @@ public class UserMsgItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     private String path;
     private String name;
     private String sub;
+    private boolean isIcon;
 
     private LinearLayout cardView;
     private CircleImageView iCircleImageView;
@@ -39,13 +40,14 @@ public class UserMsgItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     private static final String TAG = "UserMsgItemAdapter";
 
     //将信息传入
-    public UserMsgItemAdapter(List<Integer> icons, List<String> title, Context cotext, String path, String name, String sub) {
+    public UserMsgItemAdapter(List<Integer> icons, List<String> title, Context cotext, String path, String name, String sub, boolean isIcon) {
         this.icons = icons;
         this.title = title;
         this.cotext = cotext;
         this.path = path;
         this.name = name;
         this.sub = sub;
+        this.isIcon = isIcon;
     }
 
     @Override
@@ -68,7 +70,7 @@ public class UserMsgItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         UserMsgViewHolder userMsgViewHolder = (UserMsgViewHolder) holder;
         if (userMsgViewHolder.mType == IS_HEADER && position == 0) {
-            userMsgViewHolder.setUserHeader(cotext, path, name, sub);
+            userMsgViewHolder.setUserHeader(cotext, path, name, sub, isIcon);
         } else {
             userMsgViewHolder.setUserItem(icons.get(position - 1), title.get(position - 1));
             cardView.setOnClickListener(new View.OnClickListener() {

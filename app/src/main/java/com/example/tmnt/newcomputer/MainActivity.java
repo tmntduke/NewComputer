@@ -29,11 +29,11 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bigkoo.convenientbanner.ConvenientBanner;
 import com.example.tmnt.newcomputer.Activity.LoginActivity;
 import com.example.tmnt.newcomputer.Activity.ShowUseActivity;
 import com.example.tmnt.newcomputer.Adapter.HomeAdapter;
 import com.example.tmnt.newcomputer.BMOB.BmobUtils;
+import com.example.tmnt.newcomputer.BroadCast.StartBroad;
 import com.example.tmnt.newcomputer.DAO.QuestionDAO;
 import com.example.tmnt.newcomputer.DView.CircleImageView;
 import com.example.tmnt.newcomputer.Fragment.HomeFragment;
@@ -42,14 +42,12 @@ import com.example.tmnt.newcomputer.InterFace.IFristLoad;
 import com.example.tmnt.newcomputer.InterFace.IMPL.FristLoadIMPL;
 import com.example.tmnt.newcomputer.InterFace.IMPL.MaxIdIMPL;
 import com.example.tmnt.newcomputer.InterFace.IMPL.ShowIcon;
-import com.example.tmnt.newcomputer.InterFace.IMPL.TitleSrollIMPL;
 import com.example.tmnt.newcomputer.InterFace.IMaxId;
-import com.example.tmnt.newcomputer.InterFace.ITitleSrcoll;
 import com.example.tmnt.newcomputer.InterFace.OnClickShowIcon;
 import com.example.tmnt.newcomputer.Model.AnotherAnswer;
+import com.example.tmnt.newcomputer.Service.StartOpService;
 import com.example.tmnt.newcomputer.Utils.ImageUtils;
 import com.example.tmnt.newcomputer.Utils.Utils;
-import com.example.tmnt.newcomputer.ViewHolder.HomeListViewHolder;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 import com.yalantis.contextmenu.lib.ContextMenuDialogFragment;
 import com.yalantis.contextmenu.lib.MenuObject;
@@ -70,7 +68,8 @@ import me.majiajie.pagerbottomtabstrip.PagerBottomTabLayout;
 import me.majiajie.pagerbottomtabstrip.TabItemBuilder;
 import me.majiajie.pagerbottomtabstrip.listener.OnTabItemSelectListener;
 
-public class MainActivity extends AppCompatActivity implements OnMenuItemClickListener, OnMenuItemLongClickListener, NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements OnMenuItemClickListener
+        , OnMenuItemLongClickListener, NavigationView.OnNavigationItemSelectedListener {
 
     @Bind(R.id.toolbarIcon)
     CircleImageView mToolbarIcon;
@@ -83,14 +82,14 @@ public class MainActivity extends AppCompatActivity implements OnMenuItemClickLi
 
     @Bind(R.id.id_content)
     FrameLayout mIdContent;
-    @Bind(R.id.nav_view)
-    NavigationView mNavView;
     @Bind(R.id.drawer_layout)
     DrawerLayout mDrawerLayout;
     @Bind(R.id.home_username)
     TextView mHomeUsername;
     @Bind(R.id.toolbar)
     Toolbar mToolbar;
+    @Bind(R.id.exitLogin)
+    ImageView mExitLogin;
 
     private boolean a1, a2, a3;
 
@@ -117,13 +116,13 @@ public class MainActivity extends AppCompatActivity implements OnMenuItemClickLi
 
     private int count;
     private int max;
-
+    Intent startService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         getWindow().requestFeature(
                 Window.FEATURE_CONTENT_TRANSITIONS);
-
+        startService = new Intent(MainActivity.this, StartOpService.class);
         super.onCreate(savedInstanceState);
         if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) {
             Utils.setTranslucentStatus(MainActivity.this, true);
@@ -132,8 +131,9 @@ public class MainActivity extends AppCompatActivity implements OnMenuItemClickLi
         tintManager.setStatusBarTintEnabled(true);
         tintManager.setStatusBarTintResource(R.color.colorPrimary);
 
-        Bmob.initialize(this, "5b5167d530b5db1c3696b59f02b904bb");
+        Bmob.initialize(this, "4556f6a1fe01d72ebe7e4c62e41d381c");
 
+        stopService(startService);
 
         setContentView(R.layout.activity_main);
 
@@ -171,7 +171,7 @@ public class MainActivity extends AppCompatActivity implements OnMenuItemClickLi
 
         }
 
-        mNavView.setNavigationItemSelectedListener(this);
+        //mNavView.setNavigationItemSelectedListener(this);
 
         setDefaultFragment();
         showNavigationBar();
@@ -299,32 +299,17 @@ public class MainActivity extends AppCompatActivity implements OnMenuItemClickLi
 
         //mHomeAdapter = new HomeAdapter();
 
+
         if (Utils.isWifiConnected(getApplicationContext())) {
             if (mDAO.queryAll().size() - 199 == 0) {
                 BmobUtils.getyAnotherAnswer(getApplicationContext(), true, 0, "isLoad");
                 isLoad = true;
+
                 BmobUtils.setDataResult(new BmobUtils.DataResult() {
                     @Override
                     public void getQuestionData(List<AnotherAnswer> l) {
                         count = l.size();
                         for (AnotherAnswer answer : l) {
-                            if (answer.getKind().equals("fillBlank")) {
-                                mDAO.addFillQuestion(answer, mDAO.queryAll().size() + 1, 3, answer.getQuestionId());
-                            } else {
-                                mDAO.addSelectQuestion(answer, mDAO.queryAll().size() + 1, answer.getQuestionId());
-                            }
-                        }
-
-                    }
-                });
-            } else if (max > mDAO.maxQuestionId()) {
-                isLoad = true;
-                BmobUtils.getyBmobAnswer(getApplicationContext(), mDAO.maxQuestionId());
-                FristLoadIMPL.setFirstLoad(new IFristLoad() {
-                    @Override
-                    public void fristLoad(List<AnotherAnswer> list) {
-                        for (AnotherAnswer answer : list) {
-
                             if (answer.getKind().equals("fillBlank")) {
                                 mDAO.addFillQuestion(answer, mDAO.queryAll().size() + 1, 3, answer.getQuestionId());
                             } else {
@@ -374,10 +359,10 @@ public class MainActivity extends AppCompatActivity implements OnMenuItemClickLi
             public void onClick(View v) {
 
 
-//                mAlertDialog = Utils.shoeDialog(MainActivity.this, username, mDAO);
-//                mAlertDialog.show();
+                mAlertDialog = Utils.shoeDialog(MainActivity.this, username, mDAO);
+                mAlertDialog.show();
 
-                mDrawerLayout.openDrawer(GravityCompat.START);
+                //mDrawerLayout.openDrawer(GravityCompat.START);
 
             }
         });
@@ -386,7 +371,19 @@ public class MainActivity extends AppCompatActivity implements OnMenuItemClickLi
         if (mDAO.queryUserIcon(username)) {
             mToolbarIcon.setImageBitmap(ImageUtils.readBitMap(MainActivity.this, mDAO.queryUserIconPath(username)));
 
+        } else {
+            mToolbarIcon.setImageResource(R.drawable.image);
         }
+
+        mExitLogin.setOnClickListener((v -> {
+            mDAO.updateUserLogin(mDAO.queryLoginUsername(), false);
+            mDAO.updateLogin(false);
+            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+            SharedPreferences.Editor editor = getSharedPreferences("exit", MODE_PRIVATE).edit();
+            editor.putString("exitValue", "exit").commit();
+            startActivity(intent);
+            finish();
+        }));
     }
 
 
@@ -396,7 +393,7 @@ public class MainActivity extends AppCompatActivity implements OnMenuItemClickLi
 
 
         showIcon();
-        getNavigation();
+        //getNavigation();
 
 
     }
@@ -529,6 +526,7 @@ public class MainActivity extends AppCompatActivity implements OnMenuItemClickLi
         if (resultCode == RESULT_OK) {
             if (requestCode == RESULT_IMAGE && data != null) {
                 String s = ImageUtils.getImageFromGallery(MainActivity.this, data);
+                Log.i(TAG, "onActivityResult: "+s);
                 if (!mDAO.queryUserIcon(username)) {
                     mDAO.addUserIcon(username, s);
                 } else {
@@ -543,46 +541,51 @@ public class MainActivity extends AppCompatActivity implements OnMenuItemClickLi
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        startService(startService);
+    }
 
     /**
      * 打开抽屉
      */
-    public void getNavigation() {
-        //Log.i(TAG, "getNavigation: start");
-        View view = mNavView.getHeaderView(0);//获取头View
-        //navigationView.inflateHeaderView(R.layout.nav_header_main);//加载头布局
-        TextView username1 = (TextView) view.findViewById(R.id.username_main_navigation_list);
-        ImageView userIcon = (ImageView) view.findViewById(R.id.userIcon);
-        ImageView exiteLogin = (ImageView) view.findViewById(R.id.exitLogin);
-        //userIcon.setImageResource(R.drawable.a1_2);
-        if (mDAO.queryUserIconPath(username) == null) {
-            userIcon.setImageResource(R.drawable.image);
-        } else {
-            userIcon.setImageBitmap(ImageUtils.readBitMap(getApplicationContext(), mDAO.queryUserIconPath(username)));
-        }
-
-        userIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mDrawerLayout.closeDrawers();
-                mAlertDialog = Utils.shoeDialog(MainActivity.this, username, mDAO);
-                mAlertDialog.show();
-            }
-        });
-
-        //Log.i(TAG, "getNavigation: " + username);
-        username1.setText("hello " + mDAO.queryLoginUsername());
-
-        exiteLogin.setOnClickListener((v -> {
-            mDAO.updateUserLogin(mDAO.queryLoginUsername(), false);
-            mDAO.updateLogin(false);
-            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-            SharedPreferences.Editor editor = getSharedPreferences("exit", MODE_PRIVATE).edit();
-            editor.putString("exitValue", "exit").commit();
-            startActivity(intent);
-            finish();
-        }));
-    }
+//    public void getNavigation() {
+//        //Log.i(TAG, "getNavigation: start");
+//        View view = mNavView.getHeaderView(0);//获取头View
+//        //navigationView.inflateHeaderView(R.layout.nav_header_main);//加载头布局
+//        TextView username1 = (TextView) view.findViewById(R.id.username_main_navigation_list);
+//        ImageView userIcon = (ImageView) view.findViewById(R.id.userIcon);
+//        ImageView exiteLogin = (ImageView) view.findViewById(R.id.exitLogin);
+//        //userIcon.setImageResource(R.drawable.a1_2);
+//        if (!mDAO.queryUserIcon(mDAO.queryLoginUsername())) {
+//            userIcon.setImageResource(R.drawable.image);
+//        } else {
+//            userIcon.setImageBitmap(ImageUtils.readBitMap(getApplicationContext(), mDAO.queryUserIconPath(username)));
+//        }
+//
+//        userIcon.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                mDrawerLayout.closeDrawers();
+//                mAlertDialog = Utils.shoeDialog(MainActivity.this, username, mDAO);
+//                mAlertDialog.show();
+//            }
+//        });
+//
+//        //Log.i(TAG, "getNavigation: " + username);
+//        username1.setText("hello " + mDAO.queryLoginUsername());
+//
+//        exiteLogin.setOnClickListener((v -> {
+//            mDAO.updateUserLogin(mDAO.queryLoginUsername(), false);
+//            mDAO.updateLogin(false);
+//            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+//            SharedPreferences.Editor editor = getSharedPreferences("exit", MODE_PRIVATE).edit();
+//            editor.putString("exitValue", "exit").commit();
+//            startActivity(intent);
+//            finish();
+//        }));
+//    }
 
     /**
      * 退出主界面动画

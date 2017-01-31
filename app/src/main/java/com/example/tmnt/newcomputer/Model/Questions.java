@@ -14,6 +14,8 @@ public class Questions implements Serializable {
     private int mexam_type;//类型
     private byte[] blob;//图片
 
+    private String objectId;
+
     /**
      * 问题实体
      *
@@ -29,7 +31,7 @@ public class Questions implements Serializable {
      * @param blob
      */
     public Questions(int _id, int q_type, String question, String optionA, String optionB, String optionC, String optionD,
-                     int answer, int mexam_type, byte[] blob) {
+                     int answer, int mexam_type, byte[] blob, String objectId) {
         super();
         this._id = _id;
         this.q_type = q_type;
@@ -41,6 +43,7 @@ public class Questions implements Serializable {
         this.answer = answer;
         this.mexam_type = mexam_type;
         this.blob = blob;
+        this.objectId = objectId;
     }
 
     public int get_id() {
@@ -123,4 +126,11 @@ public class Questions implements Serializable {
         this.blob = blob;
     }
 
+    public String getObjectId() {
+        return objectId;
+    }
+
+    public void setObjectId(String objectId) {
+        this.objectId = objectId;
+    }
 }

@@ -26,7 +26,7 @@ public class HomeListViewHolder extends RecyclerView.ViewHolder {
     private DragBubbleView dbv;
     public static ConvenientBanner convenientBanner;
 
-    public HomeListViewHolder(View itemView, ImageView imageView, TextView title, TextView subTitle, int type, DragBubbleView dbv) {
+    private HomeListViewHolder(View itemView, ImageView imageView, TextView title, TextView subTitle, int type, DragBubbleView dbv) {
         super(itemView);
         mImageView = imageView;
         this.title = title;
@@ -35,7 +35,7 @@ public class HomeListViewHolder extends RecyclerView.ViewHolder {
         this.dbv = dbv;
     }
 
-    public HomeListViewHolder(View itemView, ConvenientBanner mConvenientBanner, int type) {
+    private HomeListViewHolder(View itemView, ConvenientBanner mConvenientBanner, int type) {
         super(itemView);
         this.mConvenientBanner = mConvenientBanner;
         this.type = type;

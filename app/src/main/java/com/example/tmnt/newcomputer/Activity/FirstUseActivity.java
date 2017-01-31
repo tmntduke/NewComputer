@@ -63,6 +63,7 @@ public class FirstUseActivity extends AppCompatActivity {
         tintManager.setStatusBarTintResource(android.R.color.transparent);
         SharedPreferences get = getSharedPreferences("slideApp", MODE_PRIVATE);
         SharedPreferences exit = getSharedPreferences("exit", MODE_PRIVATE);
+
         mDisplay = wm.getDefaultDisplay();
         mDAO = new QuestionDAO(getApplicationContext());
         if (exit != null) {

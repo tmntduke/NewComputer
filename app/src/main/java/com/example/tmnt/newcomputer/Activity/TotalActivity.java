@@ -68,7 +68,7 @@ public class TotalActivity extends AppCompatActivity {
         mCancle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                defaultBack();
+                onBackPressed();
             }
         });
 

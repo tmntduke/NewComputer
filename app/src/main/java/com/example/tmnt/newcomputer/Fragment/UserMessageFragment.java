@@ -19,6 +19,7 @@ import com.example.tmnt.newcomputer.Activity.ShowUIconActivity;
 import com.example.tmnt.newcomputer.Activity.TotalActivity;
 import com.example.tmnt.newcomputer.Activity.WrongListActivity;
 import com.example.tmnt.newcomputer.Adapter.UserMsgItemAdapter;
+import com.example.tmnt.newcomputer.DAO.QuestionDAO;
 import com.example.tmnt.newcomputer.R;
 
 import java.util.ArrayList;
@@ -44,6 +45,8 @@ public class UserMessageFragment extends Fragment {
     private ArrayList<String> mArrayList;
     private String user, path;
 
+    private QuestionDAO mDAO;
+
     private static final String TAG = "UserMessageFragment";
 
     @Override
@@ -52,6 +55,7 @@ public class UserMessageFragment extends Fragment {
         mArrayList = getArguments().getStringArrayList(QUERTION);
         user = getArguments().getString(NAME);
         path = getArguments().getString(PATH);
+        mDAO = new QuestionDAO(getActivity());
     }
 
     @Nullable
@@ -90,9 +94,13 @@ public class UserMessageFragment extends Fragment {
 //        userIcon.setImageBitmap(ImageUtils.readBitMap(getActivity(), path));
 
         mUserMegList.setLayoutManager(new LinearLayoutManager(getActivity()));
-        UserMsgItemAdapter adapter = new UserMsgItemAdapter(setIconMsg(), setTitleMsg(), getActivity(), path, user, "一级等考");
+        UserMsgItemAdapter adapter = new UserMsgItemAdapter(setIconMsg(), setTitleMsg()
+                , getActivity(), path, user, "一级等考", mDAO.queryUserIcon(user));
+
         adapter.notifyDataSetChanged();
+
         mUserMegList.setAdapter(adapter);
+
         adapter.setOnclickUserMsgListener(new UserMsgItemAdapter.OnclickUserMsgListener() {
             @Override
             public void onClickMsgItem(View v, int position) {
@@ -113,9 +121,10 @@ public class UserMessageFragment extends Fragment {
             @Override
             public void turnToShow(View v) {
                 Intent intent = new Intent(getActivity(), ShowUIconActivity.class);
-                intent.putExtra(PATH, path);
+                intent.putExtra(PATH, user);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(getActivity(), v, getString(R.string.share));
+                    ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(getActivity()
+                            , v, getString(R.string.share));
                     startActivity(intent, options.toBundle());
                 }
             }

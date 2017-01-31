@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.tmnt.newcomputer.DAO.QuestionDAO;
 import com.example.tmnt.newcomputer.DView.CircleImageView;
 import com.example.tmnt.newcomputer.R;
 import com.example.tmnt.newcomputer.Utils.ImageUtils;
@@ -20,6 +21,8 @@ public class UserMsgViewHolder extends RecyclerView.ViewHolder {
 
     private ImageView userMsgItemIcon;
     private TextView userMsgTitle;
+
+    private QuestionDAO mDAO;
 
     public int mType;
 
@@ -52,8 +55,8 @@ public class UserMsgViewHolder extends RecyclerView.ViewHolder {
         }
     }
 
-    public void setUserHeader(Context context, String path, String name, String sub) {
-        if (path == null) {
+    public void setUserHeader(Context context, String path, String name, String sub,boolean isIcon) {
+        if (!isIcon) {
             mCircleImageView.setImageResource(R.drawable.image);
         } else {
             mCircleImageView.setImageBitmap(ImageUtils.readBitMap(context, path));

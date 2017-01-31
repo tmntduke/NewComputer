@@ -16,6 +16,8 @@ import android.widget.RadioGroup;
 
 import com.dd.processbutton.iml.ActionProcessButton;
 import com.example.tmnt.newcomputer.BMOB.BmobUtils;
+import com.example.tmnt.newcomputer.InterFace.IMPL.MaxIdIMPL;
+import com.example.tmnt.newcomputer.InterFace.IMaxId;
 import com.example.tmnt.newcomputer.Model.AnotherAnswer;
 import com.example.tmnt.newcomputer.R;
 import com.example.tmnt.newcomputer.Utils.ProgressGenerator;
@@ -23,6 +25,7 @@ import com.example.tmnt.newcomputer.Utils.Utils;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import cn.bmob.v3.Bmob;
 
 /**
  * Created by tmnt on 2016/6/17.
@@ -79,6 +82,8 @@ public class SingleUploadFragment extends Fragment implements ProgressGenerator.
     private AnotherAnswer another1;
     private View view;
 
+    private int idFromBomb;
+
     private static final String FLAG = "flag";
     private int flag;
     private static final String TAG = "SingleUploadFragment";
@@ -87,6 +92,7 @@ public class SingleUploadFragment extends Fragment implements ProgressGenerator.
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         flag = getArguments().getInt(FLAG);
+        Bmob.initialize(getActivity(), "4556f6a1fe01d72ebe7e4c62e41d381c");
     }
 
     @Nullable
@@ -156,8 +162,16 @@ public class SingleUploadFragment extends Fragment implements ProgressGenerator.
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 if (checkedId == R.id.nomoal) {
                     type = 1;
+                    mAddOptionC.setEnabled(true);
+                    mAddOptionD.setEnabled(true);
+                    mC.setVisibility(View.VISIBLE);
+                    mD.setVisibility(View.VISIBLE);
                 } else {
                     type = 0;
+                    mAddOptionC.setEnabled(false);
+                    mAddOptionD.setEnabled(false);
+                    mC.setVisibility(View.GONE);
+                    mD.setVisibility(View.GONE);
                 }
             }
 
@@ -192,18 +206,28 @@ public class SingleUploadFragment extends Fragment implements ProgressGenerator.
     @Override
     public void onComplete() {
 
+        BmobUtils.maxIdToBmob(getActivity());
+        MaxIdIMPL.setMaxId(new IMaxId() {
+            @Override
+            public void maxId(int id) {
+                idFromBomb = id;
+            }
+        });
         if (!isKind) {
+
+
             another = new AnotherAnswer(mAddQuestion.getText().toString()
                     , "A." + mAddOptionA.getText().toString()
                     , "B." + mAddOptionB.getText().toString()
                     , "C." + mAddOptionC.getText().toString()
                     , "D." + mAddOptionD.getText().toString()
-                    , answer, "select", type, null, true
+                    , answer, "select", type, null, true, idFromBomb + 1
             );
-            BmobUtils.saveDataToBmob(another, getActivity(), view);
+            BmobUtils.saveDataToBmob(another, getActivity(), view, mAddCommit);
         } else {
-            another1 = new AnotherAnswer(mAddQuestion.getText().toString(), null, null, null, null, 1, "fillBlank", 3, mFillBlankAnswer.getText().toString(), true);
-            BmobUtils.saveDataToBmob(another1, getActivity(), view);
+            another1 = new AnotherAnswer(mAddQuestion.getText().toString(), null, null, null, null
+                    , 1, "fillBlank", 3, mFillBlankAnswer.getText().toString(), true, idFromBomb + 1);
+            BmobUtils.saveDataToBmob(another1, getActivity(), view, mAddCommit);
         }
 
     }

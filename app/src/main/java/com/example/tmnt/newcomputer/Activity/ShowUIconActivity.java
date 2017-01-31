@@ -5,8 +5,10 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MotionEvent;
 import android.widget.ImageView;
 
+import com.example.tmnt.newcomputer.DAO.QuestionDAO;
 import com.example.tmnt.newcomputer.Fragment.UserMessageFragment;
 import com.example.tmnt.newcomputer.R;
 import com.example.tmnt.newcomputer.Utils.ImageUtils;
@@ -25,6 +27,8 @@ public class ShowUIconActivity extends AppCompatActivity {
     @Bind(R.id.show_user_Icon)
     ImageView mShowUserIcon;
 
+    private QuestionDAO mDAO;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,17 +39,32 @@ public class ShowUIconActivity extends AppCompatActivity {
         tintManager.setStatusBarTintEnabled(true);
         tintManager.setStatusBarTintColor(android.R.color.transparent);
 
+        mDAO = new QuestionDAO(getApplicationContext());
+
         setContentView(R.layout.show_user_icon);
         ButterKnife.bind(this);
 
         Intent intent = getIntent();
         String p = intent.getStringExtra(UserMessageFragment.PATH);
-        if (p != null) {
-            mShowUserIcon.setImageBitmap(ImageUtils.readBitMap(getApplicationContext(), p));
+        if (mDAO.queryUserIcon(mDAO.queryLoginUsername())) {
+            mShowUserIcon.setImageBitmap(ImageUtils.readBitMap(getApplicationContext(), mDAO.queryUserIconPath(mDAO.queryLoginUsername())));
         } else {
             mShowUserIcon.setImageResource(R.drawable.image);
         }
 
 
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            onBackPressed();
+        }
+        return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
     }
 }
