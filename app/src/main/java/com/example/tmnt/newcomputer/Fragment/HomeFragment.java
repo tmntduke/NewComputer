@@ -10,6 +10,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.transition.Explode;
 import android.transition.Fade;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -20,18 +21,34 @@ import android.view.animation.AnimationUtils;
 import com.bigkoo.convenientbanner.ConvenientBanner;
 import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.example.tmnt.newcomputer.Activity.ExamActivity;
+import com.example.tmnt.newcomputer.Activity.NewsInfoActivity;
 import com.example.tmnt.newcomputer.Activity.TitleSlideActivity;
 import com.example.tmnt.newcomputer.Adapter.HomeAdapter;
 import com.example.tmnt.newcomputer.DAO.QuestionDAO;
+import com.example.tmnt.newcomputer.Model.NewsInfo;
+import com.example.tmnt.newcomputer.Network.RequestUrl;
 import com.example.tmnt.newcomputer.R;
 import com.example.tmnt.newcomputer.UIModel.UIQuestionData;
 import com.example.tmnt.newcomputer.ViewHolder.MainViewHolder;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import okhttp3.Interceptor;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.logging.HttpLoggingInterceptor;
+import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
+import retrofit2.converter.gson.GsonConverterFactory;
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * 显示主页
@@ -50,7 +67,7 @@ public class HomeFragment extends Fragment {
 
     public static final String SRCOLL = "SRCOLL";
     public static final String FLAG = "flag";
-    private HomeAdapter adapter;
+    private HomeAdapter mAdapter;
 
     private static final String TAG = "HomeFragment";
 
@@ -63,7 +80,7 @@ public class HomeFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setEnterAnmition();
-        mDAO = new QuestionDAO(getActivity());
+        mDAO = QuestionDAO.getInstance(getActivity());
         load = getArguments().getBoolean(ISLOAD);
 
     }
@@ -74,52 +91,10 @@ public class HomeFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.home_fragment_lay, container, false);
         ButterKnife.bind(this, view);
+
         mHomeList.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext()));
-        adapter = new HomeAdapter(getQuestionData(), showConvenientBanner(), getActivity());
-        adapter.notifyDataSetChanged();
-        mHomeList.setAdapter(adapter);
-        
 
-//        mConvenientBanner.setPages(new CBViewHolderCreator() {
-//            @Override
-//            public Object createHolder() {
-//                return new MainViewHolder();
-//            }
-//        }, showConvenientBanner())
-//                .setPageIndicator(new int[]{R.drawable.ic_page_indicator, R.drawable.ic_page_indicator_focused})
-//                .setPageIndicatorAlign(ConvenientBanner.PageIndicatorAlign.ALIGN_PARENT_RIGHT);
-
-
-        adapter.showDragWhenLoad(load);
-        adapter.setOnItemCardClickListener(new HomeAdapter.OnItemCardClickListener() {
-            @Override
-            public void longClickEvent(View view, int position) {
-
-            }
-
-            @Override
-            public void itemClickEvent(View view, int position) {
-                Intent intent = new Intent(getActivity(), ExamActivity.class);
-                switch (position) {
-                    case 1:
-                        intent.putExtra(FLAG, 1);
-                        break;
-                    case 2:
-                        intent.putExtra(FLAG, 2);
-                        break;
-                    case 3:
-                        count = mDAO.queryModelCount() + 1;
-                        mDAO.updateModelCount(count);
-                        intent.putExtra(FLAG, 3);
-                        break;
-                    case 4:
-                        intent.putExtra(FLAG, 4);
-                        break;
-                }
-                startActivity(intent);
-            }
-        });
-
+        setAdapter(mHomeList);
 
         mHomeList.setOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -132,34 +107,67 @@ public class HomeFragment extends Fragment {
 
         MainViewHolder.setOnClickImageListener(new MainViewHolder.OnClickImageListener() {
             @Override
-            public void itemClick(View v, int position) {
-                Intent intent = new Intent(getActivity(), TitleSlideActivity.class);
-                switch (position) {
-                    case 0:
-                        intent.putExtra("position", 0);
-                        break;
-                    case 1:
-                        intent.putExtra("position", 1);
-                        break;
-                    case 2:
-                        intent.putExtra("position", 2);
-                        break;
-                }
-                String transitionName = getString(R.string.share);
-                ActivityOptions transitionActivityOptions = null;
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    transitionActivityOptions = ActivityOptions.makeSceneTransitionAnimation(getActivity());
-                    startActivity(intent, transitionActivityOptions.toBundle());
-
-                } else {
-                    startActivity(intent);
-                }
+            public void itemClick(View v, String url) {
+                Intent intent = new Intent(getActivity(), NewsInfoActivity.class);
+                intent.putExtra("url", url);
+//                String transitionName = getString(R.string.share);
+//                ActivityOptions transitionActivityOptions = null;
+//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//                    transitionActivityOptions = ActivityOptions.makeSceneTransitionAnimation(getActivity());
+//                    startActivity(intent, transitionActivityOptions.toBundle());
+//
+//                } else {
+//                    startActivity(intent);
+//                }
+                Log.i(TAG, "itemClick: s");
+                startActivity(intent);
             }
-
         });
 
-
         return view;
+    }
+
+    private void setAdapter(RecyclerView homeList) {
+        getUrlData(new OnHaveData() {
+            @Override
+            public void getAdapter(HomeAdapter adapter) {
+                Log.i(TAG, "getAdapter: "+adapter);
+
+                mAdapter.notifyDataSetChanged();
+                Log.i(TAG, "getUrlData: "+mHomeList);
+                homeList.setAdapter(mAdapter);
+
+                adapter.showDragWhenLoad(load);
+                adapter.setOnItemCardClickListener(new HomeAdapter.OnItemCardClickListener() {
+                    @Override
+                    public void longClickEvent(View view, int position) {
+
+                    }
+
+                    @Override
+                    public void itemClickEvent(View view, int position) {
+                        Intent intent = new Intent(getActivity(), ExamActivity.class);
+                        switch (position) {
+                            case 1:
+                                intent.putExtra(FLAG, 1);
+                                break;
+                            case 2:
+                                intent.putExtra(FLAG, 2);
+                                break;
+                            case 3:
+                                count = mDAO.queryModelCount() + 1;
+                                mDAO.updateModelCount(count);
+                                intent.putExtra(FLAG, 3);
+                                break;
+                            case 4:
+                                intent.putExtra(FLAG, 4);
+                                break;
+                        }
+                        startActivity(intent);
+                    }
+                });
+            }
+        });
     }
 
 
@@ -172,23 +180,63 @@ public class HomeFragment extends Fragment {
     }
 
 
+    interface OnHaveData {
+        void getAdapter(HomeAdapter adapter);
+    }
+
+    /**
+     * retrofit访问http
+     * @param data
+     */
+    private void getUrlData(OnHaveData data) {
+
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+
+        OkHttpClient client = new OkHttpClient.Builder()
+                .addInterceptor(interceptor)
+                .addNetworkInterceptor(new Interceptor() {
+                    @Override
+                    public Response intercept(Chain chain) throws IOException {
+                        Request request = chain.request();
+                        Request request1 = request.newBuilder().addHeader("content-type", "application/json").build();
+                        Response response = chain.proceed(request1);
+                        Response response1 = response.newBuilder().addHeader("content-type", "application/json").build();
+                        return response1;
+                    }
+                })
+                .connectTimeout(15, TimeUnit.SECONDS)
+                .build();
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("https://api.tianapi.com/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .client(client)
+                .build();
+
+        RequestUrl requestUrl = retrofit.create(RequestUrl.class);
+        requestUrl.getITUrl("da79750a0e6e9830f9d4ddf7b4b0dc39", "5")
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(newsInfo -> {
+                    mAdapter = new HomeAdapter(getQuestionData(), newsInfo.getNewslist(), getActivity());
+                    if (data != null) {
+                        Log.i(TAG, "getUrlData: "+mAdapter);
+                        data.getAdapter(mAdapter);
+                    }
+                });
+
+    }
+
     @Override
     public void onResume() {
         super.onResume();
-        //Log.i(TAG, "onResume: " + adapter);
-        //adapter.setSrollo(1500);
-//        Log.i(TAG, "onResume: "+ HomeListViewHolder.convenientBanner);
-//        HomeListViewHolder.convenientBanner.startTurning(1500);
-
-        //mConvenientBanner.startTurning(1500);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        // mConvenientBanner.stopTurning();
-        // HomeListViewHolder.convenientBanner.stopTurning();
-
     }
 
 
@@ -207,13 +255,13 @@ public class HomeFragment extends Fragment {
         return list;
     }
 
-    public List<Integer> showConvenientBanner() {
-        List<Integer> mList = new ArrayList<>();
-        mList.add(R.drawable.zhuan_3);
-        mList.add(R.drawable.java);
-        mList.add(R.drawable.python);
-        return mList;
-    }
+//    public List<Integer> showConvenientBanner() {
+//        List<Integer> mList = new ArrayList<>();
+//        mList.add(R.drawable.zhuan_3);
+//        mList.add(R.drawable.java);
+//        mList.add(R.drawable.python);
+//        return mList;
+//    }
 
     public void setEnterAnmition() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {

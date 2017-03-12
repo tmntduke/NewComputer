@@ -5,11 +5,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.example.tmnt.newcomputer.DView.CircleImageView;
+import com.example.tmnt.newcomputer.Widget.CircleImageView;
 import com.example.tmnt.newcomputer.R;
 
 import java.util.List;

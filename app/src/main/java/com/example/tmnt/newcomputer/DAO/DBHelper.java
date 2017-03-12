@@ -30,7 +30,8 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("create table T_User (uid integer PRIMARY KEY AUTOINCREMENT, username varchar (10),password varchar (20),isLogin bool,isIcon bool)");
+        db.execSQL("create table T_User (uid integer PRIMARY KEY AUTOINCREMENT, username varchar (10),password varchar (20)" +
+                ",isLogin bool,isIcon bool)");
         db.execSQL("create table T_Question (jId integer primary key AUTOINCREMENT,question varchar(200),answerA varchar(25)," +
                 "answerB varchar(25),answerC varchar(25),answerD varchar(25),answer integer,kind varchar(15))");
         db.execSQL("create table T_First(fid integer primary key AUTOINCREMENT , isFirst bool ,isLogin bool )");

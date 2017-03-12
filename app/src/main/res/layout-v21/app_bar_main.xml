@@ -24,7 +24,7 @@
             <RelativeLayout android:layout_width="match_parent"
                             android:layout_height="wrap_content">
 
-                <com.example.tmnt.newcomputer.DView.CircleImageView
+                <com.example.tmnt.newcomputer.Widget.CircleImageView
                     android:id="@+id/toolbarIcon"
                     android:layout_width="50dp"
                     android:layout_height="50dp"

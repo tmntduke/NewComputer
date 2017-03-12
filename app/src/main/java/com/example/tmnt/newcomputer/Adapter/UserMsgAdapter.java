@@ -10,8 +10,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.example.tmnt.newcomputer.DView.SlideView;
-import com.example.tmnt.newcomputer.Model.Questions;
+import com.example.tmnt.newcomputer.Widget.SlideView;
 import com.example.tmnt.newcomputer.R;
 
 import java.util.List;

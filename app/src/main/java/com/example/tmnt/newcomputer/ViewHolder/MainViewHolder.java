@@ -5,16 +5,18 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.bigkoo.convenientbanner.holder.Holder;
+import com.example.tmnt.newcomputer.Model.NewsInfo;
+import com.squareup.picasso.Picasso;
 
 /**
  * 主页图片选择控件ViewHolder
  * Created by tmnt on 2016/6/5.
  */
-public class MainViewHolder implements Holder<Integer> {
+public class MainViewHolder implements Holder<NewsInfo.NewslistBean> {
     private ImageView mImageView;
 
     public interface OnClickImageListener {
-        void itemClick(View v, int position);
+        void itemClick(View v, String url);
     }
 
     private static OnClickImageListener mOnClickImageListener;
@@ -28,14 +30,14 @@ public class MainViewHolder implements Holder<Integer> {
     }
 
     @Override
-    public void UpdateUI(Context context, int position, Integer data) {
-        mImageView.setImageResource(data);
+    public void UpdateUI(Context context, int position, NewsInfo.NewslistBean data) {
+        Picasso.with(context).load(data.getPicUrl()).into(mImageView);
         p = position;
         if (mOnClickImageListener != null) {
             mImageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mOnClickImageListener.itemClick(v, p);
+                    mOnClickImageListener.itemClick(v, data.getUrl());
                 }
             });
         }

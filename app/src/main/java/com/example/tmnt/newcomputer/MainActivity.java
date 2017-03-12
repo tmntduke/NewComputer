@@ -27,19 +27,18 @@ import android.view.View;
 import android.view.Window;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
+import com.example.tmnt.newcomputer.Activity.BaseActivity;
 import com.example.tmnt.newcomputer.Activity.LoginActivity;
 import com.example.tmnt.newcomputer.Activity.ShowUseActivity;
 import com.example.tmnt.newcomputer.Adapter.HomeAdapter;
 import com.example.tmnt.newcomputer.BMOB.BmobUtils;
-import com.example.tmnt.newcomputer.BroadCast.StartBroad;
 import com.example.tmnt.newcomputer.DAO.QuestionDAO;
-import com.example.tmnt.newcomputer.DView.CircleImageView;
+import com.example.tmnt.newcomputer.Widget.CircleImageView;
 import com.example.tmnt.newcomputer.Fragment.HomeFragment;
 import com.example.tmnt.newcomputer.Fragment.SortFragment;
-import com.example.tmnt.newcomputer.InterFace.IFristLoad;
-import com.example.tmnt.newcomputer.InterFace.IMPL.FristLoadIMPL;
 import com.example.tmnt.newcomputer.InterFace.IMPL.MaxIdIMPL;
 import com.example.tmnt.newcomputer.InterFace.IMPL.ShowIcon;
 import com.example.tmnt.newcomputer.InterFace.IMaxId;
@@ -68,7 +67,7 @@ import me.majiajie.pagerbottomtabstrip.PagerBottomTabLayout;
 import me.majiajie.pagerbottomtabstrip.TabItemBuilder;
 import me.majiajie.pagerbottomtabstrip.listener.OnTabItemSelectListener;
 
-public class MainActivity extends AppCompatActivity implements OnMenuItemClickListener
+public class MainActivity extends BaseActivity implements OnMenuItemClickListener
         , OnMenuItemLongClickListener, NavigationView.OnNavigationItemSelectedListener {
 
     @Bind(R.id.toolbarIcon)
@@ -76,10 +75,6 @@ public class MainActivity extends AppCompatActivity implements OnMenuItemClickLi
 
     @Bind(R.id.tab)
     PagerBottomTabLayout mTab;
-
-    public static final int RESULT_IMAGE = 100;
-    public static final int RESULT_CAMERA = 200;
-
     @Bind(R.id.id_content)
     FrameLayout mIdContent;
     @Bind(R.id.drawer_layout)
@@ -114,6 +109,9 @@ public class MainActivity extends AppCompatActivity implements OnMenuItemClickLi
 
     private Controller controller;
 
+    public static final int RESULT_IMAGE = 100;
+    public static final int RESULT_CAMERA = 200;
+
     private int count;
     private int max;
     Intent startService;
@@ -124,22 +122,11 @@ public class MainActivity extends AppCompatActivity implements OnMenuItemClickLi
                 Window.FEATURE_CONTENT_TRANSITIONS);
         startService = new Intent(MainActivity.this, StartOpService.class);
         super.onCreate(savedInstanceState);
-        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) {
-            Utils.setTranslucentStatus(MainActivity.this, true);
-        }
-        SystemBarTintManager tintManager = new SystemBarTintManager(this);
-        tintManager.setStatusBarTintEnabled(true);
-        tintManager.setStatusBarTintResource(R.color.colorPrimary);
-
-        Bmob.initialize(this, "4556f6a1fe01d72ebe7e4c62e41d381c");
 
         stopService(startService);
 
         setContentView(R.layout.activity_main);
 
-
-        setEnterAnmition();
-        showExit();
         ButterKnife.bind(this);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -151,7 +138,7 @@ public class MainActivity extends AppCompatActivity implements OnMenuItemClickLi
         actionBar.setDisplayHomeAsUpEnabled(false);
         // actionBar.setHomeAsUpIndicator(R.drawable.fbn);
 
-        mDAO = new QuestionDAO(getApplication());
+        mDAO = QuestionDAO.getInstance(getApplicationContext());
 
         username = mDAO.queryLoginUsername();
         fragmentManager = getSupportFragmentManager();
@@ -175,8 +162,30 @@ public class MainActivity extends AppCompatActivity implements OnMenuItemClickLi
 
         setDefaultFragment();
         showNavigationBar();
+    }
 
+    @Override
+    public void setEnterAnimation() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            //Fade fade = new Fade();
+            Fade fade = new Fade();
+            fade.setDuration(1000);
+            getWindow().setEnterTransition(fade);
+            getWindow().setReturnTransition(fade);
+        }
+    }
 
+    @Override
+    public void setExitAnimation() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Explode explode = new Explode();
+            explode.setDuration(1000);
+            getWindow().setExitTransition(explode);
+
+            Fade fade = new Fade();
+            fade.setDuration(1000);
+            getWindow().setReturnTransition(fade);
+        }
     }
 
     @Override
@@ -190,7 +199,6 @@ public class MainActivity extends AppCompatActivity implements OnMenuItemClickLi
             }
         }
         return super.onTouchEvent(event);
-
     }
 
     /**
@@ -279,8 +287,6 @@ public class MainActivity extends AppCompatActivity implements OnMenuItemClickLi
                         }
                         break;
                 }
-
-
             }
 
             @Override
@@ -288,7 +294,6 @@ public class MainActivity extends AppCompatActivity implements OnMenuItemClickLi
 
             }
         });
-
     }
 
     private static String TEMP_IMAGE_PATH = Environment.getExternalStorageDirectory().getPath() + "image/jpg";
@@ -298,7 +303,6 @@ public class MainActivity extends AppCompatActivity implements OnMenuItemClickLi
         super.onStart();
 
         //mHomeAdapter = new HomeAdapter();
-
 
         if (Utils.isWifiConnected(getApplicationContext())) {
             if (mDAO.queryAll().size() - 199 == 0) {
@@ -322,7 +326,6 @@ public class MainActivity extends AppCompatActivity implements OnMenuItemClickLi
             }
         }
 
-
         /**
          * 进入相册或相机进行选择图片
          */
@@ -337,10 +340,7 @@ public class MainActivity extends AppCompatActivity implements OnMenuItemClickLi
                 ImageUtils.toCamera(MainActivity.this, TEMP_IMAGE_PATH, RESULT_CAMERA);
             }
         });
-
-
     }
-
 
     @Override
     protected void onPause() {
@@ -352,8 +352,6 @@ public class MainActivity extends AppCompatActivity implements OnMenuItemClickLi
      * 显示头像
      */
     public void showIcon() {
-
-
         mToolbarIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -367,6 +365,7 @@ public class MainActivity extends AppCompatActivity implements OnMenuItemClickLi
             }
         });
 
+
         mHomeUsername.setText(mDAO.queryLoginUsername());
         if (mDAO.queryUserIcon(username)) {
             mToolbarIcon.setImageBitmap(ImageUtils.readBitMap(MainActivity.this, mDAO.queryUserIconPath(username)));
@@ -375,7 +374,7 @@ public class MainActivity extends AppCompatActivity implements OnMenuItemClickLi
             mToolbarIcon.setImageResource(R.drawable.image);
         }
 
-        mExitLogin.setOnClickListener((v -> {
+        mExitLogin.setOnClickListener(v -> {
             mDAO.updateUserLogin(mDAO.queryLoginUsername(), false);
             mDAO.updateLogin(false);
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
@@ -383,19 +382,15 @@ public class MainActivity extends AppCompatActivity implements OnMenuItemClickLi
             editor.putString("exitValue", "exit").commit();
             startActivity(intent);
             finish();
-        }));
+        });
     }
 
 
     @Override
     protected void onResume() {
         super.onResume();
-
-
         showIcon();
         //getNavigation();
-
-
     }
 
 
@@ -526,7 +521,7 @@ public class MainActivity extends AppCompatActivity implements OnMenuItemClickLi
         if (resultCode == RESULT_OK) {
             if (requestCode == RESULT_IMAGE && data != null) {
                 String s = ImageUtils.getImageFromGallery(MainActivity.this, data);
-                Log.i(TAG, "onActivityResult: "+s);
+                Log.i(TAG, "onActivityResult: " + s);
                 if (!mDAO.queryUserIcon(username)) {
                     mDAO.addUserIcon(username, s);
                 } else {
@@ -586,37 +581,6 @@ public class MainActivity extends AppCompatActivity implements OnMenuItemClickLi
 //            finish();
 //        }));
 //    }
-
-    /**
-     * 退出主界面动画
-     */
-    public void showExit() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Explode explode = new Explode();
-            explode.setDuration(1000);
-            getWindow().setExitTransition(explode);
-
-            Fade fade = new Fade();
-            fade.setDuration(1000);
-            getWindow().setReturnTransition(fade);
-        }
-
-    }
-
-    /**
-     * 进入主界面动画
-     */
-    public void setEnterAnmition() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            //Fade fade = new Fade();
-            Fade fade = new Fade();
-            fade.setDuration(1000);
-            getWindow().setEnterTransition(fade);
-            getWindow().setReturnTransition(fade);
-        }
-
-    }
-
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         return false;

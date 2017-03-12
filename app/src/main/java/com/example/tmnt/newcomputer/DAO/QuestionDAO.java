@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Bundle;
 import android.util.Log;
 
 
@@ -25,12 +26,22 @@ public class QuestionDAO {
     private SQLiteDatabase db, createFromSD;
 
     private static final String TAG = "QuestionDAO";
+    private static QuestionDAO dao;
 
-    public QuestionDAO(Context mContext) {
+    private QuestionDAO(Context mContext) {
         this.mContext = mContext;
         mDBHelper = new DBHelper(mContext);
         mDBHelper.OpenDataBase();
         createFromSD = SQLiteDatabase.openOrCreateDatabase(Finallay.FILE_PATH, null);
+    }
+
+
+    public static QuestionDAO getInstance(Context context) {
+        if (dao == null) {
+            dao = new QuestionDAO(context);
+        }
+
+        return dao;
     }
 
     //内部数据库

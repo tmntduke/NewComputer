@@ -49,9 +49,17 @@ public class LoginActivity extends AppCompatActivity implements ProgressGenerato
     LinearLayout mLoginLayout;
     @Bind(R.id.register)
     TextView mRegister;
+
     private QuestionDAO mDAO;
     private String username;
     private String password;
+
+    private ProgressGenerator progressGenerator;
+
+    private SharedPreferences get;
+    private SharedPreferences exit;
+
+    private LoginAutoCompleteAdapter adapter;
 
     private boolean isClick;
     private boolean isExit;
@@ -67,33 +75,40 @@ public class LoginActivity extends AppCompatActivity implements ProgressGenerato
 
         super.onCreate(savedInstanceState);
 
-        //适配4.4系统
-        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) {
-            Utils.setTranslucentStatus(LoginActivity.this, true);
-            requestWindowFeature(Window.FEATURE_NO_TITLE);
-        }
+        setTitlebarColor();
 
-        //初始化登陆按钮
-        ProgressGenerator progressGenerator = new ProgressGenerator(this);
-        SystemBarTintManager tintManager = new SystemBarTintManager(this);
-        tintManager.setStatusBarTintEnabled(true);
-        tintManager.setStatusBarTintResource(android.R.color.transparent);
+        initData();
 
         setEnterAnmition();//入场动画
+
         showExit();//退场动画
 
+        checkLogin();
 
-        mDAO = new QuestionDAO(getApplicationContext());
+    }
+
+    /**
+     * 用户初始化操作
+     */
+    private void initData() {
+        progressGenerator = new ProgressGenerator(this);
+        mDAO = QuestionDAO.getInstance(getApplicationContext());
 
         //用户输入框初始化
-        LoginAutoCompleteAdapter adapter = new LoginAutoCompleteAdapter(LoginActivity.this, R.layout.activity_autocomplete_item
+        adapter = new LoginAutoCompleteAdapter(LoginActivity.this
+                , R.layout.activity_autocomplete_item
                 , mDAO.queryAlluser());
         adapter.notifyDataSetChanged();
 
+        get = getSharedPreferences("slideApp", MODE_PRIVATE);
+        exit = getSharedPreferences("exit", MODE_PRIVATE);
+    }
 
-        SharedPreferences get = getSharedPreferences("slideApp", MODE_PRIVATE);
-        SharedPreferences exit = getSharedPreferences("exit", MODE_PRIVATE);
-        mDAO = new QuestionDAO(getApplicationContext());
+
+    /**
+     * 验证登录信息
+     */
+    private void checkLogin() {
         if (exit != null) {
             isExit = exit.getString("exitValue", "").equals("exit");
         }
@@ -124,76 +139,13 @@ public class LoginActivity extends AppCompatActivity implements ProgressGenerato
                         mEditPwd.setText(password);
                     }
 
-                    //用户框中的逻辑判断
-                    mEditPwd.setOnFocusChangeListener((view, isCheck) -> {
-                        //当框内为空 或不存在输入的用户名时显示提示信息
-                        if (mEditUsername.getText().toString().isEmpty() || !mDAO.queryUserName(mEditUsername.getText().toString())) {
-                            //教师账号
-                            if (!mEditUsername.getText().toString().equals("admin")) {
-                                mEditUsername.setError("username not have");
-                                hideSoftInput();
-                                mEditPwd.setInputType(InputType.TYPE_DATETIME_VARIATION_NORMAL);//隐藏软键盘
-                                mRegister.setTextColor(getResources().getColor(R.color.colorPrimary));
-                            }
+                    checkUser();
 
-                        }
-                    });
-
-                    //登陆按钮
-                    mLogin.setOnClickListener((v) -> {
-                        hideSoftInput();
-                        mDAO.updateFirst(true);
-                        if (mDAO.queryUser(mEditUsername.getText().toString(), mEditPwd.getText().toString())) {
-                            //用户名和密码正确
-                            isClick = true;
-                            progressGenerator.start(mLogin);
-                            mLogin.setEnabled(false);
-                        } else if ((mEditUsername.getText().toString().equals("admin") && mEditPwd.getText().toString().equals("12345"))) {
-                            //教师账号正确
-                            progressGenerator.start(mLogin);
-                            mLogin.setEnabled(false);
-                        } else {
-                            //都不正确
-                            mEditPwd.setError("username or password wrong");
-                            mLogin.setError("ERROR");
-                        }
-
-
-                    });
+                    loginOperation();
 
                 }
 
-
-                TextWatcher watcher= new  TextWatcher(){
-
-                    @Override
-                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-                    }
-
-                    @Override
-                    public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-                    }
-
-                    @Override
-                    public void afterTextChanged(Editable s) {
-
-                    }
-                };
-
-
-                //注册按钮
-                mRegister.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        //跳转注册界面
-                        Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
-                        mDAO.updateFirst(true);
-                        startActivity(intent);
-                        finish();
-                    }
-                });
+                registerOperation();
 
             } else {
                 //是第一次使用跳转至启动界面
@@ -208,8 +160,83 @@ public class LoginActivity extends AppCompatActivity implements ProgressGenerato
             startActivity(intent);
             finish();
         }
+    }
 
+    /**
+     * 注册按钮
+     */
+    private void registerOperation() {
 
+        mRegister.setOnClickListener(v -> {
+            //跳转注册界面
+            Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
+            mDAO.updateFirst(true);
+            startActivity(intent);
+            finish();
+        });
+    }
+
+    /**
+     * 登陆按钮
+     */
+    private void loginOperation() {
+
+        mLogin.setOnClickListener((v) -> {
+            hideSoftInput();
+            mDAO.updateFirst(true);
+            if (mDAO.queryUser(mEditUsername.getText().toString()
+                    , mEditPwd.getText().toString())) {
+                //用户名和密码正确
+                isClick = true;
+                progressGenerator.start(mLogin);
+                mLogin.setEnabled(false);
+            } else if ((mEditUsername.getText().toString().equals("admin")
+                    && mEditPwd.getText().toString().equals("12345"))) {
+                //教师账号正确
+                progressGenerator.start(mLogin);
+                mLogin.setEnabled(false);
+            } else {
+                //都不正确
+                mEditPwd.setError("username or password wrong");
+                mLogin.setError("ERROR");
+            }
+        });
+    }
+
+    /**
+     * 用户框中的逻辑判断
+     */
+    private void checkUser() {
+
+        mEditPwd.setOnFocusChangeListener((view, isCheck) -> {
+            //当框内为空 或不存在输入的用户名时显示提示信息
+            if (mEditUsername.getText().toString().isEmpty() ||
+                    !mDAO.queryUserName(mEditUsername.getText().toString())) {
+                //教师账号
+                if (!mEditUsername.getText().toString().equals("admin")) {
+                    mEditUsername.setError("username not have");
+                    hideSoftInput();
+                    mEditPwd.setInputType(InputType.TYPE_DATETIME_VARIATION_NORMAL);//隐藏软键盘
+                    mRegister.setTextColor(getResources().getColor(R.color.colorPrimary));
+                }
+            }
+        });
+    }
+
+    /**
+     * 沉浸状态栏
+     */
+    private void setTitlebarColor() {
+        //适配4.4系统
+        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) {
+            Utils.setTranslucentStatus(LoginActivity.this, true);
+            requestWindowFeature(Window.FEATURE_NO_TITLE);
+        }
+
+        //初始化登陆按钮
+        SystemBarTintManager tintManager = new SystemBarTintManager(this);
+        tintManager.setStatusBarTintEnabled(true);
+        tintManager.setStatusBarTintResource(android.R.color.transparent);
     }
 
     @Override
@@ -236,7 +263,6 @@ public class LoginActivity extends AppCompatActivity implements ProgressGenerato
                 finish();
             }
         }
-
     }
 
     //退场动画
@@ -274,5 +300,11 @@ public class LoginActivity extends AppCompatActivity implements ProgressGenerato
             InputMethodManager inputmanger = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
             inputmanger.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mDAO.closeConn();
     }
 }

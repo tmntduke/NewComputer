@@ -7,7 +7,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.tmnt.newcomputer.DAO.QuestionDAO;
-import com.example.tmnt.newcomputer.DView.CircleImageView;
+import com.example.tmnt.newcomputer.Widget.CircleImageView;
 import com.example.tmnt.newcomputer.R;
 import com.example.tmnt.newcomputer.Utils.ImageUtils;
 

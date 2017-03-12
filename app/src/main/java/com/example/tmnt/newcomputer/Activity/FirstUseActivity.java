@@ -42,8 +42,11 @@ public class FirstUseActivity extends AppCompatActivity {
     Button mFirstRegister;
     @Bind(R.id.firstShowLay)
     LinearLayout mFirstShowLay;
+
     private QuestionDAO mDAO;
-    Display mDisplay;
+    private Display mDisplay;
+
+    private WindowManager wm;
 
     private boolean isExit;
     private static final String TAG = "FirstUseActivity";
@@ -51,9 +54,19 @@ public class FirstUseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        WindowManager wm = (WindowManager)
+        wm = (WindowManager)
                 getSystemService(Context.WINDOW_SERVICE);
 
+        setTilebarColor();
+
+        setData();
+
+    }
+
+    /**
+     * 沉浸状态栏
+     */
+    private void setTilebarColor() {
         if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) {
             Utils.setTranslucentStatus(FirstUseActivity.this, true);
             requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -61,11 +74,17 @@ public class FirstUseActivity extends AppCompatActivity {
         SystemBarTintManager tintManager = new SystemBarTintManager(this);
         tintManager.setStatusBarTintEnabled(true);
         tintManager.setStatusBarTintResource(android.R.color.transparent);
+    }
+
+    /**
+     * 操作
+     */
+    private void setData() {
         SharedPreferences get = getSharedPreferences("slideApp", MODE_PRIVATE);
         SharedPreferences exit = getSharedPreferences("exit", MODE_PRIVATE);
 
         mDisplay = wm.getDefaultDisplay();
-        mDAO = new QuestionDAO(getApplicationContext());
+        mDAO = QuestionDAO.getInstance(getApplicationContext());
         if (exit != null) {
             isExit = exit.getString("exitValue", "").equals("exit");
         }
@@ -94,12 +113,9 @@ public class FirstUseActivity extends AppCompatActivity {
                 });
 
             } else {
-
                 Intent intent = new Intent(FirstUseActivity.this, FristSlideAppinfo.class);
                 startActivity(intent);
             }
-
-
         } else if (mDAO.isFirstUser() && mDAO.isLogin()) {
             Intent intent = new Intent(FirstUseActivity.this, MainActivity.class);
             startActivity(intent);
@@ -107,5 +123,9 @@ public class FirstUseActivity extends AppCompatActivity {
         }
     }
 
-
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mDAO.closeConn();
+    }
 }

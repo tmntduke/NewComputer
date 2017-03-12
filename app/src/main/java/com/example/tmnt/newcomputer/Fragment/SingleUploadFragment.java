@@ -92,7 +92,7 @@ public class SingleUploadFragment extends Fragment implements ProgressGenerator.
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         flag = getArguments().getInt(FLAG);
-        Bmob.initialize(getActivity(), "4556f6a1fe01d72ebe7e4c62e41d381c");
+
     }
 
     @Nullable
@@ -214,8 +214,6 @@ public class SingleUploadFragment extends Fragment implements ProgressGenerator.
             }
         });
         if (!isKind) {
-
-
             another = new AnotherAnswer(mAddQuestion.getText().toString()
                     , "A." + mAddOptionA.getText().toString()
                     , "B." + mAddOptionB.getText().toString()

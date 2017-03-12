@@ -8,7 +8,6 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +18,7 @@ import android.widget.TextView;
 
 import com.example.tmnt.newcomputer.Activity.ExamActivity;
 import com.example.tmnt.newcomputer.DAO.QuestionDAO;
-import com.example.tmnt.newcomputer.DView.PlanBar;
+import com.example.tmnt.newcomputer.Widget.PlanBar;
 import com.example.tmnt.newcomputer.Model.Questions;
 import com.example.tmnt.newcomputer.R;
 import com.example.tmnt.newcomputer.Utils.Utils;
@@ -93,7 +92,7 @@ public class AnswerFragment extends Fragment {
 
         updateProgress = getArguments().getInt(UPDATEPROGRESS);
         //Log.i(TAG, "onCreate: " + type);
-        mDAO = new QuestionDAO(getActivity());
+        mDAO = QuestionDAO.getInstance(getActivity());
         wrongCount = new ArrayList<>();
     }
 
@@ -138,13 +137,17 @@ public class AnswerFragment extends Fragment {
                 mConfirm.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (!mFillBlankAnswer.getText().toString().equals(mDAO.queryFillAnswer(mQuestionses.get(position).getQuestion())) && kind == 3) {
+                        if (!mFillBlankAnswer.getText().toString().equals(mDAO.queryFillAnswer(mQuestionses.get(position)
+                                .getQuestion())) && kind == 3) {
                             mConfirm.setBackgroundColor(getResources().getColor(android.R.color.transparent));
                             //mDAO.addWrong(mQuestionses.get(position));
-                            mDAO.addFillWrong(mQuestionses.get(position).getQuestion(), mDAO.queryFillAnswer(mQuestionses.get(position).getQuestion()));
+                            mDAO.addFillWrong(mQuestionses.get(position).getQuestion()
+                                    , mDAO.queryFillAnswer(mQuestionses.get(position).getQuestion()));
 
                             if (position == 19) {
-                                Snackbar snackbar = Snackbar.make(view, "wrong:  " + mDAO.queryAllWrong().size() + "   turn to other view", Snackbar.LENGTH_INDEFINITE).setAction("click", new View.OnClickListener() {
+                                Snackbar snackbar = Snackbar.make(view, "wrong:  " + mDAO.queryAllWrong().size()
+                                        + "   turn to other view", Snackbar.LENGTH_INDEFINITE).setAction("click"
+                                        , new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
                                         Intent intent = new Intent(getActivity(), ExamActivity.class);
@@ -158,7 +161,9 @@ public class AnswerFragment extends Fragment {
                                 snackbar.show();
                             }
                         } else {
-                            Snackbar snackbar = Snackbar.make(view, "answer is " + mDAO.queryFillAnswer(mQuestionses.get(position).getQuestion()), Snackbar.LENGTH_SHORT);
+                            Snackbar snackbar = Snackbar.make(view, "answer is "
+                                    + mDAO.queryFillAnswer(mQuestionses.get(position).getQuestion())
+                                    , Snackbar.LENGTH_SHORT);
                             snackbar.getView().setBackgroundColor(getResources().getColor(R.color.blue_normal));
                             snackbar.show();
                         }
@@ -172,12 +177,6 @@ public class AnswerFragment extends Fragment {
         return view;
     }
 
-    /**
-     * 设置进度条进度
-     *
-     * @param updateProgress
-     */
-
 
     /**
      * 创建fragment实例
@@ -187,7 +186,8 @@ public class AnswerFragment extends Fragment {
      * @param type        问题的类型
      * @return
      */
-    public static AnswerFragment newInstance(ArrayList<Questions> questionses, int position, int type, int questionKind, int updateProgress) {
+    public static AnswerFragment newInstance(ArrayList<Questions> questionses, int position
+            , int type, int questionKind, int updateProgress) {
         Bundle bundle = new Bundle();
 
         bundle.putSerializable(POTISION, position);
@@ -217,11 +217,13 @@ public class AnswerFragment extends Fragment {
         } else if (kind != 3 && (mQuestionses.get(position).getAnswer() != useranswer)) {
             isClickItem = false;
 
-            Snackbar snackbar = Snackbar.make(view, "answer is " + getAnswer(mQuestionses.get(position).getAnswer()), Snackbar.LENGTH_SHORT);
+            Snackbar snackbar = Snackbar.make(view, "answer is "
+                    + getAnswer(mQuestionses.get(position).getAnswer()), Snackbar.LENGTH_SHORT);
             snackbar.getView().setBackgroundColor(getResources().getColor(R.color.blue_normal));
             snackbar.show();
 
-        } else if (kind == 3 && type != 3 && (mQuestionses.get(position).getAnswer() != useranswer) && !a1 && !a2 && !a3 && !a4) {
+        } else if (kind == 3 && type != 3 && (mQuestionses.get(position).getAnswer()
+                != useranswer) && !a1 && !a2 && !a3 && !a4) {
             isClickItem = false;
             wrongCount.add(mQuestionses.get(position));
             mDAO.addWrong(mQuestionses.get(position));
@@ -316,9 +318,17 @@ public class AnswerFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        mDAO.closeConn();
+    }
+
     private void showResult() {
         if (kind == 3 && position == 19) {
-            Snackbar snackbar = Snackbar.make(view, "wrong:  " + mDAO.queryAllWrong().size() + "   turn to other view", Snackbar.LENGTH_INDEFINITE).setAction("click", new View.OnClickListener() {
+            Snackbar snackbar = Snackbar.make(view, "wrong:  " + mDAO.queryAllWrong().size() +
+                    "   turn to other view", Snackbar.LENGTH_INDEFINITE).setAction("click"
+                    , new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(getActivity(), ExamActivity.class);

@@ -8,14 +8,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.tmnt.newcomputer.DAO.QuestionDAO;
-import com.example.tmnt.newcomputer.DView.CircleBar;
+import com.example.tmnt.newcomputer.Widget.CircleBar;
 import com.example.tmnt.newcomputer.R;
 
 import java.text.DecimalFormat;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 /**
  * 统计界面
@@ -45,7 +44,7 @@ public class TotalActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        mDAO = new QuestionDAO(getApplicationContext());
+        mDAO = QuestionDAO.getInstance(getApplicationContext());
         wrong = mDAO.queryAllWrong().size();
 
         setContentView(R.layout.totale_lay);

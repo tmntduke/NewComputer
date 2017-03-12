@@ -27,7 +27,7 @@ public class UpdateThread implements Runnable {
     public UpdateThread(List<AnotherAnswer> mAnotherAnswers, Context mContext) {
         this.mAnotherAnswers = mAnotherAnswers;
         this.mContext = mContext;
-        mDAO = new QuestionDAO(mContext);
+        mDAO = QuestionDAO.getInstance(mContext);
     }
 
     @Override

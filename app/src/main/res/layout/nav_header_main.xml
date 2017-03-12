@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:orientation="vertical">
-        <com.example.tmnt.newcomputer.DView.CircleImageView
+        <com.example.tmnt.newcomputer.Widget.CircleImageView
             android:id="@+id/userIcon"
             android:layout_width="75dp"
             android:layout_height="75dp"

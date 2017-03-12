@@ -18,7 +18,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.example.tmnt.newcomputer.DView.GuiUtils;
+import com.example.tmnt.newcomputer.Widget.GuiUtils;
 import com.example.tmnt.newcomputer.R;
 import com.example.tmnt.newcomputer.Utils.Utils;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
@@ -45,7 +45,27 @@ public class AboutActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //适配4.4 沉浸状态栏
+        setTitlebarColor();
+
+        setContentView(R.layout.about_lay);
+        ButterKnife.bind(this);
+
+
+        setupEnterAnimation(); // 入场动画
+
+        setupExitAnimation();//退场的动画
+
+        //返回按键
+        mOtherIvClose.setOnClickListener((v) ->
+                onBackPressed()
+        );
+    }
+
+    /**
+     * 适配4.4 沉浸状态栏
+     */
+    private void setTitlebarColor(){
+
         if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) {
             Utils.setTranslucentStatus(AboutActivity.this, true);
             requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -56,31 +76,18 @@ public class AboutActivity extends AppCompatActivity {
         SystemBarTintManager tintManager = new SystemBarTintManager(this);
         tintManager.setStatusBarTintEnabled(true);
         tintManager.setStatusBarTintResource(android.R.color.transparent);//状态栏颜色
-        setContentView(R.layout.about_lay);
-        ButterKnife.bind(this);
-
-
-        setupEnterAnimation(); // 入场动画
-        //animationShow();
-        setupExitAnimation();//退场的动画
-
-        //返回按键
-        mOtherIvClose.setOnClickListener((v) ->
-                onBackPressed()
-        );
     }
-
 
     //入场动画
     private void setupEnterAnimation() {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Transition transition = TransitionInflater.from(AboutActivity.this).inflateTransition(R.transition.arc_transition);
+            Transition transition = TransitionInflater.from(AboutActivity.this)
+                    .inflateTransition(R.transition.arc_transition);
             getWindow().setSharedElementEnterTransition(transition);
             transition.addListener(new Transition.TransitionListener() {
                 @Override
                 public void onTransitionStart(Transition transition) {
-
                 }
 
                 @Override
@@ -93,17 +100,14 @@ public class AboutActivity extends AppCompatActivity {
 
                 @Override
                 public void onTransitionCancel(Transition transition) {
-
                 }
 
                 @Override
                 public void onTransitionPause(Transition transition) {
-
                 }
 
                 @Override
                 public void onTransitionResume(Transition transition) {
-
                 }
             });
         } else {
@@ -124,7 +128,8 @@ public class AboutActivity extends AppCompatActivity {
 
     //fab按钮的爆炸效果
     private void animationShow() {
-        GuiUtils.animateRevealShow(AboutActivity.this, mRelative, mOtherFabCircle.getWidth() / 2, R.color.colorOtherPrimaryDark, new GuiUtils.OnRevealAnimationListener() {
+        GuiUtils.animateRevealShow(AboutActivity.this, mRelative, mOtherFabCircle.getWidth() / 2
+                , R.color.colorOtherPrimaryDark, new GuiUtils.OnRevealAnimationListener() {
             @Override
             public void onRevealHide() {
 
@@ -143,7 +148,8 @@ public class AboutActivity extends AppCompatActivity {
 
         //返回上级时动画
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            GuiUtils.animateRevealHide(AboutActivity.this, mRelative, mOtherFabCircle.getWidth() / 2, R.color.colorOtherPrimaryDark, true, new GuiUtils.OnRevealAnimationListener() {
+            GuiUtils.animateRevealHide(AboutActivity.this, mRelative, mOtherFabCircle.getWidth() / 2
+                    , R.color.colorOtherPrimaryDark, true, new GuiUtils.OnRevealAnimationListener() {
                 @Override
                 public void onRevealHide() {
                     defaultBack();

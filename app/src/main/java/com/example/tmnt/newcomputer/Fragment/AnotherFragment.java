@@ -11,7 +11,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.example.tmnt.newcomputer.DView.PlanBar;
+import com.example.tmnt.newcomputer.Widget.PlanBar;
 import com.example.tmnt.newcomputer.Model.AnotherAnswer;
 import com.example.tmnt.newcomputer.R;
 import com.example.tmnt.newcomputer.Utils.Utils;
@@ -32,6 +32,7 @@ public class AnotherFragment extends Fragment {
     public static final String AOTHERTYPE = "type";
     public static final String AOTHERKIND = "kind";
     public static final String ANOTHER = "another";
+
     @Bind(R.id.test)
     PlanBar mTest;
     @Bind(R.id.count)
@@ -116,7 +117,8 @@ public class AnotherFragment extends Fragment {
                     @Override
                     public void onClick(View v) {
                         if (!mFillBlankAnswer.getText().toString().equals(mQuestionses.get(position).getFillAnswer())) {
-                            Snackbar snackbar = Snackbar.make(view, "answer is " + mQuestionses.get(position).getFillAnswer(), Snackbar.LENGTH_SHORT);
+                            Snackbar snackbar = Snackbar.make(view, "answer is "
+                                    + mQuestionses.get(position).getFillAnswer(), Snackbar.LENGTH_SHORT);
                             snackbar.getView().setBackgroundColor(getResources().getColor(R.color.colorPrimary));
                             snackbar.show();
                         } else {
@@ -140,7 +142,8 @@ public class AnotherFragment extends Fragment {
     }
 
 
-    public static AnotherFragment newInstance(ArrayList<AnotherAnswer> questionses, int position, int type, int questionKind) {
+    public static AnotherFragment newInstance(ArrayList<AnotherAnswer> questionses
+            , int position, int type, int questionKind) {
         Bundle bundle = new Bundle();
 
         bundle.putSerializable(AOTHERPOTISION, position);
@@ -195,7 +198,8 @@ public class AnotherFragment extends Fragment {
             snackbar.getView().setBackgroundColor(getResources().getColor(R.color.blue_normal));
             snackbar.show();
         } else if (kind == 1 && (mQuestionses.get(position).getFillAnswer() != mFillBlankAnswer.getText().toString())) {
-            Snackbar snackbar2 = Snackbar.make(view, "answer is " + mQuestionses.get(position).getFillAnswer(), Snackbar.LENGTH_SHORT);
+            Snackbar snackbar2 = Snackbar.make(view, "answer is "
+                    + mQuestionses.get(position).getFillAnswer(), Snackbar.LENGTH_SHORT);
             snackbar2.getView().setBackgroundColor(getResources().getColor(R.color.blue_normal));
             snackbar2.show();
         }

@@ -42,7 +42,7 @@ public class WrongItemActivity extends AppCompatActivity {
         setContentView(R.layout.wrong_question_view_lay);
 
 
-        mDAO = new QuestionDAO(getApplicationContext());
+        mDAO = QuestionDAO.getInstance(getApplicationContext());
         Intent intent = getIntent();
         String question = intent.getStringExtra(WrongListActivity.QUESTION);
 
@@ -51,7 +51,8 @@ public class WrongItemActivity extends AppCompatActivity {
 
         FragmentManager manager = getSupportFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
-        transaction.replace(R.id.wrong_view_contain, WrongQuestionFragment.newInstance(mQuestions, mQuestions.getMexam_type()));
+        transaction.replace(R.id.wrong_view_contain, WrongQuestionFragment.newInstance(mQuestions
+                , mQuestions.getMexam_type()));
         transaction.commit();
     }
 }

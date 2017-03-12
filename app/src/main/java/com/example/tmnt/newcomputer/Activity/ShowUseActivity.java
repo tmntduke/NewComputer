@@ -35,12 +35,13 @@ public class ShowUseActivity extends AppCompatActivity {
         Intent intent = getIntent();
         username=intent.getStringExtra("user");
 
-        mDAO = new QuestionDAO(getApplicationContext());
+        mDAO = QuestionDAO.getInstance(getApplicationContext());
 
         //加载fragment
         FragmentManager manager = getSupportFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
-        transaction.add(R.id.show_id, UserMessageFragment.newInstance(mDAO.queryWrongQuestion(), username, mDAO.queryUserIconPath(username)));
+        transaction.add(R.id.show_id, UserMessageFragment.newInstance(mDAO.queryWrongQuestion()
+                , username, mDAO.queryUserIconPath(username)));
         transaction.commit();
     }
 

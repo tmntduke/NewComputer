@@ -17,7 +17,7 @@
                     android:layout_height="match_parent"
     >
 
-        <com.example.tmnt.newcomputer.DView.CircleImageView
+        <com.example.tmnt.newcomputer.Widget.CircleImageView
             android:id="@+id/question_sort_icon"
             android:layout_width="52dp"
             android:layout_height="52dp"
@@ -55,7 +55,7 @@
             />
         </LinearLayout>
 
-        <com.example.tmnt.newcomputer.DView.DragBubbleView
+        <com.example.tmnt.newcomputer.Widget.DragBubbleView
             android:id="@+id/dbv"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

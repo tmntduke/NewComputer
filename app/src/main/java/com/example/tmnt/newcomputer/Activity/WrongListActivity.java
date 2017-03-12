@@ -50,7 +50,7 @@ public class WrongListActivity extends AppCompatActivity {
         tintManager.setStatusBarTintEnabled(true);
         tintManager.setStatusBarTintResource(R.color.colorPrimary);
 
-        mDAO = new QuestionDAO(getApplicationContext());
+        mDAO = QuestionDAO.getInstance(getApplicationContext());
 
         int wrong = mDAO.queryWrongQuestion().size();
 
@@ -62,7 +62,8 @@ public class WrongListActivity extends AppCompatActivity {
             mWrongTool.setTitleTextColor(Color.WHITE);
             setSupportActionBar(mWrongTool);
 
-            UserMsgAdapter adapter = new UserMsgAdapter(getApplicationContext(), mDAO.queryWrongQuestion());
+            UserMsgAdapter adapter = new UserMsgAdapter(getApplicationContext()
+                    , mDAO.queryWrongQuestion());
             adapter.notifyDataSetChanged();
             mWrongContain.setAdapter(adapter);
 

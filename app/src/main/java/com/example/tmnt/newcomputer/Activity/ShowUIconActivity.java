@@ -39,7 +39,7 @@ public class ShowUIconActivity extends AppCompatActivity {
         tintManager.setStatusBarTintEnabled(true);
         tintManager.setStatusBarTintColor(android.R.color.transparent);
 
-        mDAO = new QuestionDAO(getApplicationContext());
+        mDAO = QuestionDAO.getInstance(getApplicationContext());
 
         setContentView(R.layout.show_user_icon);
         ButterKnife.bind(this);
@@ -47,7 +47,8 @@ public class ShowUIconActivity extends AppCompatActivity {
         Intent intent = getIntent();
         String p = intent.getStringExtra(UserMessageFragment.PATH);
         if (mDAO.queryUserIcon(mDAO.queryLoginUsername())) {
-            mShowUserIcon.setImageBitmap(ImageUtils.readBitMap(getApplicationContext(), mDAO.queryUserIconPath(mDAO.queryLoginUsername())));
+            mShowUserIcon.setImageBitmap(ImageUtils.readBitMap(getApplicationContext()
+                    , mDAO.queryUserIconPath(mDAO.queryLoginUsername())));
         } else {
             mShowUserIcon.setImageResource(R.drawable.image);
         }
@@ -66,5 +67,11 @@ public class ShowUIconActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mDAO.closeConn();
     }
 }

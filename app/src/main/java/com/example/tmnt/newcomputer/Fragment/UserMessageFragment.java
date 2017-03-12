@@ -55,7 +55,7 @@ public class UserMessageFragment extends Fragment {
         mArrayList = getArguments().getStringArrayList(QUERTION);
         user = getArguments().getString(NAME);
         path = getArguments().getString(PATH);
-        mDAO = new QuestionDAO(getActivity());
+        mDAO = QuestionDAO.getInstance(getActivity());
     }
 
     @Nullable
@@ -94,8 +94,16 @@ public class UserMessageFragment extends Fragment {
 //        userIcon.setImageBitmap(ImageUtils.readBitMap(getActivity(), path));
 
         mUserMegList.setLayoutManager(new LinearLayoutManager(getActivity()));
-        UserMsgItemAdapter adapter = new UserMsgItemAdapter(setIconMsg(), setTitleMsg()
-                , getActivity(), path, user, "一级等考", mDAO.queryUserIcon(user));
+//        UserMsgItemAdapter adapter = new UserMsgItemAdapter(setIconMsg(), setTitleMsg()
+//                , getActivity(), path, user, "一级等考", mDAO.queryUserIcon(user));
+
+        UserMsgItemAdapter adapter = new UserMsgItemAdapter.Bulider(setIconMsg(), setTitleMsg(), getActivity())
+                .setPath(path)
+                .setName(user)
+                .setSub("一级等考")
+                .isIcons(mDAO.queryUserIcon(user))
+                .bulid();
+
 
         adapter.notifyDataSetChanged();
 
@@ -135,7 +143,8 @@ public class UserMessageFragment extends Fragment {
             public void onClick(View view) {
                 ActivityOptions options = null;
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-                    options = ActivityOptions.makeSceneTransitionAnimation(getActivity(), mFloatButton, mFloatButton.getTransitionName());
+                    options = ActivityOptions.makeSceneTransitionAnimation(getActivity()
+                            , mFloatButton, mFloatButton.getTransitionName());
                     startActivity(new Intent(getActivity(), AboutActivity.class), options.toBundle());
                 } else {
                     startActivity(new Intent(getActivity(), AboutActivity.class));

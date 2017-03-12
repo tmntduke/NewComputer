@@ -123,6 +123,6 @@
             android:layout_gravity="center"
             app:border_color="@android:color/white"
             app:border_width="2dp"
-            app:layout_behavior="com.example.tmnt.newcomputer.DView.AvatarImageBehavior"/>
+            app:layout_behavior="com.example.tmnt.newcomputer.Widget.AvatarImageBehavior"/>
 
 </android.support.design.widget.CoordinatorLayout>

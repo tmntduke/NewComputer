@@ -14,7 +14,7 @@
                  android:layout_height="0dp"
                  android:layout_weight="1">
 
-        <com.example.tmnt.newcomputer.DView.PlanBar
+        <com.example.tmnt.newcomputer.Widget.PlanBar
             android:id="@+id/test"
             android:layout_width="225dp"
             android:layout_height="wrap_content"

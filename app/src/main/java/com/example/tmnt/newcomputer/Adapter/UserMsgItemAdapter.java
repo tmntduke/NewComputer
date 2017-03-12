@@ -1,17 +1,13 @@
 package com.example.tmnt.newcomputer.Adapter;
 
 import android.content.Context;
-import android.content.Intent;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
-import com.example.tmnt.newcomputer.Activity.ShowUIconActivity;
-import com.example.tmnt.newcomputer.DView.CircleImageView;
+import com.example.tmnt.newcomputer.Widget.CircleImageView;
 import com.example.tmnt.newcomputer.R;
 import com.example.tmnt.newcomputer.ViewHolder.UserMsgViewHolder;
 
@@ -24,13 +20,13 @@ import java.util.List;
 public class UserMsgItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int IS_HEADER = 0;
     private static final int IS_NORMAL = 1;
-    private List<Integer> icons;
-    private List<String> title;
-    private Context cotext;
-    private String path;
-    private String name;
-    private String sub;
-    private boolean isIcon;
+    private final List<Integer> icons;
+    private final List<String> title;
+    private final Context cotext;
+    private final String path;
+    private final String name;
+    private final String sub;
+    private final boolean isIcon;
 
     private LinearLayout cardView;
     private CircleImageView iCircleImageView;
@@ -39,16 +35,65 @@ public class UserMsgItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     private static final String TAG = "UserMsgItemAdapter";
 
-    //将信息传入
-    public UserMsgItemAdapter(List<Integer> icons, List<String> title, Context cotext, String path, String name, String sub, boolean isIcon) {
-        this.icons = icons;
-        this.title = title;
-        this.cotext = cotext;
-        this.path = path;
-        this.name = name;
-        this.sub = sub;
-        this.isIcon = isIcon;
+
+    /**
+     * 构建者模式 创建对象
+     */
+    public static class Bulider {
+        private List<Integer> icons;
+        private List<String> title;
+        private Context cotext;
+        private String path;
+        private String name;
+        private String sub;
+        private boolean isIcon;
+
+        public Bulider(List<Integer> icons,
+                       List<String> title,
+                       Context bContext) {
+            this.cotext = bContext;
+            this.title = title;
+            this.icons = icons;
+
+        }
+
+        public Bulider setPath(String path) {
+            this.path = path;
+            return this;
+        }
+
+        public Bulider setName(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public Bulider setSub(String sub) {
+            this.sub = sub;
+            return this;
+        }
+
+        public Bulider isIcons(boolean isIcon) {
+            this.isIcon = isIcon;
+            return this;
+        }
+
+        public UserMsgItemAdapter bulid() {
+            return new UserMsgItemAdapter(this);
+        }
+
     }
+
+    //将信息传入
+    private UserMsgItemAdapter(Bulider bulider) {
+        this.isIcon = bulider.isIcon;
+        this.cotext = bulider.cotext;
+        this.icons = bulider.icons;
+        this.title = bulider.title;
+        this.path = bulider.path;
+        this.name = bulider.name;
+        this.sub = bulider.sub;
+    }
+
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {

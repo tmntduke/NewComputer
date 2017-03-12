@@ -28,6 +28,9 @@ import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.FindStatisticsListener;
 import cn.bmob.v3.listener.SaveListener;
 import cn.bmob.v3.listener.UpdateListener;
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * bmob工具类
@@ -51,7 +54,6 @@ public class BmobUtils {
                 @Override
                 public void onSuccess() {
                     Snackbar.make(view, "you already add a question", Snackbar.LENGTH_LONG).show();
-
                 }
 
                 @Override
@@ -99,9 +101,7 @@ public class BmobUtils {
                 if (dataRe != null) {
                     dataRe.getQuestionData(list);
                 }
-
             }
-
 
             @Override
             public void onError(int i, String s) {
@@ -215,18 +215,24 @@ public class BmobUtils {
     public static void addForMore(List<AnotherAnswer> list, Context context, int id) {
         List<BmobObject> objects = new ArrayList<>();
         // Log.i(TAG, "addForMore: " + list.size());
-        for (int i = 0; i < list.size(); i++) {
-            objects.add(new AnotherAnswer(list.get(i).getQuestion()
-                    , list.get(i).getOptionA()
-                    , list.get(i).getOptionB()
-                    , list.get(i).getOptionC()
-                    , list.get(i).getOptionD()
-                    , list.get(i).getAnswer()
-                    , list.get(i).getKind()
-                    , list.get(i).getQ_type()
-                    , list.get(i).getFillAnswer(), true, id + i + 1));
-
-        }
+//        for (int i = 0; i < list.size(); i++) {
+//
+//
+//        }
+        Observable.range(0,list.size())
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(integer -> {
+                    objects.add(new AnotherAnswer(list.get(integer).getQuestion()
+                            , list.get(integer).getOptionA()
+                            , list.get(integer).getOptionB()
+                            , list.get(integer).getOptionC()
+                            , list.get(integer).getOptionD()
+                            , list.get(integer).getAnswer()
+                            , list.get(integer).getKind()
+                            , list.get(integer).getQ_type()
+                            , list.get(integer).getFillAnswer(), true, id + integer + 1));
+                });
         Log.i(TAG, "addForMore: object" + objects.size());
         new BmobObject().insertBatch(context, objects, new SaveListener() {
             @Override

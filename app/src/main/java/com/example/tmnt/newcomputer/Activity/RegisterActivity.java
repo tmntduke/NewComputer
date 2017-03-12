@@ -1,8 +1,6 @@
 package com.example.tmnt.newcomputer.Activity;
 
-import android.annotation.TargetApi;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -19,12 +17,10 @@ import android.view.View;
 import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import com.dd.processbutton.iml.ActionProcessButton;
 import com.example.tmnt.newcomputer.DAO.QuestionDAO;
-import com.example.tmnt.newcomputer.DView.AutoComplete;
-import com.example.tmnt.newcomputer.DView.CircleImageView;
+import com.example.tmnt.newcomputer.Widget.AutoComplete;
 import com.example.tmnt.newcomputer.InterFace.IMPL.ShowIcon;
 import com.example.tmnt.newcomputer.InterFace.OnClickShowIcon;
 import com.example.tmnt.newcomputer.MainActivity;
@@ -53,7 +49,6 @@ public class RegisterActivity extends AppCompatActivity implements ProgressGener
     ActionProcessButton mRegisterBtn;
     @Bind(R.id.register_mail)
     AutoComplete mRegisterMail;
-
 
     private boolean isOver = false;
 
@@ -97,16 +92,13 @@ public class RegisterActivity extends AppCompatActivity implements ProgressGener
         tintManager.setStatusBarTintResource(android.R.color.transparent);
         setContentView(R.layout.register_layout);
         ButterKnife.bind(this);
-        mDAO = new QuestionDAO(getApplicationContext());
-
-        Bmob.initialize(this, "5b5167d530b5db1c3696b59f02b904bb");//bmob初始化
+        mDAO = QuestionDAO.getInstance(getApplicationContext());
 
         mRegisterBtn.setMode(ActionProcessButton.Mode.PROGRESS);
 
 
         //mRegisterBtn.setProgress(100);
 
-        //用户框判断
 
     }
 
@@ -116,7 +108,8 @@ public class RegisterActivity extends AppCompatActivity implements ProgressGener
         mRegisterPassword.setOnFocusChangeListener((view, isCheck) -> {
             String regex = "\\w{4,8}";//用户信息验证
             //当不匹配时显示提示信息
-            if (!(mRegisterUsername.getText().toString().matches(regex)) || (mRegisterUsername.getText().toString().isEmpty())) {
+            if (!(mRegisterUsername.getText().toString().matches(regex))
+                    || (mRegisterUsername.getText().toString().isEmpty())) {
                 mRegisterUsername.setError("username illegimate");
             } else if (mDAO.queryUserName(mRegisterUsername.getText().toString())) {
                 //已存在用户名
@@ -139,7 +132,8 @@ public class RegisterActivity extends AppCompatActivity implements ProgressGener
                             startActivity(intent);
                             finish();
                         });
-                snackbar.getView().setBackgroundColor(getResources().getColor(R.color.colorPrimary));//设置SnackBar颜色
+                snackbar.getView().setBackgroundColor(getResources()
+                        .getColor(R.color.colorPrimary));//设置SnackBar颜色
                 snackbar.setActionTextColor(Color.rgb(127, 256, 169));
                 snackbar.show();
 
@@ -162,7 +156,8 @@ public class RegisterActivity extends AppCompatActivity implements ProgressGener
             String regex = "(?=.*\\d)(?=.*[a-zA-Z]).{8,10}";//密码验证
 
             //当密码不匹配时
-            if (!(mRegisterPassword.getText().toString().matches(regex)) || (mRegisterPassword.getText().toString().isEmpty())) {
+            if (!(mRegisterPassword.getText().toString().matches(regex))
+                    || (mRegisterPassword.getText().toString().isEmpty())) {
                 mRegisterPassword.setError("password illegimate");
 
             } else {
@@ -178,10 +173,15 @@ public class RegisterActivity extends AppCompatActivity implements ProgressGener
         mRegisterBtn.setOnClickListener((v) ->
                 {
                     //用户名和密码不符合要求
-                    if (!(mRegisterPasswordCommit.getText().toString().equals(mRegisterPassword.getText().toString()))
-                            || (mRegisterPasswordCommit.getText().toString().isEmpty()) || mRegisterMail.getText().toString().isEmpty()) {
+                    if (!(mRegisterPasswordCommit.getText().toString()
+                            .equals(mRegisterPassword.getText().toString()))
+                            || (mRegisterPasswordCommit.getText().toString().isEmpty())
+                            || mRegisterMail.getText().toString().isEmpty()) {
+
                         mRegisterPasswordCommit.setError("password not identical");
-                    } else if ((mRegisterPasswordCommit.getText().toString().equals(mRegisterPassword.getText().toString())
+
+                    } else if ((mRegisterPasswordCommit.getText().toString()
+                            .equals(mRegisterPassword.getText().toString())
                             && isUsername && isPassword)) {
 //
                         isOver = true;
@@ -233,6 +233,7 @@ public class RegisterActivity extends AppCompatActivity implements ProgressGener
         if (mAlertDialog != null) {
             mAlertDialog.dismiss();
         }
+        mDAO.closeConn();
     }
 
     @Override

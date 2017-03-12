@@ -14,6 +14,7 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"></uses-permission>
 
     <application
+        android:name=".Activity.BaseApplication"
         android:allowBackup="true"
         android:icon="@mipmap/new_computer_icon"
         android:label="@string/app_name"
@@ -74,6 +75,8 @@
         <activity android:name=".Activity.AdminActivity">
         </activity>
 
+        <activity android:name=".Activity.NewsInfoActivity"></activity>
+
         <activity android:name=".Activity.UploadActivity"
                   android:theme="@style/AppTheme1"></activity>
 
@@ -83,7 +86,7 @@
             </intent-filter>
         </receiver>
 
-        <service android:name=".Service.StartOpService" ></service>
+        <service android:name=".Service.StartOpService"></service>
         <service android:name=".Service.UpdateDataService"></service>
     </application>
 

@@ -3,13 +3,13 @@ package com.example.tmnt.newcomputer.Adapter;
 import android.content.Context;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.bigkoo.convenientbanner.ConvenientBanner;
-import com.example.tmnt.newcomputer.DView.DragBubbleView;
+import com.example.tmnt.newcomputer.Model.NewsInfo;
+import com.example.tmnt.newcomputer.Widget.DragBubbleView;
 import com.example.tmnt.newcomputer.R;
 import com.example.tmnt.newcomputer.UIModel.UIQuestionData;
 import com.example.tmnt.newcomputer.ViewHolder.HomeListViewHolder;
@@ -23,7 +23,7 @@ import java.util.List;
 public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private List<UIQuestionData> mDatas;
-    private List<Integer> mList;
+    private List<NewsInfo.NewslistBean> mList;
     private Context mContext;
     private CardView mCardView;
     private DragBubbleView dbv;
@@ -36,7 +36,7 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private static final String TAG = "HomeAdapter";
 
-    public HomeAdapter(List<UIQuestionData> mDatas, List<Integer> l, Context context) {
+    public HomeAdapter(List<UIQuestionData> mDatas, List<NewsInfo.NewslistBean> l, Context context) {
         this.mDatas = mDatas;
         mContext = context;
         mList = l;

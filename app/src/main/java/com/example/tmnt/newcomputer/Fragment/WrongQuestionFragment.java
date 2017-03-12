@@ -15,7 +15,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.tmnt.newcomputer.DAO.QuestionDAO;
-import com.example.tmnt.newcomputer.DView.PlanBar;
+import com.example.tmnt.newcomputer.Widget.PlanBar;
 import com.example.tmnt.newcomputer.Model.Questions;
 import com.example.tmnt.newcomputer.R;
 import com.example.tmnt.newcomputer.Utils.Utils;
@@ -86,7 +86,7 @@ public class WrongQuestionFragment extends Fragment {
         position = getArguments().getInt(POTISION);
 
         //Log.i(TAG, "onCreate: " + type);
-        mDAO = new QuestionDAO(getActivity());
+        mDAO = QuestionDAO.getInstance(getActivity());
     }
 
     @Override

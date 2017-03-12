@@ -8,9 +8,11 @@ import android.widget.TextView;
 import com.bigkoo.convenientbanner.ConvenientBanner;
 import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.example.tmnt.newcomputer.Adapter.HomeAdapter;
-import com.example.tmnt.newcomputer.DView.DragBubbleView;
+import com.example.tmnt.newcomputer.Model.NewsInfo;
+import com.example.tmnt.newcomputer.Widget.DragBubbleView;
 import com.example.tmnt.newcomputer.R;
 import com.example.tmnt.newcomputer.UIModel.UIQuestionData;
+import com.example.tmnt.newcomputer.Widget.LocalImageHolderView;
 
 import java.util.List;
 
@@ -26,7 +28,8 @@ public class HomeListViewHolder extends RecyclerView.ViewHolder {
     private DragBubbleView dbv;
     public static ConvenientBanner convenientBanner;
 
-    private HomeListViewHolder(View itemView, ImageView imageView, TextView title, TextView subTitle, int type, DragBubbleView dbv) {
+    private HomeListViewHolder(View itemView, ImageView imageView, TextView title
+            , TextView subTitle, int type, DragBubbleView dbv) {
         super(itemView);
         mImageView = imageView;
         this.title = title;
@@ -63,7 +66,7 @@ public class HomeListViewHolder extends RecyclerView.ViewHolder {
         subTitle.setText(data.getSubtitleData());
     }
 
-    public void showConvenientBanner(List<Integer> list) {
+    public void showConvenientBanner(List<NewsInfo.NewslistBean> list) {
         mConvenientBanner.setPages(new CBViewHolderCreator() {
             @Override
             public Object createHolder() {

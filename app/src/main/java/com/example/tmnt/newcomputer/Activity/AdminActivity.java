@@ -37,11 +37,10 @@ import cn.bmob.v3.listener.SaveListener;
 /**
  * 教师选择添加方式界面
  */
-public class AdminActivity extends AppCompatActivity {
+public class AdminActivity extends BaseActivity {
 
     @Bind(R.id.singleUpload)
     Button mSingleUpload;
-
     @Bind(R.id.select_main)
     FloatingActionButton mSelectMain;
     @Bind(R.id.fill_main)
@@ -64,22 +63,8 @@ public class AdminActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //适配4.4系统
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(getResources().getColor(R.color.colorPrimary));
-        }
-        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) {
-            Utils.setTranslucentStatus(AdminActivity.this, true);
-        }
-        SystemBarTintManager tintManager = new SystemBarTintManager(this);
-        tintManager.setStatusBarTintEnabled(true);
-        tintManager.setStatusBarTintResource(R.color.colorPrimary);
-
-        Bmob.initialize(this, "4556f6a1fe01d72ebe7e4c62e41d381c");
-
         setContentView(R.layout.activity_admin);
         ButterKnife.bind(this);
-        //mMSortAdd.showMenuButton(true);
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle("教师端");
@@ -87,32 +72,33 @@ public class AdminActivity extends AppCompatActivity {
         Intent intent = new Intent(AdminActivity.this, UploadActivity.class);
 
         //浮动按钮--填空添加
-        mFillMain.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                intent.putExtra(ADD, 002);
-                startActivity(intent);
-            }
+        mFillMain.setOnClickListener(v -> {
+            intent.putExtra(ADD, 002);
+            startActivity(intent);
         });
 
         //浮动按钮--选择添加
-        mSelectMain.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                intent.putExtra(ADD, 001);
-                startActivity(intent);
-            }
+        mSelectMain.setOnClickListener((v) -> {
+            intent.putExtra(ADD, 001);
+            startActivity(intent);
         });
 
 
-        mFileUpload.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(Intent.ACTION_GET_CONTENT);
-                i.setType("file/*");
-                startActivityForResult(i, REQUEST_CODE);
-            }
+        mFileUpload.setOnClickListener(v -> {
+            Intent i = new Intent(Intent.ACTION_GET_CONTENT);
+            i.setType("file/*");
+            startActivityForResult(i, REQUEST_CODE);
         });
+    }
+
+    @Override
+    public void setEnterAnimation() {
+
+    }
+
+    @Override
+    public void setExitAnimation() {
+
     }
 
     @OnClick({R.id.singleUpload})
@@ -125,7 +111,6 @@ public class AdminActivity extends AppCompatActivity {
                 case R.id.singleUpload:
                     startActivity(intent);
                     break;
-
             }
         } else {
             //没有连接时 提示 并进入设置界面
@@ -141,7 +126,6 @@ public class AdminActivity extends AppCompatActivity {
             snackbar1.setActionTextColor(getResources().getColor(R.color.colorAccent));
             snackbar1.show();
         }
-
     }
 
     @Override
@@ -173,12 +157,12 @@ public class AdminActivity extends AppCompatActivity {
                 public void onSuccess(List<AnotherAnswer> list) {
                     BmobUtils.addForMore(list, AdminActivity.this, idForm);
                 }
-
                 @Override
                 public void onError(Exception e) {
                     Log.i(TAG, "onError: " + e.toString());
                     //Utils.showToast(AdminActivity.this, "文件加载失败");
-                    Snackbar.make(getWindow().findViewById(R.id.fileUpload), "文件加载失败", Snackbar.LENGTH_LONG).show();
+                    Snackbar.make(getWindow().findViewById(R.id.fileUpload), "文件加载失败"
+                            , Snackbar.LENGTH_LONG).show();
                 }
             });
         }

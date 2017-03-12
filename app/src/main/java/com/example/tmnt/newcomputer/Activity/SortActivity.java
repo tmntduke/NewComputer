@@ -48,8 +48,7 @@ public class SortActivity extends AppCompatActivity {
         tintManager.setStatusBarTintEnabled(true);
         tintManager.setStatusBarTintResource(android.R.color.transparent);
 
-        Bmob.initialize(this, "5b5167d530b5db1c3696b59f02b904bb");//bmob初始化
-        mDAO = new QuestionDAO(getApplicationContext());
+        mDAO = QuestionDAO.getInstance(getApplicationContext());
 
         mViewPager = new ViewPager(this);
         mViewPager.setId(R.id.ViewPager);
