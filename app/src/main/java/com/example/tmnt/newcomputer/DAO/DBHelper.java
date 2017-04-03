@@ -19,9 +19,36 @@ import java.io.InputStream;
  * 数据库连接
  */
 public class DBHelper extends SQLiteOpenHelper {
+
+
     private Context mContext;
     private static final int VERSION = 1;
     private static final String DBNAME = "My.db";
+
+    private static final String CREATE = "create table T_User (uid integer PRIMARY KEY AUTOINCREMENT" +
+            ", username varchar (10),password varchar (20)" +
+            ",isLogin bool,isIcon bool)";
+
+    private final static String QUESTION = "create table T_Question (jId integer primary key AUTOINCREMENT" +
+            ",question varchar(200),answerA varchar(25),answerB varchar(25),answerC varchar(25)" +
+            ",answerD varchar(25),answer integer,kind varchar(15))";
+
+    private static final String FIRST = "create table T_First(fid integer primary key AUTOINCREMENT " +
+            ", isFirst bool ,isLogin bool )";
+
+    private final static String INS_FIRST = "insert into T_First(isFirst,isLogin) values(0,0)";
+
+    private final static String WRONG = "create table T_Wrong (wid integer primary key AUTOINCREMENT" +
+            ",question text,answerA varchar(25),answerB varchar(25),answerC varchar(25)" +
+            ",answerD varchar(25),answer integer,kind integer)";
+
+    private final static String UESER_ICON = "create table T_UserIcon(Iid integer primary key AUTOINCREMENT" +
+            ",username varchar(25),iconPath varchar(200))";
+
+    private final static String COUNT = "create table T_Count(cid integer primary key AUTOINCREMENT" +
+            ",count integer,bmobCount integer)";
+
+    private final static String INS_COUNT = "insert into T_Count(count,bmobCount) values (0,0)";
 
     public DBHelper(Context context) {
         super(context, DBNAME, null, VERSION);
@@ -30,19 +57,17 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("create table T_User (uid integer PRIMARY KEY AUTOINCREMENT, username varchar (10),password varchar (20)" +
-                ",isLogin bool,isIcon bool)");
-        db.execSQL("create table T_Question (jId integer primary key AUTOINCREMENT,question varchar(200),answerA varchar(25)," +
-                "answerB varchar(25),answerC varchar(25),answerD varchar(25),answer integer,kind varchar(15))");
-        db.execSQL("create table T_First(fid integer primary key AUTOINCREMENT , isFirst bool ,isLogin bool )");
-        db.execSQL("insert into T_First(isFirst,isLogin) values(0,0)");
-        db.execSQL("create table T_Wrong (wid integer primary key AUTOINCREMENT,question text,answerA varchar(25)," +
-                "answerB varchar(25),answerC varchar(25),answerD varchar(25),answer integer,kind integer)");
 
-        db.execSQL("create table T_UserIcon(Iid integer primary key AUTOINCREMENT,username varchar(25),iconPath varchar(200))");
+        db.execSQL(CREATE);
+        db.execSQL(QUESTION);
+        db.execSQL(FIRST);
+        db.execSQL(INS_FIRST);
+        db.execSQL(WRONG);
 
-        db.execSQL("create table T_Count(cid integer primary key AUTOINCREMENT,count integer,bmobCount integer)");
-        db.execSQL("insert into T_Count(count,bmobCount) values (0,0)");
+        db.execSQL(UESER_ICON);
+
+        db.execSQL(COUNT);
+        db.execSQL(INS_COUNT);
     }
 
     @Override

@@ -1,6 +1,8 @@
 package com.example.tmnt.newcomputer.BMOB;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Message;
 import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.View;
@@ -29,8 +31,10 @@ import cn.bmob.v3.listener.FindStatisticsListener;
 import cn.bmob.v3.listener.SaveListener;
 import cn.bmob.v3.listener.UpdateListener;
 import rx.Observable;
+import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
+import rx.subjects.Subject;
 
 /**
  * bmob工具类
@@ -214,37 +218,64 @@ public class BmobUtils {
      */
     public static void addForMore(List<AnotherAnswer> list, Context context, int id) {
         List<BmobObject> objects = new ArrayList<>();
-        // Log.i(TAG, "addForMore: " + list.size());
-//        for (int i = 0; i < list.size(); i++) {
-//
-//
-//        }
-        Observable.range(0,list.size())
+
+        Log.i(TAG, "addForMore: " + list.size());
+        Observable.range(0, list.size())
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(integer -> {
-                    objects.add(new AnotherAnswer(list.get(integer).getQuestion()
-                            , list.get(integer).getOptionA()
-                            , list.get(integer).getOptionB()
-                            , list.get(integer).getOptionC()
-                            , list.get(integer).getOptionD()
-                            , list.get(integer).getAnswer()
-                            , list.get(integer).getKind()
-                            , list.get(integer).getQ_type()
-                            , list.get(integer).getFillAnswer(), true, id + integer + 1));
+                .subscribe(new Subscriber<Integer>() {
+                    @Override
+                    public void onCompleted() {
+                        new MsgHandle(context, objects).sendEmptyMessage(1001);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                    }
+
+                    @Override
+                    public void onNext(Integer integer) {
+                        objects.add(new AnotherAnswer(list.get(integer).getQuestion()
+                                , list.get(integer).getOptionA()
+                                , list.get(integer).getOptionB()
+                                , list.get(integer).getOptionC()
+                                , list.get(integer).getOptionD()
+                                , list.get(integer).getAnswer()
+                                , list.get(integer).getKind()
+                                , list.get(integer).getQ_type()
+                                , list.get(integer).getFillAnswer(), true, id + integer + 1));
+                    }
                 });
         Log.i(TAG, "addForMore: object" + objects.size());
-        new BmobObject().insertBatch(context, objects, new SaveListener() {
-            @Override
-            public void onSuccess() {
-                Utils.showToast(context, "添加成功");
-            }
 
-            @Override
-            public void onFailure(int i, String s) {
-                Utils.showToast(context, "添加失败" + s);
+    }
+
+    static class MsgHandle extends Handler {
+        private Context mContext;
+        private List<BmobObject> mObjects;
+
+        public MsgHandle(Context context, List<BmobObject> objects) {
+            mContext = context;
+            mObjects = objects;
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            if (msg.what == 1001) {
+                new BmobObject().insertBatch(mContext, mObjects, new SaveListener() {
+                    @Override
+                    public void onSuccess() {
+                        Utils.showToast(mContext, "添加成功");
+                    }
+
+                    @Override
+                    public void onFailure(int i, String s) {
+                        Utils.showToast(mContext, "添加失败" + s);
+                    }
+                });
             }
-        });
+        }
     }
 
 }

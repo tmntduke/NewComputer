@@ -24,8 +24,8 @@ public class FristSlideAppinfo extends AppIntro {
     public void init(@Nullable Bundle savedInstanceState) {
 
         //添加页面
-        addSlide(AppIntroFragment.newInstance("slide1", "this is test ont ", R.drawable.register, getResources().getColor(R.color.colorPrimary)));
-        addSlide(AppIntroFragment.newInstance("slide2", "this is test two", R.drawable.login, getResources().getColor(R.color.holo_green_light)));
+        addSlide(AppIntroFragment.newInstance("java", "hello world ", R.drawable.register, getResources().getColor(R.color.colorPrimary)));
+        addSlide(AppIntroFragment.newInstance("test", "let`s go", R.drawable.login, getResources().getColor(R.color.holo_green_light)));
         addSlide(FirstSlideFragment.newInstance(R.layout.slide_lay));
 
         setFadeAnimation();
