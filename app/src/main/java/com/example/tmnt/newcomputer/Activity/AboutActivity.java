@@ -7,6 +7,7 @@ import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.transition.ChangeBounds;
 import android.transition.Fade;
 import android.transition.Transition;
 import android.transition.TransitionInflater;
@@ -64,7 +65,7 @@ public class AboutActivity extends AppCompatActivity {
     /**
      * 适配4.4 沉浸状态栏
      */
-    private void setTitlebarColor(){
+    private void setTitlebarColor() {
 
         if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) {
             Utils.setTranslucentStatus(AboutActivity.this, true);
@@ -85,6 +86,10 @@ public class AboutActivity extends AppCompatActivity {
             Transition transition = TransitionInflater.from(AboutActivity.this)
                     .inflateTransition(R.transition.arc_transition);
             getWindow().setSharedElementEnterTransition(transition);
+
+            ChangeBounds changeBounds = new ChangeBounds();
+            changeBounds.setPathMotion(null);
+
             transition.addListener(new Transition.TransitionListener() {
                 @Override
                 public void onTransitionStart(Transition transition) {
@@ -130,16 +135,16 @@ public class AboutActivity extends AppCompatActivity {
     private void animationShow() {
         GuiUtils.animateRevealShow(AboutActivity.this, mRelative, mOtherFabCircle.getWidth() / 2
                 , R.color.colorOtherPrimaryDark, new GuiUtils.OnRevealAnimationListener() {
-            @Override
-            public void onRevealHide() {
+                    @Override
+                    public void onRevealHide() {
 
-            }
+                    }
 
-            @Override
-            public void onRevealShow() {
-                initViews();
-            }
-        });
+                    @Override
+                    public void onRevealShow() {
+                        initViews();
+                    }
+                });
 
     }
 
@@ -150,16 +155,16 @@ public class AboutActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             GuiUtils.animateRevealHide(AboutActivity.this, mRelative, mOtherFabCircle.getWidth() / 2
                     , R.color.colorOtherPrimaryDark, true, new GuiUtils.OnRevealAnimationListener() {
-                @Override
-                public void onRevealHide() {
-                    defaultBack();
-                }
+                        @Override
+                        public void onRevealHide() {
+                            defaultBack();
+                        }
 
-                @Override
-                public void onRevealShow() {
+                        @Override
+                        public void onRevealShow() {
 
-                }
-            });
+                        }
+                    });
         } else {
             defaultBack();
         }

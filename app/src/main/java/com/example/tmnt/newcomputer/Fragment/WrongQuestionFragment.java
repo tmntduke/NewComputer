@@ -34,6 +34,8 @@ public class WrongQuestionFragment extends Fragment {
     public static final String KIND = "kind";
     public static final String ANOTHER = "another";
     public static final String UPDATEPROGRESS = "updateProgress";
+
+
     @Bind(R.id.test)
     PlanBar mTest;
     @Bind(R.id.question_title_view)
