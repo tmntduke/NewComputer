@@ -8,6 +8,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
@@ -72,7 +73,6 @@ public class MainActivity extends BaseActivity implements OnMenuItemClickListene
 
     @Bind(R.id.toolbarIcon)
     CircleImageView mToolbarIcon;
-
     @Bind(R.id.tab)
     PagerBottomTabLayout mTab;
     @Bind(R.id.id_content)
@@ -205,12 +205,16 @@ public class MainActivity extends BaseActivity implements OnMenuItemClickListene
      * 显示默认fragment
      */
     private void setDefaultFragment() {
-        FragmentManager manager = getSupportFragmentManager();
-        FragmentTransaction transaction = manager.beginTransaction();
-        transaction.setCustomAnimations(R.anim.push_up_in, R.anim.push_up_out);
-        HomeFragment homeFragment = HomeFragment.getIntance(isLoad);
-        transaction.add(R.id.id_content, homeFragment);
-        transaction.commit();
+       if (Utils.isConnected(MainActivity.this)){
+           FragmentManager manager = getSupportFragmentManager();
+           FragmentTransaction transaction = manager.beginTransaction();
+           transaction.setCustomAnimations(R.anim.push_up_in, R.anim.push_up_out);
+           HomeFragment homeFragment = HomeFragment.getIntance(isLoad);
+           transaction.add(R.id.id_content, homeFragment);
+           transaction.commit();
+       }else {
+           Snackbar.make(mTab, "Connected wrong", Snackbar.LENGTH_LONG).show();
+       }
     }
 
     /**
@@ -252,42 +256,47 @@ public class MainActivity extends BaseActivity implements OnMenuItemClickListene
             public void onSelected(int index, Object tag) {
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
                 transaction.setCustomAnimations(R.anim.push_up_in, R.anim.push_up_out);
-                switch (index) {
-                    case 0:
-                        isUser = false;
-                        a1 = true;
-                        a2 = false;
-                        a3 = false;
-                        HomeFragment homeFragment = HomeFragment.getIntance(isLoad);
-                        transaction.replace(R.id.id_content, homeFragment);
-                        transaction.commitAllowingStateLoss();
-                        break;
-                    case 1:
-                        isUser = false;
-                        a1 = false;
-                        a2 = true;
-                        a3 = false;
-                        transaction.replace(R.id.id_content, new SortFragment());
-                        transaction.commitAllowingStateLoss();
-                        break;
-                    case 2:
-                        a1 = false;
-                        a2 = false;
-                        a3 = true;
-                        isUser = true;
-                        Intent intent = new Intent(MainActivity.this, ShowUseActivity.class);
-                        intent.putExtra("user", username);
-                        ActivityOptions transitionActivityOptions = null;
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                            transitionActivityOptions = ActivityOptions.makeSceneTransitionAnimation(MainActivity.this);
-                            startActivity(intent, transitionActivityOptions.toBundle());
+                if (Utils.isConnected(MainActivity.this)) {
+                    switch (index) {
+                        case 0:
+                            isUser = false;
+                            a1 = true;
+                            a2 = false;
+                            a3 = false;
+                            HomeFragment homeFragment = HomeFragment.getIntance(isLoad);
+                            transaction.replace(R.id.id_content, homeFragment);
+                            transaction.commitAllowingStateLoss();
+                            break;
+                        case 1:
+                            isUser = false;
+                            a1 = false;
+                            a2 = true;
+                            a3 = false;
+                            transaction.replace(R.id.id_content, new SortFragment());
+                            transaction.commitAllowingStateLoss();
+                            break;
+                        case 2:
+                            a1 = false;
+                            a2 = false;
+                            a3 = true;
+                            isUser = true;
+                            Intent intent = new Intent(MainActivity.this, ShowUseActivity.class);
+                            intent.putExtra("user", username);
+                            ActivityOptions transitionActivityOptions = null;
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                transitionActivityOptions = ActivityOptions.makeSceneTransitionAnimation(MainActivity.this);
+                                startActivity(intent, transitionActivityOptions.toBundle());
 
-                        } else {
-                            startActivity(intent);
-                        }
-                        break;
+                            } else {
+                                startActivity(intent);
+                            }
+                            break;
+                    }
+                } else {
+                    Snackbar.make(mTab, "Connected wrong", Snackbar.LENGTH_LONG).show();
                 }
             }
+
 
             @Override
             public void onRepeatClick(int index, Object tag) {
