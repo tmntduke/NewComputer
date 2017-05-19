@@ -221,10 +221,12 @@ public class SingleUploadFragment extends Fragment implements ProgressGenerator.
                     , "D." + mAddOptionD.getText().toString()
                     , answer, "select", type, null, true, idFromBomb + 1
             );
+            Log.i(TAG, "onComplete: "+another.toString());
             BmobUtils.saveDataToBmob(another, getActivity(), view, mAddCommit);
         } else {
             another1 = new AnotherAnswer(mAddQuestion.getText().toString(), null, null, null, null
                     , 1, "fillBlank", 3, mFillBlankAnswer.getText().toString(), true, idFromBomb + 1);
+            Log.i(TAG, "onComplete: "+another1.toString());
             BmobUtils.saveDataToBmob(another1, getActivity(), view, mAddCommit);
         }
 

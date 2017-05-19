@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -17,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Toast;
 
 import com.bigkoo.convenientbanner.ConvenientBanner;
 import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
@@ -33,6 +35,7 @@ import com.example.tmnt.newcomputer.ViewHolder.MainViewHolder;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -73,6 +76,7 @@ public class HomeFragment extends Fragment {
 
     private int index;
     private boolean load;
+    private View view;
 
     private float scroll;
 
@@ -89,7 +93,7 @@ public class HomeFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.home_fragment_lay, container, false);
+        view = inflater.inflate(R.layout.home_fragment_lay, container, false);
         ButterKnife.bind(this, view);
 
         mHomeList.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext()));
@@ -131,10 +135,10 @@ public class HomeFragment extends Fragment {
         getUrlData(new OnHaveData() {
             @Override
             public void getAdapter(HomeAdapter adapter) {
-                Log.i(TAG, "getAdapter: "+adapter);
+                Log.i(TAG, "getAdapter: " + adapter);
 
                 mAdapter.notifyDataSetChanged();
-                Log.i(TAG, "getUrlData: "+mHomeList);
+                Log.i(TAG, "getUrlData: " + mHomeList);
                 homeList.setAdapter(mAdapter);
 
                 adapter.showDragWhenLoad(load);
@@ -186,6 +190,7 @@ public class HomeFragment extends Fragment {
 
     /**
      * retrofit访问http
+     *
      * @param data
      */
     private void getUrlData(OnHaveData data) {
@@ -222,7 +227,7 @@ public class HomeFragment extends Fragment {
                 .subscribe(newsInfo -> {
                     mAdapter = new HomeAdapter(getQuestionData(), newsInfo.getNewslist(), getActivity());
                     if (data != null) {
-                        Log.i(TAG, "getUrlData: "+mAdapter);
+                        Log.i(TAG, "getUrlData: " + mAdapter);
                         data.getAdapter(mAdapter);
                     }
                 });
