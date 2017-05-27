@@ -7,6 +7,7 @@ import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.transition.ArcMotion;
 import android.transition.ChangeBounds;
 import android.transition.Fade;
 import android.transition.Transition;
@@ -89,6 +90,8 @@ public class AboutActivity extends AppCompatActivity {
 
             ChangeBounds changeBounds = new ChangeBounds();
             changeBounds.setPathMotion(null);
+
+            ArcMotion arcMotion=new ArcMotion();
 
             transition.addListener(new Transition.TransitionListener() {
                 @Override
